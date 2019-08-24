@@ -1,0 +1,19 @@
+EXPORT       Reasoner.
+
+% This module contains the two reasoning procedures for the three 
+% wise men puzzle.
+
+IMPORT       Programs.
+
+BASE         Wiseman, Colour.
+
+CONSTANT     W1, W2, W3 : Wiseman;
+             Black, White : Colour.
+
+
+PREDICATE  Solve :
+
+  Wiseman          % A wise man.
+* Program          % The knowledge known, or assumed to be known, to 
+                   % this wise man by the third wise man, W3. 
+* Colour.          % The colour of this wise man's hat.

@@ -1,0 +1,54 @@
+
+This directory contains a number of demonstration programs (and associated
+queries). These are grouped as follows:
+
+
+1. Parser 
+        * error detecting: Errors.loc and ErrorsFixed.loc
+
+2. Expressiveness
+	* quantifiers: DB1.loc (see db1-queries)
+	* an executable specification: GCD.loc
+
+3. Control
+	* co-routining: EightQueens.loc (run <- Queen(x).)
+
+4. Numbers and Constraints 
+	* various kinds of numerical computations and constraint solving:
+		 Pythagorean numbers, factorials, Fibonacci numbers, 
+                 send-more-money puzzle, rationals, ... (see number-queries)
+
+5. Module system
+	* hidden terms: TestTables.loc (see table-queries -- last query)
+
+6. Sets
+        * extensional and intensional sets; set processing (see set-queries)
+
+7. Units and Flocks
+        * tableau propositional theorem prover (see tableau-queries) 
+
+8. Non-ground representation
+	* vanilla interpreter (see vanilla-queries)
+
+9. Meta-programming
+        * SLDNF-interpreter: TestInterpreter.loc (see interpreter-queries)
+        * dynamic meta-programming : TestDynamic.loc (see dynamic-queries)
+	* meta-reasoning: ThreeWisemen.loc (run <- Go(colour).)
+        * unification algorithm : TestUnify.loc (see unify-queries) 
+	* demo: TestDemo.loc (see demo-queries)
+	* breadth-first interpreter: TestBreadthFirst.loc 
+                                                    (see breadthfirst-queries)
+	* abduction: TestAbduction.loc (see abduction-queries)
+	* reflection: Succeed.loc (see succeed-queries)
+                      Reflection.loc (see reflection-queries)
+
+10. Miscellaneous
+        * Tables: TestTables.loc (see table-queries)
+        * Answers module: a utility for printing out substitutions
+        * NinetyOne and Takeuchi modules: recursive functions
+        * AssocList module: association list (see assoclist-queries)
+        * NaiveReverse module: naive reverse (with DELAYs)
+        * Occur and Occur1 modules: testing occur check
+        * Various other modules are used as data for the meta-programs
+           (e.g. Bike, Qsort, Inclusion, M4, ...)
+

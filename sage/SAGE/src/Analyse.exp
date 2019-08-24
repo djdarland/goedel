@@ -1,0 +1,38 @@
+
+%  ============================================================
+%
+%  Module Analyse - Static Analysis for Partial Evaluation.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+EXPORT		Analyse.
+
+IMPORT		Programs.
+
+
+BASE		AFormula , ATerm.
+
+CONSTANT	EMPTY : AFormula.
+
+FUNCTION	GT : Integer -> ATerm ;
+		V : Integer -> ATerm ;
+		NGT : Name * List(ATerm) -> ATerm ;
+		SUSP : Name * List(ATerm) -> AFormula ;
+		Cov : Name * Integer * List(ATerm) -> AFormula.
+
+
+PREDICATE  GetSelectableAtoms : Formula * List(Name) * List(Formula)
+			 * List(Formula).
+
+PREDICATE  FindSuspectPredicates : List(Formula) * Program * List(Name)
+			 * List(Name) * List(Name) * List(Name).
+
+PREDICATE  StaticAnalysis : Program * List(Formula) * List(Name) * List(Name)
+			 * List(Name) * List(AFormula).
+
+PREDICATE  FreeVars : List(Term) * List(Term).
+
+%  ============================================================

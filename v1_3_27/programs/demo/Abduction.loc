@@ -1,0 +1,84 @@
+LOCAL	Abduction.
+
+Abduction(program, goal, computed_answer, abducibles) <-
+   ConjunctionOfAtoms(goal) &
+   EmptyVarTyping(empty_var_types) &
+   FormulaInProgram(program, empty_var_types, goal, _) &
+   EmptyTermSubst(empty_subst) &
+   IsImpliedBy(goal, goal, resultant) &
+   Abduce(program, resultant, empty_subst, answer, [], abducibles) &
+   CheckIntegrityConstraint(abducibles, program) &
+   RestrictSubstToFormula(goal, answer, computed_answer).
+
+%------------------------------------------------------------------------------
+
+PREDICATE	Abduce : Program * Formula * TermSubst * TermSubst
+			 * List(Formula) * List(Formula).
+
+Abduce(_, resultant, answer, answer, abducibles, abducibles) <-
+   IsImpliedBy(_, empty_formula, resultant) &
+   EmptyFormula(empty_formula).
+
+Abduce(program, resultant, answer, answer2, abducibles, abducibles2) <-
+   IsImpliedBy(head, body, resultant) &
+   Select(body, left, selected, right) &
+   IF DeclaredInClosedModule(program, _, selected)
+   THEN
+      Succeed(program, selected, subst) &
+      ComposeTermSubsts(answer, subst, answer1) &
+      IsImpliedBy(head, right, resultant2) &
+      ApplySubstToFormula(resultant2, subst, resultant3) &
+      Abduce(program, resultant3, answer1, answer2, abducibles, abducibles2)
+   ELSE IF SOME [statement] StatementMatchAtom(program, _, selected, statement)
+   THEN
+      ( IF SOME [answer1, mgu, renamed, resultant2]
+   	      RenameFormulas([resultant], [statement], [renamed]) &
+   	      Derive(head, left, selected, right, renamed, mgu, resultant2) &
+   	      ComposeTermSubsts(answer, mgu, answer1) 
+	THEN
+           Abduce(program, resultant2, answer1, answer2, abducibles,
+			abducibles2)
+   	ELSE
+      	   IsImpliedBy(head, right, resultant2) &
+           Abduce(program, resultant2, answer, answer2, [selected|abducibles],
+	   		abducibles2)
+      )
+   ELSE
+      IsImpliedBy(head, right, resultant2) &
+      Abduce(program, resultant2, answer, answer2, [selected|abducibles],
+			abducibles2).
+
+%------------------------------------------------------------------------------
+
+PREDICATE	Select : Formula * Formula * Formula * Formula.
+
+Select(atom, empty, atom, empty) <-
+   Atom(atom) |
+   EmptyFormula(empty).
+
+Select(body, left, selected, right) <-
+   And(left_body, right_body, body) |
+   Select(left_body, left, selected, right1) &
+   AndWithEmpty(right1, right_body, right).
+
+%------------------------------------------------------------------------------
+
+PREDICATE	CheckIntegrityConstraint : List(Formula) * Program.
+
+CheckIntegrityConstraint([], _).
+CheckIntegrityConstraint([abducible|abducibles], program) <-
+   MainModuleInProgram(program, module) &
+   AddAbducibles([abducible|abducibles], program, module, new_program) &
+   IF SOME [goal]
+      StringToProgramFormula(program, module, "Inconsistent", [goal])
+   THEN
+      Fail(new_program, goal).
+
+PREDICATE	AddAbducibles : List(Formula) * Program * String * Program.
+
+AddAbducibles([], program, _, program).
+AddAbducibles([abducible|abducibles], program, module, new_program) <-
+   EmptyFormula(empty_formula) &
+   IsImpliedBy(abducible, empty_formula, formula) &
+   InsertStatement(program, module, formula, program2) &
+   AddAbducibles(abducibles, program2, module, new_program).

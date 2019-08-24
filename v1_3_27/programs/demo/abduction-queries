@@ -1,0 +1,19 @@
+1. Kowalski's bicycle fault diagnosis problem.  The problem is formulated in
+   programs, Bike.loc and Bike2.loc.  Bike2.loc is essentially the same as
+   Bike.loc with TypeHoldsAir added as a fact.
+
+   Bike.loc and Bike2.loc are object programs on which we want to do abduction.
+   You need to program-compile Bike.loc and Bike2.loc. 
+
+<- Go("Bike", "WobblyWheel", answer_substitutions, abducibles).
+
+<- Go("Bike2", "WobblyWheel", answer_substitutions, abducibles).
+
+
+2. Moore's block world problem.  Description of the problem can be found in
+   Block.loc.  The problem is formulated in program Blocks.loc.
+   You need to program-compile Blocks.loc.
+
+<- Go("Blocks", "NextTo(x,y) & Green(x) & NotGreen(y)", answer_sub, abducibles).
+
+

@@ -1,0 +1,35 @@
+LOCAL      Answers.
+
+% PREDICATE  AnswerString : Program * String * TermSubst * String.
+
+AnswerString(program, module, answer, "{" ++ string ++ "}") <-
+    AnswerString1(program, module, answer, string).
+
+PREDICATE  AnswerString1 : Program * String * TermSubst * String.
+
+AnswerString1(program, module, answer, string) <- 
+    {IF SOME [var, term, answer1]
+          DelBindingInTermSubst(answer, var, term, answer1)
+     THEN
+       ProgramTermToString(program, module, var, var_string) &
+       ProgramTermToString(program, module, term, term_string) &
+       AnswerString2(program, module, answer1, 
+                               var_string ++ "/" ++ term_string, string)
+     ELSE
+       string = ""
+    }.
+
+PREDICATE  AnswerString2 : Program * String * TermSubst * String * 
+                           String.
+
+AnswerString2(program, module, answer, so_far, string) <-
+    {IF SOME [var, term, answer1]
+          DelBindingInTermSubst(answer, var, term, answer1)
+     THEN
+       ProgramTermToString(program, module, var, var_string) &
+       ProgramTermToString(program, module, term, term_string) &
+       AnswerString2(program, module, answer1, 
+         so_far ++ "," ++ var_string ++ "/" ++ term_string, string)
+     ELSE
+       string = so_far
+    }.

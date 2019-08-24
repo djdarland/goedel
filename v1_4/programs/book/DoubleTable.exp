@@ -1,0 +1,6 @@
+EXPORT     DoubleTable.
+
+IMPORT     Tables.
+
+PREDICATE  Double : Table(Integer) * Table(Integer).
+     

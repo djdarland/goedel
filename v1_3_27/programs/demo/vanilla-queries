@@ -1,0 +1,11 @@
+% Normal use of OAppend3
+
+Solve(OAppend3(OCons(OMonday,ONil),OCons(OTuesday,ONil),OCons(OWednesday,ONil),
+                                                                            x)).
+
+
+% Run OAppend3 backward, decomposing a list into three sub-lists.
+
+Solve(OAppend3(x,y,z,OCons(OMonday,OCons(OTuesday,ONil)))).
+	% This terminates because the delays for Append are pushed to
+	% the meta level.

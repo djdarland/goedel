@@ -1,0 +1,305 @@
+CLOSED     Scripts.
+
+% Module providing the abstract data type Script for representing 
+% Goedel scripts (using a ground representation) and predicates for 
+% processing terms of type Script.
+
+IMPORT     Programs.
+
+BASE       Script.         % Type of a term representing a script.
+
+
+PREDICATE  ProgramToScript : 
+
+  Program         % Representation of a program.
+* Script.         % Representation of the associated script for this
+                  % program.
+
+DELAY      ProgramToScript(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  TypeInScript : 
+
+  Script          % Representation of a script.
+* Type.           % Representation of a type in the language of this 
+                  % script.
+
+DELAY      TypeInScript(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TermInScript : 
+
+  Script          % Representation of a script.
+* VarTyping       % Representation of a variable typing in the language 
+                  % of this script.
+* Term            % Representation of a term in the language of this 
+                  % script.
+* Type            % Representation of the type of this term with respect
+                  % to this variable typing.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the second argument 
+                  % with the types of all variables occurring in the 
+                  % term.
+
+DELAY      TermInScript(x,y,z,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z).
+
+
+PREDICATE  FormulaInScript : 
+
+  Script          % Representation of a script.
+* VarTyping       % Representation of a variable typing in the language 
+                  % of this script.
+* Formula         % Representation of a formula, which is a standard 
+                  % body or standard resultant, in the language of this 
+                  % script.
+* VarTyping.      % Representation of the variable typing obtained by
+                  % combining the variable typing in the second argument
+                  % with the types of all free variables occurring in 
+                  % the formula.
+
+DELAY      FormulaInScript(x,y,z,_) UNTIL GROUND(x) & GROUND(y) &
+                                                              GROUND(z).
+
+
+PREDICATE  BaseInScript : 
+
+  Script          % Representation of a script.
+* Name.           % Representation of the flat name of a base in the 
+                  % open language of this script.
+
+DELAY      BaseInScript(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstructorInScript : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a constructor in 
+                  % the open language of this script.
+* Integer.        % Arity of this constructor.
+
+DELAY      ConstructorInScript(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstantInScript : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a constant in 
+                  % the open language of this script.
+* Type.           % Representation of the type of this constant.
+
+DELAY      ConstantInScript(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  FunctionInScript : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a function in 
+                  % the open language of this script.
+* FunctionInd     % Representation of the indicator for this function.
+* List(Type)      % List of the representations of the domain types of 
+                  % this function.
+* Type.           % Representation of the range type of this function.
+
+DELAY      FunctionInScript(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  PropositionInScript : 
+
+  Script          % Representation of a script.
+* Name.           % Representation of the flat name of a proposition in
+                  % the open language of this script.
+
+DELAY      PropositionInScript(x,_) UNTIL GROUND(x). 
+
+
+PREDICATE  PredicateInScript : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a predicate in 
+                  % the open language of this script.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type).     % List of the representations of the types for this 
+                  % predicate.
+
+DELAY      PredicateInScript(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  StatementInScript :
+
+  Script          % Representation of a script.
+* Formula.        % Representation of a statement in the open part of
+                  % this script.
+
+DELAY      StatementInScript(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  StatementMatchAtom : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of an atom in the language of this 
+                  % script, whose proposition or predicate symbol is in
+                  % the open language of this script.
+* Formula.        % Representation of a statement in the open part of 
+                  % this script whose proposition or predicate in the 
+                  % head is the same as the proposition or predicate in
+                  % this atom.
+
+DELAY      StatementMatchAtom(x,z,_) UNTIL GROUND(x) & GROUND(z).
+
+
+PREDICATE  DefinitionInScript : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a proposition or 
+                  % predicate in the open language of this script.
+* List(Formula).  % List (in a definite order) of representations of 
+                  % statements in the definition of this proposition or
+                  % predicate.
+
+DELAY      DefinitionInScript(x,_,_) UNTIL GROUND(x).
+
+                               
+PREDICATE  ControlInScript :  
+                               
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a predicate in 
+                  % the open language of this script.
+* List(Formula)   % List (in a definite order) of representations of the 
+                  % heads of all DELAY declarations for this predicate.
+* List(Condition).% List of representations of the DELAY conditions 
+                  % corresponding to each head in the fourth argument.
+                               
+DELAY      ControlInScript(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  DelayInScript : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of the Atom part of a DELAY 
+                  % declaration appearing in the open part of this 
+                  % script.
+* Condition.      % Representation of the Cond part of this DELAY
+                  % declaration.
+
+DELAY      DelayInScript(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertScriptProposition : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a proposition
+                  % whose module name component is not the name of a 
+                  % closed module and which is not declared in this 
+                  % script.
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it also
+                  % contains the declaration of this proposition in its 
+                  % open part.
+
+DELAY      InsertScriptProposition(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  DeleteScriptProposition : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a proposition 
+                  % whose module name component is not the name of a 
+                  % closed module and which is declared in the open part
+                  % of this script.
+* Script.         % Representation of a script which differs from the
+                  % script in the first argument only in that it does
+                  % not contain the declaration of this proposition in 
+                  % its open part.
+
+DELAY      DeleteScriptProposition(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertScriptPredicate : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a predicate whose
+                  % module name component is not the name of a closed 
+                  % module and which is not declared in this script.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type)      % List of the representations of the types of this 
+                  % predicate. 
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it also 
+                  % contains the declaration of this predicate in its
+                  % open part.
+
+DELAY      InsertScriptPredicate(x,y,z,u,_) UNTIL GROUND(x) & 
+                                      GROUND(y) & GROUND(z) & GROUND(u).
+
+
+PREDICATE  DeleteScriptPredicate : 
+
+  Script          % Representation of a script.
+* Name            % Representation of the flat name of a predicate whose
+                  % module name component is not the name of a closed 
+                  % module and which is declared in the open part of 
+                  % this script.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type)      % List of the representations of the types of this
+                  % predicate. 
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it does 
+                  % not contain the declaration of this predicate in its
+                  % open part.
+
+DELAY      DeleteScriptPredicate(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertDelay : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of a DELAY Atom part.
+* Condition       % Representation of a DELAY Cond part. 
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it also 
+                  % contains in its open part the DELAY declaration 
+                  % consisting of the Atom part in the second argument
+                  % and the Cond part in the third argument.
+
+DELAY      InsertDelay(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).
+
+
+PREDICATE  DeleteDelay : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of the Atom part of a DELAY
+                  % declaration in the open part of this script.
+* Condition       % Representation of the Cond part of this DELAY 
+                  % declaration. 
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it does 
+                  % not contain this DELAY declaration in its open part.
+
+DELAY      DeleteDelay(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertStatement : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of a statement in the open language 
+                  % of this script.
+* Script.         % Representation of a script which differs from the 
+                  % script in the first argument only in that it also
+                  % contains this statement in the open part of the 
+                  % script. 
+
+DELAY      InsertStatement(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  DeleteStatement : 
+
+  Script          % Representation of a script.
+* Formula         % Representation of a statement in the open language 
+                  % of this script in this script.
+* Script.         % Representation of a script which differs from the
+                  % script in the first argument only in that it does 
+                  % not contain this statement in the open part of the 
+                  % script. 
+
+DELAY      DeleteStatement(x,_,_) UNTIL GROUND(x).

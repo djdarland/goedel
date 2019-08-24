@@ -1,0 +1,448 @@
+
+%  ========================================================
+%
+%  Module SAGE - User interface for Partial Evaluator SAGE.
+%
+%  ========================================================
+
+%				Corin Gurr. (18/4/94).
+%				----------------------
+
+MODULE  SAGE.
+
+IMPORT  PE, ProgramsIO, ScriptsIO.
+
+
+PROPOSITION  RunPE.
+
+RunPE <-
+  WriteGreetings &
+  {GetInputProgram(program)} &
+  NewLine(StdOut) &
+  {
+  IF ModuleInProgram(program,"Sets")
+    THEN  
+      WriteString(StdOut,"WARNING: This program imports the system module ") &
+      WriteString(StdOut,"Sets\n         SAGE may not be able to ") &
+      WriteString(StdOut,"successfully partially evaluate this program!\n\n")
+  } &
+  MainModuleInProgram(program,main) &
+  {GetGoal(program,main,goal)} &
+  GetNonSelectable(program,main,selectable) &
+  PE(program,goal,selectable,danger,new_program,a,changes) &
+  WriteString(StdOut,"\nWriting script in file " ++ main ++".scr..." ) &
+  Flush(StdOut) &
+  FindOutput(main ++ ".scr",Out(output)) &
+  PutScript(output,new_program) &
+  EndOutput(output) &
+  WriteString(StdOut,"done\n") &
+  WriteLog(program,main,goal,selectable,danger,a,changes) &
+  WriteString(StdOut,"\nDo you wish SAGE to perform another ") &
+  WriteString(StdOut,"partial evaluation") &
+  Repeat.
+
+
+PROPOSITION  WriteGreetings.
+
+WriteGreetings <-
+  WriteString(StdOut,"\n         SAGE  Partial Evaluator.\n") &
+  WriteString(StdOut,"        --------------------------\n\n") &
+  WriteString(StdOut,"  Welcome :\n  ---------\n\n").
+
+
+PROPOSITION  WriteGoodbye.
+
+WriteGoodbye <-
+  WriteString(StdOut,"\n\n  Goodbye.\n  --------\n\n").
+
+
+PREDICATE  GetInputProgram : Program.
+
+GetInputProgram(program) <-
+  WriteString(StdOut,"Object Program Name ? ") &
+  GetString(list) &
+  StringInts(file,list) &
+  ( IF  _ ++ ".prm" = file
+      THEN  file1 = file
+      ELSE  file ++ ".prm" = file1 ) &
+  WriteString(StdOut,"Loading program...") &
+  Flush(StdOut) &
+  FindInput(file1,result) &
+  IF  result = NotFound
+    THEN  WriteString(StdOut,"\nProgram file not found\n") &
+  	  GetInputProgram(program)
+    ELSE  result = In(input) &
+  	IF  SOME  [prog]  GetProgram(input,prog)
+  	  THEN  program = prog &
+  		WriteString(StdOut,"done\n") &
+  		EndInput(input)
+  	  ELSE WriteString(StdOut,"\nCannot read program from file\n") &
+  		GetInputProgram(program).
+
+
+PREDICATE  GetString : List(Integer).
+
+GetString(file) <-
+  Get(StdIn,char) &
+  IF  char = 10
+    THEN  file = []
+    ELSE  file = [char|rest] &
+          GetString(rest).
+
+
+PREDICATE  GetNonSelectable : Program * String * List(Name).
+
+GetNonSelectable(program,main,selectable) <-
+  WriteString(StdOut,"\nNon-Selectable Atoms :\n") &
+  WriteString(StdOut,"----------------------\n\n") &
+  {
+  IF  ModuleInProgram(program,"Syntax")
+    THEN
+      WriteString(StdOut
+              ,"Do you wish to make the WAM-like predicates non-selectable") &
+      NonSelectWAMs(wams) &
+      Append(wams,selectable1,selectable) &
+      WriteString(StdOut,"\nInput other ")
+    ELSE
+      WriteString(StdOut,"Input ") &
+      selectable = selectable1
+  } &
+  WriteString(StdOut
+   ,"non-selectable predicates as atoms, terminating with empty string.\n\n") &
+  {GetSelectable(program,main,selectable1)} &
+  NewLine(StdOut).
+
+
+PREDICATE  NonSelectWAMs : List(Name).
+
+NonSelectWAMs(wams) <-
+  WriteString(StdOut," (Y/N)? ") &
+  GetString(list) &
+  StringInts(answer,list) &
+  IF ( answer = "y" \/ answer = "Y" )
+    THEN  GetWAMs(wams)
+    ELSE  IF ( answer = "n" \/ answer = "N" )
+      THEN  wams = []
+      ELSE  NonSelectWAMs(wams).
+
+
+PREDICATE  GetWAMs : List(Name).
+
+GetWAMs([get_c,get_f,u_term,u_var,u_val,u_c,u_f]) <-
+  NewProgram("Syntax",p) &
+  ProgramPredicateName(p,"Substs","GetConstant",4,get_c) &
+  ProgramPredicateName(p,"Substs","GetFunction",5,get_f) &
+  ProgramPredicateName(p,"Syntax","UnifyTerms",4,u_term) &
+  ProgramPredicateName(p,"Substs","UnifyVariable",4,u_var) &
+  ProgramPredicateName(p,"Syntax","UnifyValue",5,u_val) &
+  ProgramPredicateName(p,"Substs","UnifyConstant",5,u_c) &
+  ProgramPredicateName(p,"Substs","UnifyFunction",6,u_f).
+
+
+PROPOSITION  Repeat.
+
+Repeat <-
+  WriteString(StdOut," (Y/N)? ") &
+  GetString(list) &
+  StringInts(answer,list) &
+  IF ( answer = "y" \/ answer = "Y" )
+    THEN  RunPE
+    ELSE  IF ( answer = "" \/ answer = "n" \/ answer = "N" )
+      THEN  WriteGoodbye
+      ELSE  Repeat.
+
+
+PREDICATE  GetGoal : Program * String * Formula.
+
+GetGoal(program,main,goal) <-
+  WriteString(StdOut,"Object goal ? ") &
+  GetString(list) &
+  StringInts(goal1,list) &
+  IF  SOME  [g]  StringToProgramFormula(program,main,goal1,[g])
+  	THEN  goal = g
+  	ELSE  WriteString(StdOut,"Incorrect goal\n") &
+  	      GetGoal(program,main,goal).
+
+
+PREDICATE  GetSelectable : Program * String * List(Name).
+
+GetSelectable(program,main,selectable) <-
+  WriteString(StdOut,"Next atom ? ") &
+  GetString(list) &
+  StringInts(pred,list) &
+  IF  pred = ""
+    THEN  selectable = []
+    ELSE  (
+  	IF SOME [p] StringToAtomName(program,pred,p)
+  	  THEN  selectable = [p|selectable1]
+  	  ELSE  WriteString(StdOut,"Not a valid atom\n") &
+  		selectable = selectable1
+  	) &
+  	GetSelectable(program,main,selectable1).
+
+
+PREDICATE  StringToAtomName : Program * String * Name.
+
+StringToAtomName(program,string,name) <-
+  ModuleInProgram(program,module) &
+  StringToProgramFormula(program,module,string,[atom]) &
+  (PredicateAtom(atom,name,_) \/ PropositionAtom(atom,name)).
+
+
+PREDICATE  WriteLog : Program * String * Formula * List(Name)
+		      * List(Name) * List(Formula) * List(Change).
+
+WriteLog(program,main,goal,selectable,danger,a,changes) <-
+  ProgramFormulaToString(program,main,goal,goal_string) &
+  WriteString(StdOut,"\n% ---------------------------------------\n Script: " 
+	++ main ++ ".scr\n\n  Partial evaluation of program:  "
+	++ main ++ "\n  wrt goal:  " ++ goal_string
+	++ "\n% ---------------------------------------\n\n") &
+  FindOutput(main ++ ".new",Out(log)) &
+  WriteString(log,"\n% ---------------------------------------\n Script: " 
+	++ main ++ ".scr\n\n  Partial evaluation of program:  "
+	++ main ++ "\n  wrt goal:  " ++ goal_string
+	++ "\n% ---------------------------------------\n\n") &
+  ShowAtoms(a,program,main,log) &
+  ShowSelectable(selectable,program,log) &
+  ShowUnsafe(danger,program,log) &
+  ShowChanges(changes,program,log) &
+  EndOutput(log) &
+  WriteString(StdOut
+       ,"\nThese changes have been recorded in the file " ++ main ++ ".new\n").
+
+
+PREDICATE  ShowAtoms : List(Formula) * Program * String * OutputStream.
+
+ShowAtoms([],_,_,log) <-
+  WriteString(StdOut,"No atoms in this goal were partially evaluated.\n\n") &
+  WriteString(log,"No atoms in this goal were partially evaluated.\n\n").
+
+ShowAtoms([c|rest],program,main,log) <-
+  WriteString(StdOut,"The following atoms were partially evaluated:\n\n") &
+  WriteString(log,"The following atoms were partially evaluated:\n\n") &
+  WriteAtoms(rest,c,program,main,log).
+
+
+PREDICATE  WriteAtoms : List(Formula) * Formula * Program * String
+                        * OutputStream.
+
+WriteAtoms([],a,program,main,log) <-
+  ProgramFormulaToString(program,main,a,a_string) &
+  WriteString(StdOut,a_string ++ ".\n\n") &
+  WriteString(log,a_string ++ ".\n\n").
+
+WriteAtoms([a1|rest],a,program,main,log) <-
+  ProgramFormulaToString(program,main,a,a_string) &
+  WriteString(StdOut,a_string ++ ",\n") &
+  WriteString(log,a_string ++ ",\n") &
+  WriteAtoms(rest,a1,program,main,log).
+
+
+PREDICATE  ShowSelectable : List(Name) * Program * OutputStream.
+
+ShowSelectable([],_,log) <- 
+  WriteString(StdOut,"No predicates were marked non-selectable.\n\n") &
+  WriteString(log,"No predicates were marked non-selectable.\n\n").
+
+ShowSelectable([s|rest],program,log) <-
+  WriteString(StdOut
+		,"The following predicates were marked non-selectable:\n\n") &
+  WriteString(log,"The following predicates were marked non-selectable:\n\n") &
+  StringInts("0",[zero]) &
+  WritePredicates(rest,s,program,zero,log).
+
+
+PREDICATE  ShowUnsafe : List(Name) * Program * OutputStream.
+
+ShowUnsafe([],_,log) <- 
+  WriteString(StdOut,"No predicates were marked unsafe.\n\n") &
+  WriteString(log,"No predicates were marked unsafe.\n\n").
+
+ShowUnsafe([s|rest],program,log) <-
+  WriteString(StdOut,"The following predicates were marked unsafe:\n\n") &
+  WriteString(log,"The following predicates were marked unsafe:\n\n") &
+  StringInts("0",[zero]) &
+  WritePredicates(rest,s,program,zero,log).
+
+
+PREDICATE  WritePredicates : List(Name) * Name * Program
+                             * Integer * OutputStream.
+
+WritePredicates([],a,program,zero,log) <-
+  WriteName(program,a,zero,log) &
+  WriteString(StdOut,".\n\n") &
+  WriteString(log,".\n\n").
+
+WritePredicates([a1|rest],a,program,zero,log) <-
+  WriteName(program,a,zero,log) &
+  WriteString(StdOut,",\n") &
+  WriteString(log,",\n") &
+  WritePredicates(rest,a1,program,zero,log).
+
+
+PREDICATE  ShowChanges : List(Change) * Program * OutputStream.
+
+ShowChanges([],_,log) <-
+  WriteString(StdOut,"No new predicates have been defined.\n\n") &
+  WriteString(log,"No new predicates have been defined.\n\n").
+
+ShowChanges([c|rest],program,log) <-
+  WriteString(StdOut,"The following new predicates have been defined:\n\n") &
+  WriteString(log,"The following new predicates have been defined:\n\n") &
+  StringInts("0",[zero]) &
+  CreateLog([c|rest],zero,program,log).
+
+
+PREDICATE  CreateLog : List(Change) * Integer * Program * OutputStream.
+
+CreateLog([], _, _, _).
+
+CreateLog([Change(atom,pred,new_pred,_,types,delays,conds)|rest]
+          ,zero,program,log) <-
+  GetName(pred,program,module,arity,name) &
+  NumberAsString(zero,arity,[],number) &
+  (
+  IF  arity = 0
+    THEN  WriteString(StdOut,"Proposition ") &
+          WriteString(log,"Proposition ")
+    ELSE  WriteString(StdOut,"Predicate ") &
+          WriteString(log,"Predicate ")
+  ) &
+  WriteString(StdOut
+          ,name ++ "/" ++ number ++ ", defined in module " ++ module
+	   ++ ",\nhas been replaced by:\n\n") &
+  WriteString(log
+          ,name ++ "/" ++ number ++ ", defined in module " ++ module
+	   ++ ",\nhas been replaced by:") &
+  DisplayPredicate(types,new_pred,new_name,program,module,log) &
+  DisplayControl(delays,conds,program,module,log) &
+  WriteString(StdOut,"\n\nas if re-defined by the statement:\n") &
+  WriteString(log,"\n\nas if re-defined by the statement:\n") &
+  WritePattern(atom,new_name,program,module,log) &
+  NewLine(StdOut) &
+  NewLine(log) &
+  CreateLog(rest,zero,program,log).
+
+
+PREDICATE  WriteName : Program * Name * Integer * OutputStream.
+
+WriteName(program,pred,zero,log) <-
+  GetName(pred,program,module,arity,name) &
+  NumberAsString(zero,arity,[],number) &
+  (
+  IF  arity = 0
+    THEN  WriteString(StdOut,"Proposition ") &
+          WriteString(log,"Proposition ")
+    ELSE  WriteString(StdOut,"Predicate ") &
+          WriteString(log,"Predicate ")
+  ) &
+  WriteString(StdOut
+                 ,name ++ "/" ++ number ++ ", defined in module " ++ module) &
+  WriteString(log
+                 ,name ++ "/" ++ number ++ ", defined in module " ++ module).
+
+
+PREDICATE  GetName : Name * Program * String * Integer * String.
+
+GetName(pred,program,module,arity,name) <-
+  ProgramPredicateName(program,module,name,arity,pred) |.
+
+GetName(pred,program,module,0,name) <-
+  ProgramPropositionName(program,module,name,pred) |.
+
+
+PREDICATE  DisplayPredicate : List(Type) * Name * String * Program * String
+                              * OutputStream.
+
+DisplayPredicate([],pred,string,program,_,log) <-
+  ProgramPropositionName(program,_,string,pred) &
+  WriteString(StdOut,"PROPOSITION  " ++ string ++ ".") &
+  WriteString(log,"PROPOSITION  " ++ string ++ ".").
+
+DisplayPredicate([type|rest],pred,name_string,program,module,log) <-
+  ProgramPredicateName(program,_,name_string,_,pred) &
+  ProgramTypeToString(program,module,type,type_string) &
+  WriteString(StdOut,"PREDICATE  " ++ name_string ++ " : " ++ type_string) &
+  WriteString(log,"PREDICATE  " ++ name_string ++ " : " ++ type_string) &
+  DisplayTypes(rest,program,module,log).
+
+
+PREDICATE  DisplayTypes : List(Type) * Program * String * OutputStream.
+
+DisplayTypes([],_,_,log) <-
+  WriteString(StdOut,".") &
+  WriteString(log,".").
+
+DisplayTypes([type|rest],program,module,log) <-
+  ProgramTypeToString(program,module,type,string) &
+  WriteString(StdOut," * " ++ string) &
+  WriteString(log," * " ++ string) &
+  DisplayTypes(rest,program,module,log).
+
+
+PREDICATE  DisplayControl : List(Formula) * List(Condition) * Program * String
+                              * OutputStream.
+
+DisplayControl([],[],_,_,_).
+
+DisplayControl([delay|rest1],[cond|rest2],program,module,log) <-
+  PredicateAtom(delay,pred,[a|args]) &
+  ProgramPredicateName(program,_,pred_string,_,pred) &
+  WriteArgs(args,a,program,module,args_string) &
+  ConditionToString(cond,cond_string) &
+  WriteString(StdOut,"\n\nDELAY  " ++ pred_string ++ "(" ++ args_string
+		 ++ ") UNTIL " ++ cond_string ++ ".") &
+  WriteString(log,"\n\nDELAY  " ++ pred_string ++ "(" ++ args_string
+		 ++ ") UNTIL " ++ cond_string ++ ".") &
+  DisplayControl(rest1,rest2,program,module,log).
+
+
+PREDICATE  WriteArgs : List(Term) * Term * Program * String * String.
+
+WriteArgs([],arg,program,module,arg_string) <-
+  ProgramTermToString(program,module,arg,arg_string).
+
+WriteArgs([a|rest],arg,program,module,arg_string ++ "," ++ rest_string) <-
+  ProgramTermToString(program,module,arg,arg_string) &
+  WriteArgs(rest,a,program,module,rest_string).
+
+
+PREDICATE  WritePattern : Formula * String * Program
+                          * String * OutputStream.
+
+WritePattern(atom,new_name,program,main,log) <-
+  FormulaVariables(atom,vars) &
+  ProgramFormulaToString(program,main,atom,string) &
+  WriteString(StdOut,"  " ++ string ++ " <- " ++ new_name) &
+  WriteString(log,"  " ++ string ++ " <- " ++ new_name) &
+  WriteNewArgs(vars,program,main,log).
+
+
+PREDICATE  WriteNewArgs : List(Term) * Program * String * OutputStream.
+
+WriteNewArgs([],_,_,log) <-
+  WriteString(StdOut,".") &
+  WriteString(log,".").
+
+WriteNewArgs([arg|rest],program,main,log) <-
+  WriteString(StdOut,"(") &
+  WriteString(log,"(") &
+  WNA(rest,arg,program,main,log).
+
+
+PREDICATE  WNA : List(Term) * Term * Program * String * OutputStream.
+
+WNA([],arg,program,main,log) <-
+  ProgramTermToString(program,main,arg,string) &
+  WriteString(StdOut,string ++ ").\n") &
+  WriteString(log,string ++ ").\n").
+
+WNA([arg|rest],arg1,program,main,log) <-
+  ProgramTermToString(program,main,arg1,string) &
+  WriteString(StdOut,string ++ ",") &
+  WriteString(log,string ++ ",") &
+  WNA(rest,arg,program,main,log).
+
+%  ========================================================
+%  ========================================================

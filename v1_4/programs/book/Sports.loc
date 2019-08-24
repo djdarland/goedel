@@ -1,0 +1,19 @@
+MODULE      Sports.
+
+IMPORT      Sets.
+
+BASE        Person, Sport, PersonSports.
+
+CONSTANT    Mary, Bill, Joe, Fred : Person;
+            Cricket, Football, Tennis : Sport.
+
+FUNCTION    Pair : Person * Set(Sport) -> PersonSports.
+
+PREDICATE   Likes : Person * Sport.
+
+Likes(Mary, Cricket).
+Likes(Mary, Tennis).
+Likes(Bill, Cricket).
+Likes(Bill, Tennis).
+Likes(Joe, Tennis).
+Likes(Joe, Football).

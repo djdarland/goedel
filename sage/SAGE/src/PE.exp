@@ -1,0 +1,24 @@
+
+%  ============================================================
+%
+%  Module PE - Partial Evaluator for ground Goedel programs.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+EXPORT	  PE.
+
+IMPORT	  Analyse, Assemble.
+
+BASE	  Free.
+
+CONSTANT  Prune, Free : Free.
+
+
+PREDICATE  PE : Program * Formula * List(Name) * List(Name)
+	        * Script * List(Formula) * List(Change).
+
+%  ========================================================
+%  ========================================================

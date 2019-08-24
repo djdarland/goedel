@@ -1,0 +1,507 @@
+CLOSED       Floats.
+
+% Module providing floating-point numbers and some standard functions 
+% and predicates with floating-point arguments.
+%
+% This module conforms to the standard for the data type Floating-Point 
+% in Version 4.0 (August 1992) of the Language Independent Arithmetic 
+% Standard (LIAS) ISO/IEC CD 10967-1:1992 (JTC1/SC22/WG11 N318, ANSI 
+% X3T2 92-064). It also conforms to the ANSI/IEEE Standard for Binary
+% Floating-Point Arithmetic 754-1985.
+%
+% The four IEEE Standard 754-1985 rounding functions (round toward 
+% nearest, round toward plus infinity, round toward minus infinity, and 
+% round toward zero) are provided by compiler options. The default 
+% rounding function is round toward nearest.
+%
+% The intended interpretation of the symbols in this module is as 
+% follows.
+%
+% The domain of the intended interpretation is the finite set F of
+% floating-point numbers characterised by a fixed radix, a fixed 
+% precision, and fixed smallest and largest exponent. Thus F is the 
+% finite set of numbers of the form either 0 or s0.f1...fp * r^e, where 
+% r is the radix, p is the precision, e is the exponent, s is either + 
+% or -, and each fi satisfies 0 =< fi < r. Note that the LIAS boolean 
+% denorm is true. Thus denormalised floating-point numbers are provided.
+%
+% The language contains finitely many constants, exactly one 
+% corresponding to each floating-point number in F. However, for the 
+% convenience of the user, there is some syntactic sugar used instead 
+% of the names of these constants. This is the usual decimal number 
+% notation, with or without an exponent. Typical decimal numbers without
+% exponent are 3.1416 and 0, and typical decimal numbers with exponent 
+% are -2.345619E-12 and 674328.89E+2. Such decimal numbers are converted
+% (according to the ANSI/IEEE standard 754-1985) by the system to 
+% floating-point numbers in the form above. Then the convention is 
+% that a decimal number is syntactic sugar for the constant whose 
+% interpretation is the floating-point number obtained from the decimal
+% number. This means that there is more than one way of denoting each of 
+% these constants. For example, both 3.1416 and 314.16E-2 denote the 
+% same constant. Similarly, when answers are displayed by the system, 
+% floating-point numbers are converted back to a more convenient 
+% decimal form.
+%
+% The various functions, such as +, -, etc., have their usual 
+% interpretation as mappings from  F x F (or F, as appropriate) into F.
+% Similarly, the various predicates, such as >, <, etc., have their
+% usual interpretation on F x F. The details are given below.
+
+IMPORT       Integers.
+
+BASE         Float.    
+%
+% Type of the floating-point numbers.
+
+% CONSTANT   Finitely many constants, one for each number in the finite 
+% set F of floating-point numbers determined by the radix, precision,
+% and smallest and largest exponent.
+
+
+FUNCTION    ^ : yFx(540) : Float * Float -> Float.
+%
+% Exponentiation.
+%
+% ^ is defined by 
+%      x^y  = Exp(y*Log(x)),  if x>0 and no underflow or overflow occurs
+%           = 0,              otherwise.
+% The function ^ is defined to be 0 when x =< 0 or underflow or overflow 
+% occurs to make it a total function. This result will never be used. If
+% exponentiation is attempted with x =< 0 or underflow or overflow 
+% occurs, the computation will halt with an appropriate error message.
+
+
+FUNCTION     - : Fy(530) : Float -> Float.
+%
+% Unary minus.
+%
+% The function - corresponds to the LIAS function neg.
+
+
+FUNCTION     * : yFx(520) : Float * Float -> Float.
+%
+% Multiplication.
+%
+% * can overflow or underflow. In either case, the multiplication is 
+% defined to be 0 to make * total. Such a result will never be used. If
+% a multiplication leads to an underflow or overflow, the computation 
+% will halt with an appropriate error message.  
+%
+% The function * corresponds to the LIAS function mul.
+
+
+FUNCTION     / : yFx(520) : Float * Float -> Float.
+%
+% Division.
+%
+% / can overflow, underflow, or have a zero divisor. In all such cases, 
+% the division is defined to be 0 to make / total. Such a result will 
+% never be used. If a division leads to an underflow, overflow, or a 
+% zero divisor, the computation will halt with an appropriate error
+% message.  
+%
+% The function / corresponds to the LIAS function div.
+
+
+FUNCTION     + : yFx(510) : Float * Float -> Float.
+%
+% Addition.
+%
+% + can overflow or underflow. In either case, the addition is defined 
+% to be 0 to make + total. Such a result will never be used. If an 
+% addition leads to an underflow or overflow, the computation will halt
+% with an appropriate error message.  
+%
+% The function + corresponds to the LIAS function add. The LIAS
+% approximate addition function add* is true (exact) addition.
+
+
+FUNCTION     - : yFx(510) : Float * Float -> Float.
+%
+% Subtraction.
+%
+% - can overflow or underflow. In either case, the subtraction is 
+% defined to be 0 to make - total. Such a result will never be used.
+% If a subtraction leads to an underflow or overflow, the computation 
+% will halt with an appropriate error message.  
+%
+% The function - corresponds to the LIAS function sub.
+
+
+FUNCTION     Abs : Float -> Float.
+%
+% Absolute value.
+%
+% The function Abs corresponds to the LIAS function abs.
+
+
+FUNCTION     Max : Float * Float -> Float.
+%
+% Maximum.
+
+
+FUNCTION     Min : Float * Float -> Float.
+%
+% Minimum.
+
+
+FUNCTION     Sqrt : Float -> Float.
+%
+% Square root.
+%
+% Sqrt is defined to be 0 when its argument is negative to make it 
+% total. Such a result will never be used. In such a case, the 
+% computation will halt with an appropriate error message.  
+
+
+FUNCTION     Sign : Float -> Float.
+%
+% Sign(x) = 1,   if x>0
+%         = 0,   if x=0
+%          -1,   if x<0
+%
+% The function Sign corresponds to the LIAS function sign.
+
+
+FUNCTION     Fraction : Float -> Float.
+%
+% The fraction part s0.f1...fp of a non-zero floating-point number 
+% s0.f1...fp * r^e (normalized so that f1 ~= 0, if necessary) or 0 
+% for the floating-point number 0.
+%
+% The function Fraction corresponds to the LIAS function fraction.
+
+
+FUNCTION     Scale : Float * Integer -> Float.
+%
+% Scale scales a floating-point number in the first argument by an 
+% integer power of the radix, where the integer is in the second 
+% argument. Scale is defined to be 0 when underflow or overflow occurs 
+% to make it a total function. Such a result will never be used. If
+% underflow or overflow occurs, the computation will halt with an 
+% error message.
+%
+% The function Scale corresponds to the LIAS function scale.
+
+
+FUNCTION     Successor : Float -> Float. 
+%
+% Successor returns the closest number in F greater than its argument. 
+% Successor is defined to be 0 when overflow occurs to make it a total
+% function. Such a result will never be used. If overflow occurs, the
+% computation will halt with an error message.
+%
+% The function Successor corresponds to the LIAS function succ.
+
+
+FUNCTION     Predecessor : Float -> Float. 
+%
+% Predecessor returns the closest number in F less than its argument. 
+% Predecessor is defined to be 0 when overflow occurs to make it a 
+% total function. Such a result will never be used. If overflow occurs,
+% the computation will halt with an error message.
+%
+% The function Predecessor corresponds to the LIAS function pred.
+
+
+FUNCTION     UnitInLastPlace : Float -> Float.
+%
+% UnitInLastPlace gives the weight of the least significant digit of 
+% a non-zero argument. UnitInLastPlace is defined to be 0 when its 
+% argument is 0 or underflow occurs to make it a total function. Such 
+% a result will never be used. If its argument is 0 or underflow 
+% occurs, the computation will halt with an error message.
+%
+% The function UnitInLastPlace corresponds to the LIAS function ulp.
+
+
+FUNCTION     Truncate : Float * Integer -> Float. 
+%
+% Truncate zeros out the low (p - n) digits of its first argument, where 
+% p is the precision and n is the second argument.  If n =< 0, then 0
+% is returned and if n >= p, the first argument is returned.
+%
+% The function Truncate corresponds to the LIAS function trunc.
+
+
+FUNCTION     Round : Float * Integer -> Float. 
+%
+% Round rounds its first argument to n significant digits. That is,
+% the nearest n-digit floating-point value is returned. Values exactly
+% half-way between two adjacent n-digit floating-point numbers round
+% away from zero. Round is defined to be 0 when overflow occurs to 
+% make it a total function. Such a result will never be used. If 
+% overflow occurs, the computation will halt with an error message.
+%
+% The function Round corresponds to the LIAS function round.
+
+
+FUNCTION     IntegerPart : Float -> Float. 
+%
+% IntegerPart returns (in floating-point form) the integer part of a 
+% floating point number.
+%
+% The function IntegerPart corresponds to the LIAS function intpart.
+
+
+FUNCTION     FractionalPart : Float -> Float. 
+%
+% FractionalPart returns the value of its argument minus its integer
+% part. 
+%
+% The function FractionalPart corresponds to the LIAS function
+% fractpart.
+
+
+FUNCTION     Sin : Float -> Float.
+%
+% Sine.
+
+
+FUNCTION     Cos : Float -> Float.
+%
+% Cosine.
+
+
+FUNCTION     Tan : Float -> Float.
+%
+% Tangent.
+%
+% Tan is defined to be 0 when overflow occurs to make it total. Such
+% a result will never be used.  If overflow occurs, the computation 
+% will halt with an error message.
+
+
+FUNCTION     ArcSin : Float -> Float.
+%
+% ArcSine.
+%
+% ArcSin is defined to be 0 when its argument is outside the range 
+% [-1,1] to make it total. Such a result will never be used.  If
+% ArcSin is called with such an argument, the computation will halt 
+% with an error message.
+
+
+FUNCTION     ArcCos : Float -> Float.
+%
+% ArcCosine.
+%
+% ArcCos is defined to be 0 when its argument is outside the range 
+% [-1,1] to make it total. Such a result will never be used.  If 
+% ArcCos is called with such an argument, the computation will halt 
+% with an error message.
+
+
+FUNCTION     ArcTan : Float -> Float.
+%
+% ArcTangent.
+
+
+FUNCTION     Exp : Float -> Float.
+%
+% Exponential.
+%
+% Exponential is defined to be 0 when underflow or overflow occurs to 
+% make it total. Such a result will never be used.  If underflow or 
+% overflow occurs, the computation will halt with an error message.
+
+
+FUNCTION     Log : Float -> Float.
+%
+% Natural logarithm.
+%
+% Log is defined to be 0 when its argument is not greater than 0 or
+% underflow or overflow occurs to make it total. Such a result will 
+% never be used. In such cases, the computation will halt with an error
+% message.
+
+
+FUNCTION     Log10 : Float -> Float.
+%
+% Base 10 logarithm.
+%
+% Log10 is defined to be 0 when its argument is not greater than 0 or 
+% underflow or overflow occurs to make it total. Such a result will 
+% never be used. In such cases, the computation will halt with an error
+% message.
+
+
+PREDICATE    IntegerToFloat : 
+
+  Integer     % An integer. 
+* Float.      % The floating-point number resulting from the conversion
+              % of this integer. 
+
+DELAY        IntegerToFloat(x,_) UNTIL GROUND(x).
+
+% The predicate IntegerToFloat corresponds to the LIAS function 
+% cvt_{I->F}.
+
+
+PREDICATE    TruncateToInteger : 
+
+  Float       % A floating-point number.
+* Integer.    % The integer resulting from the conversion of this 
+              % floating-point number using the function 
+              % x -> sign(x).[|x|], where sign gives the sign of its 
+              % argument, [] is the floor function, and . is 
+              % multiplication.
+
+DELAY        TruncateToInteger(x,_) UNTIL GROUND(x).
+
+% The predicate TruncateToInteger corresponds to an LIAS function
+% cvt_{F->I}.
+
+
+PREDICATE    RoundToInteger : 
+
+  Float       % A floating-point number.
+* Integer.    % The integer resulting from the conversion of this 
+              % floating-point number using the function 
+              % x -> sign(x).[|x| + 1/2], where sign gives the sign of
+              % its argument, [] is the floor function, and . is
+              % multiplication.
+
+DELAY        RoundToInteger(x,_) UNTIL GROUND(x).
+
+% The predicate Nearest corresponds to an LIAS function cvt_{F->I}.
+
+
+PREDICATE    Floor : 
+
+  Float       % A floating-point number.
+* Integer.    % The integer resulting from the conversion of this 
+              % floating-point number using the floor function.
+
+DELAY        Floor(x,_) UNTIL GROUND(x).
+
+% The predicate Floor corresponds to an LIAS function cvt_{F->I}.
+
+
+PREDICATE    Ceiling : 
+
+  Float       % A floating-point number.
+* Integer.    % The integer resulting from the conversion of this 
+              % floating-point number using the ceiling function.
+
+DELAY        Ceiling(x,_) UNTIL GROUND(x).
+
+% The predicate Ceiling corresponds to an LIAS function cvt_{F->I}.
+
+
+PREDICATE    Exponent : 
+
+  Float       % A (non-zero) floating-point number s0.f1...fp * r^e
+              % (normalized so that f1 ~= 0, if necessary).
+* Integer.    % The exponent e of this number.
+
+DELAY        Exponent(x,_) UNTIL GROUND(x).
+
+% The predicate Exponent corresponds to the LIAS function exponent.
+
+
+PREDICATE    Radix : 
+
+  Integer.    % The radix 2 used in the representation of 
+              % floating-point numbers.
+
+% The predicate Radix gives the LIAS parameter r.
+
+
+PREDICATE    Precision : 
+
+  Integer.    % The maximum number 24 of radix digits allowed in the 
+              % representation of floating-point numbers. 
+
+% The predicate Precision gives the LIAS parameter p.
+
+
+PREDICATE    MaxExponent : 
+
+  Integer.    % The maximum exponent 128 allowed in the representation 
+              % of floating-point numbers.
+
+% The predicate MaxExponent gives the LIAS parameter emax.
+
+
+PREDICATE    MinExponent : 
+
+  Integer.    % The minimum exponent -125 allowed in the representation 
+              % of floating-point numbers.
+
+% The predicate MinExponent gives the LIAS parameter emin.
+
+
+PREDICATE    MaxFloat : 
+
+  Float.      % The largest floating-point number 3.402823466E+38 
+              % (approx.). 
+
+% The predicate MaxFloat gives the LIAS constant fmax.
+
+
+PREDICATE    MinNormFloat :
+
+  Float.      % The normalised floating-point number 1.175494351E-38 
+              % (approx.) with the smallest magnitude.
+
+% The predicate MinNormFloat gives the LIAS constant fmin_{N}.
+
+
+PREDICATE    MinFloat :
+
+  Float.      % The denormalised floating-point number 1.401298464E-45 
+              % (approx.) with the smallest magnitude.
+
+% The predicate MinNormFloat gives the LIAS constant fmin_{D}.
+
+
+PREDICATE    Epsilon : 
+
+  Float.      % Maximum relative spacing 1.192092896E-7 (approx.) in F. 
+
+% The predicate Epsilon gives the LIAS constant epsilon.
+
+
+PREDICATE    > : zPz : 
+
+  Float       % A floating-point number greater than the number in the
+              % second argument. 
+* Float.      % A floating-point number.
+
+DELAY        x > y UNTIL GROUND(x) & GROUND(y).
+
+% The predicate > corresponds to the LIAS predicate gtr.
+
+
+PREDICATE    < : zPz :
+
+  Float       % A floating-point number less than the number in the
+              % second argument. 
+* Float.      % A floating-point number.
+
+DELAY        x < y UNTIL GROUND(x) & GROUND(y).
+
+% The predicate < corresponds to the LIAS predicate lss.
+
+
+PREDICATE    >= : zPz :
+
+  Float       % A floating-point number greater than or equal to the 
+              % number in the second argument. 
+* Float.      % A floating-point number.
+
+DELAY        x >= y UNTIL GROUND(x) & GROUND(y).
+
+% The predicate >= corresponds to the LIAS predicate geq.
+
+
+PREDICATE    =< : zPz :
+
+  Float       % A floating-point number less than or equal to the 
+              % number in the second argument. 
+* Float.      % A floating-point number.
+
+DELAY        x =< y UNTIL GROUND(x) & GROUND(y).
+
+% The predicate =< corresponds to the LIAS predicate leq.

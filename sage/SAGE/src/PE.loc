@@ -1,0 +1,923 @@
+
+%  ============================================================
+%
+%  Module PE - Partial Evaluator for ground Goedel programs.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+LOCAL	  PE.
+
+IMPORT    IO.
+
+BASE	  PE_Resultant, Binding, Extra.
+
+FUNCTION  Res : Formula * Formula * TermSubst * Integer -> PE_Resultant;
+	  @ : xFx(200) : Term * Term -> Binding;
+	  Xtra : List(Formula) * Integer * List(PE) -> Extra.
+
+
+PE(program,goal,selectable,danger,new_program,a_out,changes) <-
+  {
+  GetSelectableAtoms(goal,selectable,[],a1) &
+  GeneraliseAtoms(a1,a) &
+  WriteString(StdOut,"Constructing predicate dependancy graph...") &
+  Flush(StdOut) &
+  FindSuspectPredicates(a,program,selectable,[],[],suspect) &
+  WriteString(StdOut,"done") &
+  NewLine(StdOut) &
+  NewLine(StdOut) &
+  WriteString(StdOut,"Performing static analysis...") &
+  NewLine(StdOut) &
+  StaticAnalysis(program,a,selectable,selectable1,suspect,recurs) &
+  GetPredicates(recurs,danger) &
+  RemoveDanger(a,danger,a2,fz)
+  } &
+  NewLine(StdOut) &
+  WriteString(StdOut,"done") &
+  NewLine(StdOut) &
+  NewLine(StdOut) &
+  WriteString(StdOut,"Performing partial evaluation...") &
+  NewLine(StdOut) &
+  Phase1(a2,program,selectable1,danger,Xtra(fz,0,[]),fz1,res1) &
+  Phase2(recurs,[],program,selectable1,danger,fz1,a3,res1,res2,conds) &
+  Append(a2,a3,a_out) &
+  NewLine(StdOut) &
+  WriteString(StdOut,"done") &
+  NewLine(StdOut) &
+  NewLine(StdOut) &
+  WriteString(StdOut,"Optimising residual code...") &
+  Flush(StdOut) &
+  CreateScript(res2,conds,program,selectable1,new_program,changes) &
+  WriteString(StdOut,"done") &
+  NewLine(StdOut).
+
+
+PREDICATE  GeneraliseAtoms : List(Formula) * List(Formula).
+
+GeneraliseAtoms(atoms,atoms1) <-
+	{
+	IF SOME [a1,a2,atoms2]  InstancePair(atoms,a1,a2,atoms2)
+	  THEN  MostSpecificGeneralization(a1,a2,msg) &
+		GeneraliseAtoms([msg|atoms2],atoms1)
+	  ELSE  atoms1 = atoms
+	}.
+
+
+PREDICATE  InstancePair : List(Formula) * Formula  * Formula
+			 * List(Formula).
+
+InstancePair(atoms,a1,a2,atoms1) <-
+	EmptyTermSubst(e) &
+	Delete(a1,atoms,atoms2) &
+	Delete(a2,atoms2,atoms1) &
+	UnifyAtoms(a1,a2,e,_).
+
+
+PREDICATE  MostSpecificGeneralization : Formula * Formula * Formula.
+
+MostSpecificGeneralization(atom1,atom2,msg) <-
+	PredicateAtom(atom1,pred,args1) |
+	PredicateAtom(atom2,pred,args2) &
+	MostSpecificGeneralizedArgs(args1,args2,0,_,args) &
+	PredicateAtom(msg1,pred,args) &
+	RenameFormulas([atom1,atom2],[msg1],[msg]).
+
+MostSpecificGeneralization(atom1,atom2,atom1) <-
+	PropositionAtom(atom1,pred) |
+	PropositionAtom(atom2,pred).
+
+MostSpecificGeneralization(atom,atom,atom) <-
+	OpaqueAtom(atom) |.
+
+
+PREDICATE  MostSpecificGeneralizedArgs : List(Term) * List(Term) * Integer
+			 * Integer * List(Term).
+
+MostSpecificGeneralizedArgs([],[],n,n,[]).
+
+MostSpecificGeneralizedArgs([arg1|rest1],[arg2|rest2],n,n1,[arg|rest]) <-
+	MSG_Terms(arg1,arg2,n,n2,arg) &
+	MostSpecificGeneralizedArgs(rest1,rest2,n2,n1,rest).
+
+
+PREDICATE  MSG_Terms : Term * Term * Integer * Integer * Term.
+
+MSG_Terms(arg,_,n,n,arg) <-
+	Variable(arg) |.
+
+MSG_Terms(_,arg,n,n,arg) <-
+	Variable(arg) |.
+
+MSG_Terms(arg1,arg2,n,n2,arg) <-
+	ConstantTerm(arg1,name) &
+	GeneralizeConstant(name,arg2,n,n2,arg).
+
+MSG_Terms(arg1,_,n,n+1,arg) <-
+	OpaqueTerm(arg1) |
+	VariableName(arg,"v",n).
+
+MSG_Terms(arg1,arg2,n,n2,arg) <-
+	FunctionTerm(arg1,f,args) &
+	GeneralizeFunction(f,args,arg2,n,n2,arg).
+
+PREDICATE  GeneralizeConstant : Name * Term * Integer * Integer * Term.
+
+GeneralizeConstant(name,arg1,n,n1,arg) <-
+	IF  ConstantTerm(arg1,name)
+		THEN  ConstantTerm(arg,name) &
+		      n1 = n
+		ELSE  VariableName(arg,"v",n) &
+		      n1 = n+1.
+
+
+PREDICATE  GeneralizeFunction : Name * List(Term) * Term * Integer
+			 * Integer * Term.
+
+GeneralizeFunction(f,args1,arg2,n,n1,arg) <-
+	IF  SOME  [args2]  FunctionTerm(arg2,f,args2)
+		THEN  MostSpecificGeneralizedArgs(args1,args2,n,n1,args) &
+		      FunctionTerm(arg,f,args)
+		ELSE  VariableName(arg,"v",n) &
+		      n1 = n+1.
+
+
+PREDICATE  GetPredicates : List(AFormula) * List(Name).
+
+GetPredicates([],[]).
+
+GetPredicates([Cov(pred,_,_)|rest],[pred|rest1]) <-
+        GetPredicates(rest,rest1).
+
+
+PREDICATE  RemoveDanger : List(Formula) * List(Name) * List(Formula)
+                          * List(Formula).
+
+RemoveDanger([],_,[],[]).
+
+RemoveDanger([atom|rest],danger,safe,fz) <-
+        {
+        (PredicateAtom(atom,pred,_) \/ PropositionAtom(atom,pred)) &
+        IF  Member(pred,danger)
+          THEN  safe = safe1 &
+		fz = [atom|fz1]
+          ELSE  safe = [atom|safe1] &
+		fz = fz1
+        } &
+        RemoveDanger(rest,danger,safe1,fz1).
+
+
+PREDICATE  Phase1 : List(Formula) * Program * List(Name) * List(Name)
+                    * Extra * Extra * List(PE).
+
+Phase1([],_,_,_,fz,fz,[]).
+
+Phase1([atom|rest],program,selectable,danger,fz,fz1,[PE_Of(atom1,pe)|rest1]) <-
+	EmptyTermSubst(s) &
+	EmptyFormula(e) &
+	{PredicateAtom(atom,pred,_)\/PropositionAtom(atom,pred)} &
+	StandardiseFormula(atom,0,var,atom1) &
+  {(PredicateAtom(selected,pred,_)&
+    ProgramPredicateName(program,mod_string,pred_string,_,pred)) \/
+   (PropositionAtom(selected,pred)&
+    ProgramPropositionName(program,mod_string,pred_string,pred))} &
+    WriteString(StdOut,mod_string++"."++pred_string) &
+    NewLine(StdOut) &
+	UnfoldAtom(pred,pred_string,atom1,program,atom1,e,e,s,var
+			,selectable,danger,fz,fz2,[],res) &
+	ReconstructResultants(res,pe) &
+	Phase1(rest,program,selectable,danger,fz2,fz1,rest1).
+
+
+PREDICATE  ReconstructResultants : List(PE_Resultant) * List(Formula).
+
+ReconstructResultants([],[]).
+
+ReconstructResultants([Res(head,body,sbs,_)|rest],[f|rest1]) <-
+	ApplySubstToFormula(head,sbs,head1) &
+	ApplySubstToFormula(body,sbs,body1) &
+	IsImpliedBy(head1,body1,f) &
+	ReconstructResultants(rest,rest1).
+
+
+PREDICATE  Phase2 : List(AFormula) * List(AFormula) * Program * List(Name)
+                         * List(Name) * Extra
+			 * List(Formula) * List(PE) * List(PE) * List(PE).
+
+Phase2([],[],_,_,_,Xtra(_,_,conds),[],res,res,conds) <-
+  |.
+
+Phase2([],rem,program,selectable,danger,Xtra(fz,n,conds),a,res,res1,conds1) <-
+  rem ~= [] |
+  IF  fz = []
+    THEN  res1 = res &
+	  conds1 = conds
+    ELSE  Phase2(rem,[],program,selectable,danger,Xtra(fz,n,conds),a
+		,res,res1,conds1).
+
+Phase2([Cov(pred,_,args)|rest],rem,program,selectable,danger
+			,Xtra(fz,test,xtra),a,res,res1,conds) <-
+  args ~= [] |
+  {
+  IF  SOME [args1] 
+	( SOME [atom1] (
+	PredicateAtom(atom1,pred,args1) & 
+	MemberCheck(atom1,fz) )
+	)
+    THEN
+      DeleteAtoms(fz,pred,fz2) &
+      DeleteFirst(pred,danger,danger1) &
+      selectable1 = [pred|selectable] &
+      InstanceArgs(args,args1,0,var,args2) &
+      PredicateAtom(atom,pred,args2) &
+      a = [atom|a1] &
+      EmptyTermSubst(s) &
+      EmptyFormula(e) &
+      UnfoldAtom(pred,"",atom,program,atom,e,e,s,var,selectable1,danger1
+		,Xtra(fz2,test,xtra),fz1,[],res2) &
+      ReconstructResultants(res2,pe) &
+      res1 = [PE_Of(atom,pe)|res3] &
+      rem = rem1
+    ELSE
+      fz1 = Xtra(fz,test,xtra) &
+      selectable1 = selectable &
+      danger1 = danger &
+      a = a1 &
+      res1 = res3 &
+      rem1 = [Cov(pred,_,args)|rem]
+  } &
+  Phase2(rest,rem1,program,selectable1,danger1,fz1,a1,res,res3,conds).
+
+Phase2([Cov(pred,_,[])|rest],rem,program,selectable,danger,Xtra(fz,n,c)
+				,[atom|a],res,[PE_Of(atom,pe)|res1],conds) <-
+  |
+  PropositionAtom(atom,pred) &
+  DeleteAtoms(fz,pred,fz2) &
+  DeleteFirst(pred,danger,danger1) &
+  EmptyTermSubst(s) &
+  EmptyFormula(e) &
+  UnfoldAtom(pred,"",atom,program,atom,e,e,s,0,[pred|selectable],danger1
+		,Xtra(fz2,n,c),fz1,[],res2) &
+  ReconstructResultants(res2,pe) &
+  Phase2(rest,rem,program,[pred|selectable],danger1,fz1,a,res,res1,conds).
+
+
+PREDICATE  DeleteAtoms : List(Formula) * Name * List(Formula).
+
+DeleteAtoms([],_,[]).
+
+DeleteAtoms([atom|rest],name,list) <-
+  DeleteAtoms(rest,name,rest1) &
+  { PredicateAtom(atom,pred,_) \/ PropositionAtom(atom,pred) } &
+  IF  pred = name
+    THEN list = rest1
+    ELSE  list = [atom|rest1].
+
+
+PREDICATE  InstanceArgs : List(ATerm) * List(Term) * Integer * Integer
+                         * List(Term).
+
+InstanceArgs([],[],var,var,[]).
+
+InstanceArgs([arg|rest],[arg1|rest1],var,var1,[arg2|rest2]) <-
+        InstanceTerm(arg,arg1,var,var2,arg2) &
+        InstanceArgs(rest,rest1,var2,var1,rest2).
+
+
+PREDICATE  InstanceTerm : ATerm * Term * Integer * Integer * Term.
+
+InstanceTerm(V(_),_,var,var+1,term) <-
+        VariableName(term,"v",var).
+
+InstanceTerm(NGT(name,args),term,var,var1,term1) <-
+        IF  args ~= []
+          THEN  FunctionTerm(term,name,args1) &
+                InstanceArgs(args,args1,var,var1,args2) &
+                FunctionTerm(term1,name,args2)
+          ELSE  term1 = term &
+                var1 = var.
+
+InstanceTerm(GT(_),term,var,var,term).
+
+
+%  Compute_PE - compute partial evaluation of resultant 'head <- body'
+%		  with respect to program.
+%  -------------------------------------------------------------------
+
+PREDICATE  Compute_PE : Formula * Program * Formula * Formula
+			 * Formula * TermSubst * Integer
+			 * List(Name) * List(Name)
+                         * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	And(ll,rr,formula) |
+	AndWithEmpty(rr,right,right1) &
+	Compute_PE(ll,program,head,left,right1,subst,var
+			,selable,danger,fz,fz1,res_so_far,res).
+
+Compute_PE(selected,program,hd,left,right,subst,var
+				,selectable
+				,danger,fz,fz1,res_so_far,res) <-
+	Atom(selected) |
+%	{PredicateAtom(selected,pred,_)\/PropositionAtom(selected,pred)} &
+  {(PredicateAtom(selected,pred,_)&
+    ProgramPredicateName(program,mod_string,pred_string,_,pred)) \/
+   (PropositionAtom(selected,pred)&
+    ProgramPropositionName(program,mod_string,pred_string,pred))} &
+    WriteString(StdOut,mod_string++"."++pred_string) &
+    NewLine(StdOut) &
+  IF  NotMember(selectable,pred)
+    THEN  (
+	  IF  NotMember(danger,pred)
+  	    THEN  UnfoldAtom(pred,pred_string,selected,program,hd,left
+				,right,subst,var,selectable,danger,fz,fz1
+				,res_so_far,res)
+  	    ELSE  ApplySubstToFormula(selected,subst,f2_atom) &
+		  fz = Xtra(fzz,test,extra) &
+  		  fz2 = Xtra([f2_atom|fzz],test,extra) &
+          	  AndWithEmpty(left,selected,left1) &
+	  	  EmptyFormula(empty) &
+ 	 	  Compute_PE(right,program,hd,left1,empty,subst,var,selectable
+    				,danger,fz2,fz1,res_so_far,res)
+	  )
+    ELSE  AndWithEmpty(left,selected,left1) &
+  	  EmptyFormula(empty) &
+  	  Compute_PE(right,program,hd,left1,empty,subst,var,selectable
+    			,danger,fz,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	Some(_,formula1,formula) |
+	Compute_PE(formula1,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+        IfSomeThenElse(some,test,then,else,formula) |
+	ApplySubstToFormula(test,subst,test1) &
+	EmptyFormula(empty) &
+	Compute_PE(test1,program,test1,empty,empty,subst,var
+			,selable,danger,fz,fz2,[],new_test) &
+	UnfoldQConditional(new_test,test1,some,then,else,program,head,left
+			,right,subst,var
+			,selable,danger,fz2,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	Commit(_,formula1,formula) |
+	Compute_PE(formula1,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res).
+
+Compute_PE(formula,_,head,body,_,subst,var,_,_,fz,fz,res
+				,[Res(head,body,subst,var)|res]) <-
+	EmptyFormula(formula) |.
+
+Compute_PE(formula,program,head,left,right,subst,var,selable
+					,danger,fz,fz1,res_so_far,res) <-
+	Or(or_left,or_right,formula) |
+	Compute_PE(or_left,program,head,left,right,subst,var,selable,danger
+			,fz,fz2,res_so_far,res1) &
+	Compute_PE(or_right,program,head,left,right,subst,var,selable,danger
+			,fz2,fz1,res1,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+        IfThenElse(test,then,else,formula) |
+	ApplySubstToFormula(test,subst,test1) &
+	EmptyFormula(empty) &
+	Compute_PE(test1,program,test1,empty,empty,subst,var
+			,selable,danger,fz,fz2,[],new_test) &
+	UnfoldQConditional(new_test,test1,[],then,else,program,head,left
+			,right,subst,var
+			,selable,danger,fz2,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+        IfSomeThen(some,test,then,formula) |
+	ApplySubstToFormula(test,subst,test1) &
+	EmptyFormula(empty) &
+	Compute_PE(test1,program,test1,empty,empty,subst,var
+			,selable,danger,fz,fz2,[],new_test) &
+	UnfoldQConditional(new_test,test1,some,then,empty,program,head,left
+			,right,subst,var
+			,selable,danger,fz2,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+        IfThen(test,then,formula) |
+	ApplySubstToFormula(test,subst,test1) &
+	EmptyFormula(empty) &
+	Compute_PE(test1,program,test1,empty,empty,subst,var
+			,selable,danger,fz,fz2,[],new_test) &
+	UnfoldQConditional(new_test,test1,[],then,empty,program,head,left
+			,right,subst,var
+			,selable,danger,fz2,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+  Not(not,formula) |
+  ApplySubstToFormula(not,subst,not1) &
+  EmptyFormula(empty) &
+  Compute_PE(not1,program,not1,empty,empty,subst,var,selable,danger,fz,fz2
+		,[],new_not) &
+  UnfoldNot(new_not,not1,program,head,left,right,subst,var
+		,selable,danger,fz2,fz1,res_so_far,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	IsImpliedBy(a,b,formula) |
+	Not(b,not_b) &
+	Compute_PE(a,program,head,left,right,subst,var,selable,danger
+			,fz,fz2,res_so_far,res1) &
+	Compute_PE(not_b,program,head,left,right,subst,var,selable,danger
+			,fz2,fz1,res1,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	Implies(a,b,formula) |
+	Not(a,not_a) &
+	Compute_PE(not_a,program,head,left,right,subst,var,selable,danger
+			,fz,fz2,res_so_far,res1) &
+	Compute_PE(b,program,head,left,right,subst,var,selable,danger
+			,fz2,fz1,res1,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	Equivalent(a,b,formula) |
+	Not(a,not_a) &
+	Not(b,not_b) &
+	And(a,b,a_and_b) &
+	And(not_a,not_b,not_not) &
+	Compute_PE(a_and_b,program,head,left,right,subst,var,selable,danger
+			,fz,fz2,res_so_far,res1) &
+	Compute_PE(not_not,program,head,left,right,subst,var,selable,danger
+			,fz2,fz1,res1,res).
+
+Compute_PE(formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res) <-
+	All(all,formula1,formula) |
+	Not(formula1,not) &
+	Some(all,not,not1) &
+	Not(not1,all_formula) &
+	Compute_PE(all_formula,program,head,left,right,subst,var
+			,selable,danger,fz,fz1,res_so_far,res).
+
+
+PREDICATE  UnfoldAtom : Name * String * Formula * Program * Formula
+			 * Formula * Formula * TermSubst * Integer
+			 * List(Name) * List(Name) * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+UnfoldAtom(pred,pred_string,selected,program,hd,left,right,subst,var
+				,selectable
+				,danger,fz,fz1,res_so_far,res) <-
+  DefinitionInProgram(program,module,pred,clauses) |
+  IF  module = "Syntax"
+    THEN  UnfoldSyntax(pred,pred_string,selected,clauses,program,hd,left,right
+				,subst,var
+				,selectable
+				,danger,fz,fz1,res_so_far,res)
+    ELSE  ResolveAll(selected,clauses,var,var1,0,_,subst,ss,rs) &
+	  PE_Next_Node(rs,ss,var1,hd,left,right,program,selectable,danger
+			,fz,fz1,res_so_far,res).
+
+UnfoldAtom(_,_,selected,program,hd,left,right,subst,var,selectable
+				,danger,fz,fz1,res_so_far,res) <-
+	DeclaredInClosedModule(program,_,selected) |
+	ComputeAll(program,selected,var,var1,subst,ss,rs) &
+	PE_Next_Node1(rs,ss,var1,hd,left,right,program,selectable,danger
+			,fz,fz1,res_so_far,res).
+
+
+PREDICATE  UnfoldSyntax : Name * String * Formula * List(Formula) * Program
+			 * Formula * Formula * Formula
+			 * TermSubst * Integer * List(Name) * List(Name)
+                         * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+UnfoldSyntax(pred,pred_string,selected,clauses,program,hd,left,right
+				,subst,var
+				,selectable
+				,danger,fz,fz1,res_so_far,res) <-
+  IF  SOME [ddd] PredicateAtom(ddd,pred,_) & 
+		 DelayInModule(program,"Syntax",Export,ddd,_) &
+      		 pred_string ~= "Variable" &
+      		 pred_string ~= "Atom" &
+      		 pred_string ~= "Resolve" &
+      		 pred_string ~= "ResolveAll" &
+      		 pred_string ~= "Literal" &
+      		 pred_string ~= "Parameter"
+    THEN  ComputeAll(program,selected,var,var1,subst,ss,rs) &
+	  PE_Next_Node1(rs,ss,var1,hd,left,right,program,selectable,danger
+			,fz,fz1,res_so_far,res)
+    ELSE  ResolveAll(selected,clauses,var,var1,0,_,subst,ss,rs) &
+	  PE_Next_Node(rs,ss,var1,hd,left,right,program,selectable,danger
+			,fz,fz1,res_so_far,res).
+
+
+
+PREDICATE  PE_Next_Node : List(Formula) * List(TermSubst) * Integer * Formula
+			 * Formula * Formula * Program
+			 * List(Name) * List(Name)
+                         * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+PE_Next_Node([],[],_,_,_,_,_,_,_,fz,fz,res,res).
+
+PE_Next_Node([resolvent|rest],[subst|rest1],var,head,left,right,program
+				,selectable,danger,fz,fz1,res_so_far,res) <-
+	EmptyFormula(empty) &
+	AndWithEmpty(resolvent,right,resolvent1) &
+	Compute_PE(resolvent1,program,head,left,empty,subst,var,selectable
+				,danger,fz,fz2,res_so_far,res1) &
+	PE_Next_Node(rest,rest1,var,head,left,right,program
+				,selectable,danger,fz2,fz1,res1,res).
+
+
+PREDICATE  PE_Next_Node1 : List(Formula) * List(TermSubst) * Integer * Formula
+			 * Formula * Formula * Program
+			 * List(Name) * List(Name)
+                         * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+PE_Next_Node1([],[],_,_,_,_,_,_,_,fz,fz,res,res).
+
+PE_Next_Node1([resolvent|rest],[subst|rest1],var,head,left,right,program
+				,selectable,danger,fz,fz1,res_so_far,res) <-
+	EmptyFormula(empty) &
+	AndWithEmpty(left,resolvent,left1) &
+	Compute_PE(right,program,head,left1,empty,subst,var
+				,selectable,danger,fz,fz2,res_so_far,res1) &
+	PE_Next_Node1(rest,rest1,var,head,left,right,program
+				,selectable,danger,fz2,fz1,res1,res).
+
+
+PREDICATE  UnfoldNot : List(PE_Resultant) * Formula
+			 * Program * Formula * Formula
+			 * Formula * TermSubst * Integer
+			 * List(Name) * List(Name)
+                         * Extra * Extra * List(PE_Resultant)
+			 * List(PE_Resultant).
+
+UnfoldNot([],_,program,head,left,right,subst,var,selectable,danger
+						,fz,fz1,res_so_far,res) <-
+  EmptyFormula(empty) &
+  Compute_PE(right,program,head,left,empty,subst,var,selectable,danger
+			,fz,fz1,res_so_far,res).
+
+UnfoldNot([new_test|rest],ttt,program,head,left,right
+	,subst,_,selectable,danger,Xtra(fz,test,conds),fz1,res_so_far,res) <-
+  {FormulaVariables(ttt,free)} &
+  MakeCondition(rest,new_test,free,var,Prune,solved,ss,ssl,cf,cfl) &
+  IF  solved = Free
+    THEN  fz1 = Xtra(fz,test,conds) &
+	  res_so_far = res
+    ELSE  MainModuleInProgram(program,module) &
+	  Length(free,arity) &
+	  ProgramPredicateName(program,module,"Not",arity,pred) &
+	  NewPredicate(program,pred,arity,test,test1,name) &
+	  (
+	  IF  arity = 0
+	    THEN  PropositionAtom(condition,name)
+	    ELSE  PredicateAtom(condition,name,free)
+	  ) &
+	  Not(condition,not) &
+	  AndWithEmpty(left,not,left1) &
+	  EmptyFormula(empty) &
+	  ConstructTest(ssl,ss,cfl,cf,condition,not_defn) &
+	  Compute_PE(right,program,head,left1,empty,subst,var
+			,selectable,danger
+			,Xtra(fz,test1,[PE_Of(condition,not_defn)|conds])
+			,fz1,res_so_far,res).
+
+
+PREDICATE  UnfoldQConditional : List(PE_Resultant) * Formula * List(Term)
+                         * Formula * Formula * Program * Formula * Formula
+                         * Formula * TermSubst * Integer
+                         * List(Name) * List(Name)
+                         * Extra * Extra * List(PE_Resultant)
+                         * List(PE_Resultant).
+
+UnfoldQConditional([],_,_,_,else,program,head,left,right,subst,var,selectable
+                                        ,danger,fz,fz1,res_so_far,res) <-
+        IF  EmptyFormula(else)
+          THEN  Compute_PE(right,program,head,left,else,subst,var,selectable
+                                ,danger,fz,fz1,res_so_far,res)
+          ELSE  Compute_PE(else,program,head,left,right,subst,var,selectable
+                                ,danger,fz,fz1,res_so_far,res).
+
+UnfoldQConditional([new_test|rest],ttt,some,then,else,program,head,left,right
+                        ,subst,_,selectable,danger,fz,fz1,res_so_far,res) <-
+	Some(some,ttt,ttt1) &
+	{FormulaVariables(ttt1,old_free)} &
+        MakeCondition(rest,new_test,old_free,var,Prune,solved,ss,ssl,cf,cfl) &
+        IF  solved = Free
+          THEN  Unfold_then(cfl,cf,ssl,ss,then,program,head,left,right,var
+                                ,selectable,danger,fz,fz1,res_so_far,res)
+          ELSE  UnfoldQConditional1(old_free,ttt,then,else,subst,var
+			,ssl,ss,cfl,cf
+                        ,program,head,left,right,selectable,danger,fz,fz1
+                        ,res_so_far,res).
+
+
+PREDICATE  Unfold_then : List(Formula)
+			 * Formula * List(TermSubst) * TermSubst
+			 * Formula * Program * Formula * Formula * Formula
+			 * Integer * List(Name) * List(Name)
+                         * Extra * Extra
+			 * List(PE_Resultant) * List(PE_Resultant).
+
+Unfold_then([],cf,[],ss,then,program,head,left,right,var,selectable
+					,danger,fz,fz1,res_so_far,res) <-
+	AndWithEmpty(left,cf,left1) &
+	Compute_PE(then,program,head,left1,right,ss,var,selectable,danger
+			,fz,fz1,res_so_far,res).
+
+Unfold_then([cf1|cfs],cf,[ss1|sss],ss,then,program,head,left,right,var
+				,selectable,danger,fz,fz1,res_so_far,res) <-
+	AndWithEmpty(left,cf,left1) &
+	Compute_PE(then,program,head,left1,right,ss,var,selectable,danger
+			,fz,fz1,res_so_far,res1) &
+	Unfold_then(cfs,cf1,sss,ss1,then,program,head,left,right,var
+			,selectable,danger,fz,fz1,res1,res).
+
+
+PREDICATE  UnfoldQConditional1 : List(Term) * Formula * Formula
+			 * Formula * TermSubst * Integer * List(TermSubst)
+			 * TermSubst * List(Formula) * Formula
+			 * Program * Formula
+			 * Formula * Formula * List(Name)
+			 * List(Name)
+                         * Extra * Extra * List(PE_Resultant)
+			 * List(PE_Resultant).
+
+UnfoldQConditional1(old_free,condition,then,else,subst,var,ssl,ss,cfl,cf
+			,program,head,left,right,selectable,danger
+			,fz,fz1,res_so_far,res) <-
+  EmptyTermSubst(e) &
+  EmptyFormula(empty) &
+  ApplySubstToFormula(then,subst,then1) &
+  FormulaMaxVarIndex([then1],var1) &
+  Compute_PE(then1,program,then1,empty,empty,e,var1,selectable,danger
+			,fz,fz2,[],then_res) &
+  {FormulaVariables(then1,then_vars)} &
+  ApplySubstToFormula(else,subst,else1) &
+  FormulaMaxVarIndex([else1],var2) &
+  Compute_PE(else1,program,else1,empty,empty,e,var2,selectable,danger
+			,fz2,Xtra(fzz,test,conds),[],else_res) &
+  {FormulaVariables(else1,else_vars)} &
+  {FormulaVariables(condition,all_vars)} &
+  RemoveFreeVars(old_free,all_vars,new_some) &
+  MainModuleInProgram(program,module) &
+  Length(all_vars,arity) &
+  ProgramPredicateName(program,module,"Test",arity,pred) &
+  NewPredicate(program,pred,arity,test,test1,name) &
+  (
+  IF  arity = 0
+    THEN  PropositionAtom(new_condition,name)
+    ELSE  PredicateAtom(new_condition,name,all_vars)
+  ) &
+  Length(then_vars,t_arity) &
+  ProgramPredicateName(program,module,"Then",t_arity,t_pred) &
+  NewPredicate(program,t_pred,t_arity,test1,test2,t_name) &
+  (
+  IF  t_arity = 0
+    THEN  PropositionAtom(new_then,t_name)
+    ELSE  PredicateAtom(new_then,t_name,then_vars)
+  ) &
+  Length(else_vars,e_arity) &
+  ProgramPredicateName(program,module,"Else",e_arity,e_pred) &
+  NewPredicate(program,e_pred,e_arity,test2,test3,e_name) &
+  (
+  IF  e_arity = 0
+    THEN  PropositionAtom(new_else,e_name)
+    ELSE  PredicateAtom(new_else,e_name,else_vars)
+  ) &
+  ConstructTest(ssl,ss,cfl,cf,new_condition,test_defn) &
+  ConstructThen(then_res,new_then,then_defn) &
+  ConstructThen(else_res,new_else,else_defn) &
+  NewConditional(new_some,new_condition,new_then,new_else,if_ste) &
+  AndWithEmpty(left,if_ste,left1) &
+  Compute_PE(right,program,head,left1,empty,subst,var,selectable,danger
+			,Xtra(fzz,test3,[PE_Of(new_condition,test_defn)
+			,PE_Of(new_then,then_defn),PE_Of(new_else,else_defn)
+			|conds]),fz1,res_so_far,res).
+
+
+PREDICATE  NewPredicate : Program * Name * Integer * Integer * Integer * Name.
+
+NewPredicate(program,pred,arity,test,test1,new_pred) <-
+	StringInts("0",[zero]) &
+	IF  arity = 0
+	  THEN  NewProposition(program,zero,test,test1,pred,new_pred)
+	  ELSE  NewPredicate1(program,zero,test,test1,pred,arity,new_pred).
+
+
+PREDICATE  NewProposition : Program * Integer * Integer * Integer * Name
+			 * Name.
+
+NewProposition(program,zero,n,n1,pred,new_pred) <-
+	NumberAsString(zero,n,[],ns) &
+	ProgramPredicateName(program,m,ps,_,pred) &
+	ProgramPropositionName(program,m,ps++"_"++ns,pred1) &
+	{
+	IF PropositionInModule(program,_,_,pred1,_)
+	  THEN  NewProposition(program,zero,n+1,n1,pred,new_pred)
+	  ELSE  new_pred = pred1 &
+		n1 = n+1
+	}.
+
+
+PREDICATE  NewPredicate1 : Program * Integer * Integer * Integer * Name
+			 * Integer * Name.
+
+NewPredicate1(program,zero,n,n1,pred,arity,new_pred) <-
+	NumberAsString(zero,n,[],ns) &
+	ProgramPredicateName(program,m,ps,_,pred) &
+	ProgramPredicateName(program,m,ps++"_"++ns,arity,pred1) &
+	{
+	IF PredicateInModule(program,_,_,pred1,_,_,_)
+	  THEN  NewPredicate1(program,zero,n+1,n1,pred,arity,new_pred)
+	  ELSE  new_pred = pred1 &
+		n1 = n+1
+	}.
+
+
+PREDICATE  NewConditional : List(Term) * Formula * Formula * Formula * Formula.
+
+NewConditional([],new_condition,then,else,if_ste) <-
+  IF  EmptyFormula(else)
+    THEN  IfThen(new_condition,then,if_ste)
+    ELSE  IfThenElse(new_condition,then,else,if_ste).
+
+NewConditional([s|r],new_condition,then,else,if_ste) <-
+  IF  EmptyFormula(else)
+    THEN  IfSomeThen([s|r],new_condition,then,if_ste)
+    ELSE  IfSomeThenElse([s|r],new_condition,then,else,if_ste).
+
+
+PREDICATE  MakeCondition : List(PE_Resultant) * PE_Resultant * List(Term)
+			 * Integer * Free * Free * TermSubst
+			 * List(TermSubst) * Formula * List(Formula).
+
+MakeCondition([],Res(_,new_test,subst,var),vfree,var,free,free1
+					,subst,[],new_test1,[]) <-
+	ApplySubstToFormula(new_test,subst,new_test1) &
+	{
+	IF  free = Prune
+	  THEN  
+	    (
+	    BoundVariables(vfree,subst,bind) &
+	    CheckFreeBindings(bind,bind,vfree,solved) &
+	    IF  EmptyFormula(new_test)
+	      THEN  free1 = solved
+	      ELSE  free1 = free
+	    )
+	  ELSE
+	    free1 = free
+	}.
+
+MakeCondition([n|r],Res(_,new_test,subst,var),vfree,Max(var,var1),free
+		,free1,subst,[ss1|sss],new_test1,[cc1|ccc]) <-
+	ApplySubstToFormula(new_test,subst,new_test1) &
+	{
+	IF  free = Prune
+	  THEN  
+	    (
+	    BoundVariables(vfree,subst,bind) &
+	    CheckFreeBindings(bind,bind,vfree,solved) &
+	    IF  EmptyFormula(new_test)
+	      THEN  free2 = solved
+	      ELSE  free2 = free
+	    )
+	  ELSE
+	    free2 = free
+	} &
+	MakeCondition(r,n,vfree,var1,free2,free1,ss1,sss,cc1,ccc).
+
+
+PREDICATE  MakeCondition1 :  List(Binding) * Formula * Formula.
+
+MakeCondition1([],formula,condition) <-
+	IF  EmptyFormula(formula)
+	  THEN  NewProgram("Empty",p) &
+		ProgramPropositionName(p,"","True",true) &
+		PropositionAtom(condition,true)
+	  ELSE  condition = formula.
+
+MakeCondition1([b|r],formula,condition) <-
+	MakeBindings(r,b,bind) &
+	AndWithEmpty(bind,formula,condition).
+
+
+PREDICATE  BoundVariables : List(Term) * TermSubst * List(Binding).
+
+BoundVariables([],_,[]).
+
+BoundVariables([var|rest],subst,bind) <-
+	{ 
+	IF  SOME  [term]  BindingInTermSubst(subst,var,term)
+	    THEN  bind = [var @ term|bind1]
+	    ELSE  bind = bind1 
+	} &
+	BoundVariables(rest,subst,bind1).
+
+
+PREDICATE  MakeBindings : List(Binding) * Binding * Formula.
+
+MakeBindings([],var @ term,f) <-
+	NewProgram("Empty",p) &
+	ProgramPredicateName(p,"","=",2,eq) &
+	PredicateAtom(f,eq,[var,term]).
+
+MakeBindings([b|r],var @ term,f) <-
+	NewProgram("Empty",p) &
+	ProgramPredicateName(p,"","=",2,eq) &
+	PredicateAtom(atom,eq,[var,term]) &
+	MakeBindings(r,b,f1) &
+	And(atom,f1,f).
+
+
+PREDICATE  MakeBindings : List(Binding) * Formula.
+
+MakeBindings([],f) <-
+	EmptyFormula(f).
+
+MakeBindings([b|r],f) <-
+	MakeBindings(r,b,f).
+
+
+PREDICATE  ApplySubstToVars : List(Term) * TermSubst * List(Term).
+
+ApplySubstToVars([],_,[]).
+
+ApplySubstToVars([var|rest],subst,[var|rest1]) <-
+	ApplySubstToTerm(var,subst,term) &
+	{IF  Variable(term)
+	  THEN  rest1 = [term|rest2]
+	  ELSE  TermVariables(term,vars) &
+		Append(vars,rest2,rest1) } &
+	ApplySubstToVars(rest,subst,rest2).
+
+
+PREDICATE  CheckFreeBindings : List(Binding) * List(Binding) * List(Term)
+			 * Free.
+
+CheckFreeBindings([],_,_,Free).
+
+CheckFreeBindings([var @ term|rest],bind,free,prune) <-
+	{
+	IF  Variable(term)
+	  THEN  (
+		DeleteFirst(var @ term,bind,s_bind) &
+		IF  (Member(_ @ term,s_bind) \/ Member(term,free))
+		  THEN  prune = Prune
+		  ELSE  CheckFreeBindings(rest,bind,free,prune)
+		)
+	  ELSE  prune = Prune
+	}.
+
+
+PREDICATE  RemoveFreeVars : List(Term) * List(Term) * List(Term).
+
+RemoveFreeVars([],s,s).
+
+RemoveFreeVars([var|rest],some,some1) <-
+	{
+	IF  SOME  [some2]  DeleteFirst(var,some,some2)
+	  THEN  RemoveFreeVars(rest,some2,some1)
+	  ELSE  RemoveFreeVars(rest,some,some1)
+	}.
+
+
+PREDICATE  ConstructTest : List(TermSubst) * TermSubst 
+			 * List(Formula) * Formula * Formula * List(Formula).
+
+ConstructTest([],sbs,[],body,head,[f]) <-
+	ApplySubstToFormula(head,sbs,head1) &
+	ApplySubstToFormula(body,sbs,body1) &
+	IsImpliedBy(head1,body1,f).
+
+ConstructTest([sbs1|rest1],sbs,[bdy1|rest2],body,head,[f|rest3]) <-
+	ApplySubstToFormula(head,sbs,head1) &
+	ApplySubstToFormula(body,sbs,body1) &
+	IsImpliedBy(head1,body1,f) &
+	ConstructTest(rest1,sbs1,rest2,bdy1,head,rest3).
+
+
+PREDICATE  ConstructThen : List(PE_Resultant) * Formula * List(Formula).
+
+ConstructThen([],_,[]).
+
+ConstructThen([Res(_,body,sbs,_)|rest1],head,[f|rest2]) <-
+	ApplySubstToFormula(head,sbs,head1) &
+	ApplySubstToFormula(body,sbs,body1) &
+	IsImpliedBy(head1,body1,f) &
+	ConstructThen(rest1,head,rest2).
+
+%  ===================================================
+%  ===================================================

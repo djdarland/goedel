@@ -1,0 +1,13 @@
+MODULE NinetyOne.
+
+IMPORT Integers.
+
+PREDICATE F91 : Integer * Integer.
+
+F91(x, y) <- 
+   IF x > 100
+   THEN
+      y = x - 10
+   ELSE
+      F91(x + 11, x1) &
+      F91(x1, y).

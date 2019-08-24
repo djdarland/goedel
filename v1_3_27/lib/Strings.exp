@@ -1,0 +1,97 @@
+CLOSED     Strings.
+
+% Module providing strings and a collection of standard string 
+% processing predicates.
+
+IMPORT     Lists.
+
+BASE       String.
+%
+% Type of a string.
+
+% CONSTANT  Infinitely many constants which are in one-to-one 
+% correspondence with all possible strings. A constant of the form
+% "c1...cn", where each ci is a character, is interpreted as the
+% string consisting of the characters c1, ..., cn in that order.
+
+
+FUNCTION   ++ : yFx(500) : String * String -> String.
+%
+% String concatenation.
+
+
+PREDICATE  StringInts : 
+
+  String          % A string. 
+* List(Integer).  % The list of ASCII codes of the characters in this 
+                  % string in the order in which they appear there.
+
+DELAY      StringInts(x,y) UNTIL GROUND(x) \/ GROUND(y).
+
+
+PREDICATE  FirstSubstring : 
+
+  String          % A string.
+* Integer         % A non-negative integer n less than or equal to the
+                  % length of the string in the first argument.
+* String.         % The substring consisting of the first n characters 
+                  % of the string in the first argument.
+
+DELAY      FirstSubstring(x,y,z) UNTIL GROUND(x) & 
+                                              (GROUND(y) \/ GROUND(z)).
+
+
+PREDICATE  LastSubstring : 
+
+  String          % A string.
+* Integer         % A non-negative integer n less than or equal to the 
+                  % length of this string.
+* String.         % The substring consisting of the last n characters 
+                  % of the string in the first argument.
+
+DELAY      LastSubstring(x,y,z) UNTIL GROUND(x) & 
+                                              (GROUND(y) \/ GROUND(z)).
+
+
+PREDICATE  Width :
+
+  String          % A string.
+* Integer.        % The number of characters in this string.
+
+DELAY      Width(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  > : zPz : 
+
+  String          % A string lexically greater than the string in the
+                  % second argument. 
+* String.         % A string.
+
+DELAY      x > y UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  < : zPz : 
+
+  String          % A string lexically less than the string in the 
+                  % second argument. 
+* String.         % A string.
+
+DELAY      x < y UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  >= : zPz : 
+
+  String          % A string lexically greater than or equal to the 
+                  % string in the second argument. 
+* String.         % A string.
+
+DELAY      x >= y UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  =< : zPz : 
+
+  String          % A string lexically less than or equal to the string 
+                  % in the second argument. 
+* String.         % A string.
+
+DELAY      x =< y UNTIL GROUND(x) & GROUND(y).

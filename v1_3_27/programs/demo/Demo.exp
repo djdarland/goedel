@@ -1,0 +1,10 @@
+EXPORT    Demo.
+
+IMPORT    Programs.
+
+PREDICATE Demo : 
+
+  Program     % Representation of a definite program.
+* Formula     % Representation of the body of a definite goal. 
+* TermSubst.  % Representation of a computed answer for this goal and
+              % program using SLD-resolution.

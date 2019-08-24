@@ -1,0 +1,46 @@
+CLOSED     Units.
+
+% Module providing the abstract data type Unit and predicates for 
+% processing terms of type Unit. A term of type Unit represents a 
+% unit which is a term-like structure.
+
+IMPORT     Strings.
+
+BASE       Unit.
+%
+% Type of a unit.
+
+
+PREDICATE  StringToUnit :
+
+  String           % String representation of a unit.
+* Unit.            % This unit.
+
+DELAY      StringToUnit(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  UnitToString :
+
+  Unit             % A unit.
+* String.          % String representation in a standard form of 
+                   % this unit.
+
+DELAY      UnitToString(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  UnitParts :
+
+  Unit             % A unit.
+* String           % String representation of the top-level identifier 
+                   % of this unit.
+* List(Unit).      % List of top-level subunits of this unit. (The list 
+                   % is empty if the unit is just an identifier.)
+
+
+PREDICATE  UnitArgument :
+
+  Unit             % A unit.
+* Integer          % A positive integer n.
+* Unit.            % The nth top-level subunit of this unit.
+
+DELAY      UnitArgument(x,_,_) UNTIL NONVAR(x).

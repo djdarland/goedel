@@ -1,0 +1,35 @@
+
+%  ====================================================================
+%
+%  Module Assemble - Construct Residual Script from Partial Evaluation.
+%
+%  ====================================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+
+EXPORT	Assemble.
+
+IMPORT  Scripts.
+
+BASE		PE, Pattern, Change.
+
+CONSTANT	Arg : Pattern.
+
+FUNCTION	F : Name * List(Pattern) -> Pattern;
+		C : Name -> Pattern;
+		Del : Term -> Pattern;
+		PE_Of : Formula * List(Formula) -> PE;
+		Change : Formula * Name * Name * List(Pattern) * List(Type)
+			 * List(Formula) * List(Condition) -> Change.
+
+PREDICATE  CreateScript : List(PE) * List(PE) * Program * List(Name) * Script
+                          * List(Change).
+
+PREDICATE  NotMember : List(Name) * Name.
+
+PREDICATE  NumberAsString : Integer * Integer * List(Integer) * String.
+
+%  ====================================================================
+%  ====================================================================

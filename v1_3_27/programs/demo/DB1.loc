@@ -1,0 +1,33 @@
+MODULE      DB1.
+
+BASE        Person.
+
+CONSTANT    Fred, Mary, George, James, John, Albert, Jane, Sue, Liz : Person.
+
+PREDICATE   Ancestor, Parent, Grandparent, Father, Mother : Person * Person.   
+
+
+Ancestor(x,y) <-
+	    Parent(z,y) &
+	    Ancestor(x,z).
+Ancestor(x,y) <-
+	    Parent(x,y).
+
+Grandparent(x,y) <- 
+	    Parent(x,z) &
+            Parent(z,y).
+
+Parent(x,y) <-
+  	    Mother(x,y).
+Parent(x,y) <-
+ 	    Father(x,y).
+
+Father(Fred, Mary).
+Father(George, James).
+Father(John, Fred).
+Father(Albert, Jane).
+
+Mother(Sue, Mary).
+Mother(Jane, Sue).
+Mother(Liz, Fred).
+Mother(Sue, James).

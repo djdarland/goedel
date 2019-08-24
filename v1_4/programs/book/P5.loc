@@ -1,0 +1,30 @@
+MODULE        P5.
+
+IMPORT        Lists.
+
+ 
+PREDICATE     Perm : List(Integer) * List(Integer).
+DELAY         Perm([],_) UNTIL TRUE;
+              Perm([x|_],[y|_]) UNTIL NONVAR(x) & NONVAR(y).
+ 
+Perm([],[]) <-
+              {True}_1.
+Perm([x|y],[x|v]) <-
+              {True}_1 &
+              {True}_2 &
+              Perm(y,v).
+Perm([x|y],[u|v]) <-
+              {True}_1 &
+              {x ~= u}_2 &
+              Del(u,y,w) &
+              Perm([x|w],v).
+
+
+PREDICATE     Del : Integer * List(Integer) * List(Integer).
+DELAY         Del(x,[y|_],_) UNTIL NONVAR(x) & NONVAR(y).
+
+Del(x,[x|y],y) <-
+              {True}_2.
+Del(x,[y|z],[y|w]) <-
+              {x ~= y}_2 &
+              Del(x,z,w).

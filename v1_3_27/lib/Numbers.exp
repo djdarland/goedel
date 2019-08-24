@@ -1,0 +1,58 @@
+CLOSED       Numbers.
+
+% Module providing various conversion predicates for integer, rational, 
+% and floating-point numbers, and strings.
+
+IMPORT       Rationals, Floats, Strings.
+
+
+PREDICATE    RationalToFloat : 
+
+  Rational    % A rational. 
+* Float.      % The floating-point number nearest the rational. In the 
+              % case of a value exactly half-way between two 
+              % neighbouring values in F, the one selected will be the 
+              % one with the least significant bit zero. If underflow 
+              % or overflow occurs, the computation will halt with an 
+              % error message.
+
+DELAY        RationalToFloat(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    FloatToRational : 
+
+  Float       % A floating-point number. 
+* Rational.   % The rational resulting from the exact conversion of
+              % this floating-point number.
+
+DELAY        FloatToRational(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    IntegerString :
+
+  Integer        % An integer. 
+* String.        % The string consisting of the characters in the 
+                 % integer.
+
+DELAY        IntegerString(x,y) UNTIL GROUND(x) \/ GROUND(y).
+
+
+PREDICATE    RationalString :
+
+  Rational       % A rational. 
+* String.        % The string consisting of the characters in the 
+                 % (standard form a/b of the) rational.
+
+DELAY        RationalString(x,y) UNTIL GROUND(x) \/ GROUND(y).
+
+
+PREDICATE    FloatString :
+
+  Float          % A floating-point number. 
+* String.        % The string consisting of the characters in the 
+                 % standard form decimal representation of the 
+                 % floating-point number. (A decimal is in standard 
+                 % form if it is either 0 or has the form s0.d1...dnEe,
+                 % where s is + or - and d1 ~= 0.)
+
+DELAY        FloatString(x,y) UNTIL GROUND(x) \/ GROUND(y).

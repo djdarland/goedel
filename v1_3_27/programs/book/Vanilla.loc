@@ -1,0 +1,19 @@
+MODULE        Vanilla.
+
+IMPORT        OM2.
+
+PREDICATE     Solve : OFormula.
+DELAY         Solve(x) UNTIL NONVAR(x).
+
+Solve(Empty).
+
+Solve(x And y) <-
+              Solve(x) &
+              Solve(y).
+
+Solve(Not x) <-
+              ~ Solve(x).
+
+Solve(x) <-
+              Statement(x If y) &
+              Solve(y).

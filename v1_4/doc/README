@@ -1,0 +1,11 @@
+
+This directory contains the documentation for the Goedel system. Each document
+is in both dvi and ps format. The documents are:
+
+1. manual -- "Goedel Users' Manual".
+
+2. ground -- "Representing Goedel Object Programs in Goedel".
+
+Please note that the Goedel report has been published as "The Goedel
+Programming Language" by P.M. Hill & J.W. Lloyd, MIT Press, 1994,
+ISBN 0-262-08229-2. 

@@ -1,0 +1,22 @@
+EXPORT      OM2.
+
+BASE        OFormula, ODay.
+CONSTRUCTOR OList/1.
+ 
+CONSTANT    Empty : OFormula;
+            ONil : OList(ODay);
+            OMonday, OTuesday, OWednesday, OThursday, OFriday, 
+            OSaturday, OSunday : ODay.
+
+FUNCTION    And : xFy(110) : OFormula * OFormula -> OFormula;
+            Not : Fy(120) : OFormula -> OFormula;
+            If : xFx(100) : OFormula * OFormula -> OFormula;
+            OCons : ODay * OList(ODay) -> OList(ODay);
+            OAppend : OList(ODay) * OList(ODay) * OList(ODay) -> 
+                      OFormula;
+            OAppend3 : OList(ODay) * OList(ODay) * OList(ODay) * 
+                       OList(ODay) -> OFormula.
+
+PREDICATE   Statement : OFormula.
+
+DELAY       Statement(OAppend(x,_,z) If _) UNTIL NONVAR(x) \/ NONVAR(z).

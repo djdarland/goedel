@@ -1,0 +1,9 @@
+MODULE       Coroutine.
+
+IMPORT       Lists.
+
+PREDICATE    Slowsort : List(Integer) * List(Integer).
+
+Slowsort(x,y) <-
+             Sorted(y) &
+             Permutation(x,y).

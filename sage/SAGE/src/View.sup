@@ -1,0 +1,21 @@
+
+%  ============================================================
+%
+%  Program View - Simple script viewer.
+%                 Based on code from Anthony Bowers.
+%
+%  Supplementary Prolog code for predicate:  FormulaChars/3.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+'View.FormulaChars.P3'(F, 'Scripts.Script.F5'(_,_,L,_,_), Cs) :-
+   user:'SharedPrograms.FormulaToIntDL.P6'(F, L, L, [], Cs, []).
+
+'~View.FormulaChars.P3'(F, S, Cs) :-
+   'View.FormulaChars.P3'(F, S, Cs).
+
+%  ============================================================
+%  ============================================================

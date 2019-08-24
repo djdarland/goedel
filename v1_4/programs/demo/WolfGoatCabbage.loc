@@ -1,0 +1,49 @@
+LOCAL WolfGoatCabbage.
+
+
+% PREDICATE  Initial : State.
+
+Initial(St({Farmer,Wolf,Goat,Cabbage}, {})).
+
+
+% PREDICATE  Final : State.
+
+Final(St({}, {Farmer,Wolf,Goat,Cabbage})).
+
+
+% PREDICATE  Applicable : Move * State.
+
+Applicable(LeftToRight({Farmer}), St(left,_)) <-
+               Farmer In left.
+
+Applicable(RightToLeft({Farmer}), St(_,right)) <-
+               Farmer In right.
+
+Applicable(LeftToRight({Farmer,x}), St(left,_)) <-
+               {Farmer,x} Subset left &
+               x In {Wolf,Goat,Cabbage}.
+
+Applicable(RightToLeft({Farmer,x}), St(_,right)) <-
+               {Farmer,x} Subset right &
+               x In {Wolf,Goat,Cabbage}.
+
+
+% PREDICATE  ApplyMove : Move * State * State.
+
+ApplyMove(LeftToRight(cargo), St(left,right), St(left\cargo,right+cargo)).
+
+ApplyMove(RightToLeft(cargo), St(left,right), St(left+cargo,right\cargo)).
+
+
+% PREDICATE  Legal : State.
+
+Legal(St(left,right)) <-
+               ~ Illegal(left) &
+               ~ Illegal(right).
+
+
+PREDICATE Illegal : Set(Object).
+
+Illegal(bank) <-
+               ~ Farmer In bank &
+               ({Goat,Cabbage} Subset bank \/ {Wolf,Goat} Subset bank).

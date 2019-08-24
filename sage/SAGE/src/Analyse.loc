@@ -1,0 +1,1668 @@
+
+%  ============================================================
+%
+%  Module Analyse - Static Analysis for Partial Evaluation.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+LOCAL		Analyse.
+
+IMPORT		IO, Sets.
+
+BASE		SG, ANode, Mode, AOrder, ABind, AResBind, APattern, 
+		GroundPattern, Control.
+
+CONSTANT	Read, Write : Mode;
+		AG, AGNO, ANG : APattern.
+
+FUNCTION	ANODE : AFormula * AFormula * List(ABind) * Integer
+				 * Integer * List(AOrder)
+			 -> ANode ;
+		APRED : Name * List(ATerm) -> AFormula ;
+		BDY : Formula -> AFormula;
+		SYS : Formula * List(Term) -> AFormula;
+		CMT : Integer * AFormula -> AFormula;
+		NOT : Formula -> AFormula;
+		IFTHNLSE : AFormula * List(AFormula) * List(AFormula)
+			 -> AFormula;
+		IFSMTHNLSE : List(Term) * AFormula * List(AFormula)
+				 * List(AFormula)
+			 -> AFormula;
+		AND : xFy(1100) : AFormula * AFormula -> AFormula;
+		AOR : xFy(1200) : AFormula * AFormula -> AFormula;
+		ANOT : AFormula -> AFormula;
+		! : xFx(200) : Integer * ATerm -> ABind;
+		@ : xFx(200) : Term * ATerm -> AResBind;
+		Pattern : Name * List(APattern) * List(APattern)
+			 -> GroundPattern;
+		Eq : Integer * Integer -> AOrder;
+		LT : Integer * Integer -> AOrder;
+		Gen : Integer * Integer * Integer -> SG;
+		Grind : Integer -> Mode;
+		Delay : List(Term) * Condition -> Control.
+
+
+GetSelectableAtoms(body,selable,selected,selected1) <-
+	( And(left,right,body)
+	  \/ Or(left,right,body)
+	  \/ Implies(left,right,body)
+	  \/ IsImpliedBy(left,right,body)
+	  \/ Equivalent(left,right,body)
+	  \/ IfThen(left,right,body)
+	  \/ IfSomeThen(_,left,right,body) ) |
+	GetSelectableAtoms(left,selable,selected,s1) &
+	GetSelectableAtoms(right,selable,s1,selected1).
+
+GetSelectableAtoms(body,selectable,selected,selected1) <-
+	PredicateAtom(body,pred,_) |
+        {
+	IF  ~Member(pred,selectable)
+		THEN  selected1 = [body|selected]
+		ELSE  selected1 = selected
+	}.
+
+GetSelectableAtoms(body,selable,selected,selected1) <-
+	( Not(body1,body)
+	  \/ Some(_,body1,body)
+	  \/ All(_,body1,body)
+	  \/ Commit(_,body1,body) ) |
+	GetSelectableAtoms(body1,selable,selected,selected1).
+
+GetSelectableAtoms(body,selable,selected,selected1) <-
+	( IfThenElse(test,then,else,body)
+	  \/ IfSomeThenElse(_,test,then,else,body) ) |
+	GetSelectableAtoms(test,selable,selected,s1) &
+	GetSelectableAtoms(then,selable,s1,s2) &
+	GetSelectableAtoms(else,selable,s2,selected1).
+
+GetSelectableAtoms(body,_,sel,sel) <-
+	EmptyFormula(body) |.
+
+GetSelectableAtoms(body,selectable,selected,selected1) <-
+	PropositionAtom(body,pred) |
+	{
+	IF  ~Member(pred,selectable)
+		THEN  selected1 = [body|selected]
+		ELSE  selected1 = selected
+	}.
+
+
+%	Find all potentially recursive predicates in program.
+%	-----------------------------------------------------
+
+
+FindSuspectPredicates([],_,_,_,suspect,suspect).
+
+FindSuspectPredicates([atom|rest],prog,selectable,done
+							,suspect,suspect1) <-
+	{ 	PredicateAtom(atom,pred,_) \/ PropositionAtom(atom,pred) } &
+	{
+	IF  (
+	     MemberCheck(pred,selectable) \/
+	     MemberCheck(pred,suspect) \/
+	     MemberCheck(pred,done)
+	    )
+	  THEN  done1 = done &
+		suspect2 = suspect
+	  ELSE IF SOME [mod,defn] DefinitionInProgram(prog,mod,pred,defn) &
+				  mod ~= "Syntax"
+		  THEN  CheckDefinitionForRecursion(defn,prog,selectable,[pred]
+					,suspect,suspect2,[pred|done],done1)
+		  ELSE  done1 = done &
+			suspect2 = suspect
+	} &
+	FindSuspectPredicates(rest,prog,selectable,done1,suspect2,suspect1).
+
+
+PREDICATE  CheckDefinitionForRecursion : List(Formula) * Program
+			 * List(Name) * List(Name) * List(Name)
+			 * List(Name) * List(Name) * List(Name).
+
+CheckDefinitionForRecursion([],_,_,_,danger,danger,done,done).
+
+CheckDefinitionForRecursion([clause|rest],program,selectable
+			,ancestors,danger_in,danger_out,done_in,done_out) <-
+	IsImpliedBy(_,body,clause) &
+	CheckBodyForRecursion(program,body,selectable,ancestors
+				,danger_in,danger1,done_in,done1) &
+	CheckDefinitionForRecursion(rest,program,selectable,ancestors
+				,danger1,danger_out,done1,done_out).
+
+
+PREDICATE  CheckBodyForRecursion : Program * Formula
+			 * List(Name) * List(Name) * List(Name)
+			 * List(Name) * List(Name) * List(Name).
+
+CheckBodyForRecursion(program,body,selectable,ancestors
+				,danger_in,danger_out,done_in,done_out) <-
+	And(left,right,body) |
+	CheckBodyForRecursion(program,left,selectable,ancestors
+				,danger_in,danger1,done_in,done1) &
+	CheckBodyForRecursion(program,right,selectable,ancestors
+				,danger1,danger_out,done1,done_out).
+
+CheckBodyForRecursion(prog,body,selectable,ancestors
+  			,danger_in,danger_out,done_in,done_out) <-
+  PredicateAtom(body,pred,_) \/ PropositionAtom(body,pred) |
+  {
+  IF ( MemberCheck(pred,selectable) \/ MemberCheck(pred,danger_in) )
+    THEN  danger_out = danger_in &
+  	  done_out = done_in
+    ELSE  IF  MemberCheck(pred,ancestors)
+            THEN  danger_out = [pred|danger_in] &
+		  done_out = done_in
+	    ELSE  IF  MemberCheck(pred,done_in)
+		    THEN  danger_out = danger_in &
+			  done_out = done_in
+          	    ELSE  IF SOME [mod,defn] 
+				DefinitionInProgram(prog,mod,pred,defn) &
+				mod ~= "Syntax"
+			    THEN  CheckDefinitionForRecursion(defn,prog
+					,selectable,[pred|ancestors],danger_in
+					,danger_out,[pred|done_in],done_out)
+			    ELSE  danger_out = danger_in &
+				  done_out = done_in
+  }.
+
+CheckBodyForRecursion(program,body,selectable,ancestors
+				,danger_in,danger_out,done_in,done_out) <-
+	( Some(_,body1,body)
+	  \/ Commit(_,body1,body)
+	  \/ Not(body1,body)
+	  \/ All(_,body1,body) ) |
+	CheckBodyForRecursion(program,body1,selectable,ancestors,danger_in
+				,danger_out,done_in,done_out).
+
+CheckBodyForRecursion(_,body,_,_,danger,danger,done,done) <-
+	( EmptyFormula(body)
+	  \/ OpaqueAtom(body) ) |.
+
+CheckBodyForRecursion(program,body,selectable,ancestors
+				,danger_in,danger_out,done_in,done_out) <-
+	( IfSomeThenElse(_,test,then,else,body)
+	  \/ IfThenElse(test,then,else,body) ) |
+	CheckBodyForRecursion(program,test,selectable,ancestors
+				,danger_in,danger1,done_in,done1) &
+	CheckBodyForRecursion(program,then,selectable,ancestors
+				,danger1,danger2,done1,done2) &
+	CheckBodyForRecursion(program,else,selectable,ancestors
+				,danger2,danger_out,done2,done_out).
+
+CheckBodyForRecursion(program,body,selectable,ancestors
+				,danger_in,danger_out,done_in,done_out) <-
+	( Or(left,right,body)
+	  \/ IfSomeThen(_,left,right,body)
+	  \/ IfThen(left,right,body)
+	  \/ Implies(left,right,body)
+	  \/ IsImpliedBy(left,right,body)
+	  \/ Equivalent(left,right,body) ) |
+	CheckBodyForRecursion(program,left,selectable,ancestors
+				,danger_in,danger1,done_in,done1) &
+	CheckBodyForRecursion(program,right,selectable,ancestors
+				,danger1,danger_out,done1,done_out).
+
+
+StaticAnalysis(program,a,selectable,sss1,suspect,recurs) <-
+	MakeAbstractNodes(a,suspect,ns) &
+	AbstractInterpretation(ns,1,program,selectable,sss2,suspect
+				,[],_,[],r1) &
+	StaticAnalysis1([],r1,1,program,ns,sss2,sss1,suspect,r1,recurs).
+
+
+PREDICATE  MakeAbstractNodes : List(Formula) * List(Name) * List(ANode).
+
+MakeAbstractNodes([],_,[]).
+
+MakeAbstractNodes([atom|rest],suspect
+			,[ANODE(EMPTY,a_atom,[],var,ground,[])|rest1]) <-
+	MakeAbstractFormula(atom,a_atom,suspect,0,var,0,ground) &
+	MakeAbstractNodes(rest,suspect,rest1).
+
+
+PREDICATE  MakeAbstractFormula : Formula * AFormula * List(Name)
+				 * Integer * Integer * Integer * Integer.
+
+MakeAbstractFormula(formula,a_f,suspect,var,var1,ground_in,ground_out) <-
+	( And(left1,right1,formula)
+	  \/ Equivalent(left1,right1,formula) ) |
+	MakeAbstractFormula(left1,left,suspect,var,var2,ground_in,ground1) &
+	MakeAbstractFormula(right1,right,suspect,var2,var1
+			,ground1,ground_out) &
+	ANDwithEmpty(left,right,a_f).
+
+MakeAbstractFormula(formula,a_atom,suspect,var,var1,ground_in,ground_out) <-
+	PredicateAtom(formula,pred,args1) |
+	MakeAbstractArgs(args1,args,var,var1,ground_in,ground_out) &
+	{ 
+	IF  MemberCheck(pred,suspect)
+	  THEN  a_atom = SUSP(pred,args)
+	  ELSE  a_atom = APRED(pred,args)
+	}.
+
+MakeAbstractFormula(formula,formula1,suspect,var,var1,ground_in,ground_out) <-
+	( Some(_,f1,formula)
+	  \/ All(_,f1,formula)
+	  \/ Commit(_,f1,formula) ) |
+	MakeAbstractFormula(f1,formula1,suspect,var,var1,ground_in,ground_out).
+
+MakeAbstractFormula(formula,EMPTY,_,var,var,ground,ground) <-
+	EmptyFormula(formula) |.
+
+MakeAbstractFormula(formula,test_then AOR else,suspect,var,v1
+							,ground,ground1) <-
+	( IfThenElse(test1,then1,else1,formula)
+	  \/ IfSomeThenElse(_,test1,then1,else1,formula) ) |
+	MakeAbstractFormula(test1,test,suspect,var,v2,ground,ground2) &
+	MakeAbstractFormula(then1,then,suspect,v2,v3,ground2,ground3) &
+	MakeAbstractFormula(else1,else,suspect,v3,v1,ground3,ground1) &
+	ANDwithEmpty(test,then,test_then).
+
+MakeAbstractFormula(formula,EMPTY,_,var,var,ground,ground) <-
+	OpaqueAtom(formula) |.
+
+MakeAbstractFormula(formula,a_atom,suspect,var,var,ground,ground) <-
+	PropositionAtom(formula,pred) |
+	{ 
+	IF  MemberCheck(pred,suspect)
+	  THEN  a_atom = SUSP(pred,[])
+	  ELSE  a_atom = APRED(pred,[])
+	}.
+
+MakeAbstractFormula(formula,test_then,suspect,var,var1,ground_in,ground_out) <-
+	( IfThen(test1,then1,formula)
+	  \/ IfSomeThen(_,test1,then1,formula) ) |
+	MakeAbstractFormula(test1,test,suspect,var,var2,ground_in,ground1) &
+	MakeAbstractFormula(then1,then,suspect,var2,var1,ground1,ground_out) &
+	ANDwithEmpty(test,then,test_then).
+
+MakeAbstractFormula(formula,ANOT(formula1),suspect,var,var1
+						,ground_in,ground_out) <-
+	Not(f1,formula) |
+	MakeAbstractFormula(f1,formula1,suspect,var,var1,ground_in,ground_out).
+
+MakeAbstractFormula(formula,left AOR right,suspect,var,var1
+						,ground_in,ground_out) <-
+	( Or(left1,right1,formula)
+	  \/ Implies(left1,right1,body)
+	  \/ IsImpliedBy(left1,right1,body) ) |
+	MakeAbstractFormula(left1,left,suspect,var,var2,ground_in,ground1) &
+	MakeAbstractFormula(right1,right,suspect,var2,var1,ground1,ground_out).
+
+
+PREDICATE  MakeAbstractArgs : List(Term) * List(ATerm) * Integer * Integer
+			 * Integer * Integer.
+
+MakeAbstractArgs([],[],var,var,ground,ground).
+
+MakeAbstractArgs([arg|rest],[arg1|rest1],var,var1,ground_in,ground_out) <-
+  % OpaqueTerm(arg) --> GT(n)
+  {
+IF  Variable(arg)
+	    THEN  arg1 = V(var) &
+		  var2 = var+1 &
+		  ground1 = ground_in
+	    ELSE  IF  SOME  [name]  ConstantTerm(arg,name)
+		    THEN  arg1 = NGT(name,[]) &
+			  var2 = var &
+			  ground1 = ground_in
+		    ELSE  IF  OpaqueTerm(arg)
+			    THEN  arg1 = GT(ground_in) &
+				  var2 = var &
+				  ground1 = ground_in + 1
+			    ELSE  FunctionTerm(arg,name,args) &
+				  MakeAbstractArgs(args,args1,var,var2
+						      ,ground_in,ground1) &
+				  arg1 = NGT(name,args1)
+  } &
+  MakeAbstractArgs(rest,rest1,var2,var1,ground1,ground_out).
+
+
+PREDICATE  StaticAnalysis1 : List(AFormula) * List(AFormula) * Integer
+			 * Program * List(ANode) * List(Name) * List(Name)
+			 * List(Name) * List(AFormula) * List(AFormula).
+
+StaticAnalysis1([],[],_,_,_,s,s,_,recurs,recurs).
+
+StaticAnalysis1([],[_|_],pass,program,ns,selectable,sss,suspect,r1,recurs) <-
+  AbstractInterpretation(ns,pass+1,program,selectable,sss1,suspect
+			,[],_,r1,r2) &
+  StaticAnalysis1(r1,r2,pass+1,program,ns,sss1,sss,suspect,r2,recurs).
+
+StaticAnalysis1([_|rest],[_|rest1],pass,program,ns,selectable
+							,sss,suspect,r1,r) <-
+	StaticAnalysis1(rest,rest1,pass,program,ns,selectable
+			,sss,suspect,r1,r).
+
+
+PREDICATE  AbstractInterpretation : List(ANode) * Integer * Program
+			 * List(Name) * List(Name) * List(Name) 
+			 * List(GroundPattern)
+			 * List(GroundPattern) * List(AFormula)
+			 * List(AFormula).
+
+AbstractInterpretation([],_,_,sss,sss,_,pattern,pattern,danger,danger).
+
+AbstractInterpretation([ANODE(head,body,subst,var,ground,order)|rest]
+						,pass,program
+						,selectable,sss,suspect,pattern
+						,pattern1,danger,danger1) <-
+	AbsUnfoldStep(body,pass,program,head,EMPTY,subst,var,selectable
+		,sss1,suspect,ground,order,pattern,pattern2,danger,danger2) &
+	AbstractInterpretation(rest,pass,program,sss1,sss,suspect,pattern2
+		,pattern1,danger2,danger1).
+
+
+PREDICATE  CombinePatterns : List(APattern) * List(ATerm) * List(ABind)
+			 * List(APattern).
+
+CombinePatterns([],[],_,[]).
+
+CombinePatterns([pattern1|rest1],[pattern2|rest2],subst,[pattern|rest]) <-
+	{ IF  ( pattern1 ~= ANG & AbstractGroundTerm(pattern2,subst) )
+		THEN  pattern = pattern1
+		ELSE  pattern = ANG } &
+	CombinePatterns(rest1,rest2,subst,rest).
+
+
+PREDICATE  AbstractGroundTerm : ATerm * List(ABind).
+
+AbstractGroundTerm(term,subst) <-
+	ADeref(term,subst,term1) &
+	AbstractGroundTerm1(term1,subst).
+
+
+PREDICATE  AbstractGroundTerm1 : ATerm * List(ABind).
+
+AbstractGroundTerm1(GT(_),_).
+
+AbstractGroundTerm1(NGT(_,args),subst) <-
+	AbstractGroundTerms(args,subst).
+
+
+PREDICATE  AbstractGroundTerms : List(ATerm) * List(ABind).
+
+AbstractGroundTerms([],_).
+
+AbstractGroundTerms([arg|rest],subst) <-
+	AbstractGroundTerm(arg,subst) &
+	AbstractGroundTerms(rest,subst).
+
+
+PREDICATE  AbsUnfoldStep : AFormula * Integer * Program * AFormula
+			 * AFormula * List(ABind) * Integer * List(Name)
+			 * List(Name) * List(Name) * Integer * List(AOrder)
+			 * List(GroundPattern) * List(GroundPattern)
+			 * List(AFormula) * List(AFormula).
+
+AbsUnfoldStep(EMPTY,_,_,EMPTY,_,_,_,s,s,_,_,_,patt,patt,danger,danger).
+
+AbsUnfoldStep(EMPTY,_,_,APRED(pred,args),_,subst,_,sss,sss,_,_,_,pattern
+						,pattern1,danger,danger) <-
+	{
+	IF SOME [in,out,p] DeleteFirst(Pattern(pred,in,out),pattern,p)
+	  THEN  CombinePatterns(out,args,subst,out1) &
+		pattern1 = [Pattern(pred,in,out1)|p]
+	  ELSE  pattern1 = pattern
+	}.
+
+AbsUnfoldStep(SUSP(pred,args),pass,program,head,rest,subst,var
+			,selectable,sss,suspect
+			,ground,order,pattern_in,pattern_out
+  		,danger_in,danger_out) <-
+  {
+  IF SOME [pass1,dang_args,d1] DeleteFirst(Cov(pred,pass1,dang_args)
+					,danger_in,d1)
+    THEN  (
+	  subst1 = subst &
+	  grnd1 = ground &
+	  IF SOME [d_args,vvv] 
+                    GeneraliseAArgs(dang_args,args,pass,pass1,subst,d_args
+				,var,vvv,[],_)
+	    THEN  AbsUnfoldStep(APRED(pred,d_args),pass,program
+			,APRED(pred,d_args),EMPTY,[],vvv,selectable,sss1
+			,suspect,ground,order,pattern_in,pattern1
+			,[Cov(pred,pass,d_args)|d1],danger1)
+	    ELSE  pattern1 = pattern_in &
+  		  danger1 = danger_in &
+		  sss1 = selectable
+	  )
+    ELSE  IF SOME [head_args] head = APRED(pred,head_args)
+	    THEN  RecursivePattern(program,pass,pred,args,head_args
+			,subst,subst1,ground,grnd1,order,var,selectable
+			,sss1,suspect,pattern_in,pattern1,danger_in,danger1)
+	    ELSE IF SOME [p] MatchingPattern(pred,args,subst,pattern_in,p)
+	  	   THEN  ApplyPattern(p,args,subst,subst1,ground,grnd1) &
+	    		 pattern1 = pattern_in &
+  			 danger1 = danger_in &
+			 sss1 = selectable
+  		   ELSE  (
+  			 MakePattern(pred,args,s_args,subst,var9,patn) &
+  			 AbsUnfoldStep(APRED(pred,s_args),pass,program
+  			 ,APRED(pred,s_args),EMPTY,[],var9,selectable,sss1
+			,suspect,ground,order,[patn|pattern_in],pattern1
+			,danger_in,danger1) &
+  			 IF  MemberCheck(Cov(pred,_,_),danger1)
+  			   THEN  subst1 = subst &
+  			  	 grnd1 = ground
+			   ELSE  MatchingPattern(pred,args,subst,pattern1,p) &
+  				 ApplyPattern(p,args,subst,subst1,ground,grnd1)
+  			 )
+  } &
+  AbsUnfoldStep(rest,pass,program,head,EMPTY,subst1,var,sss1,sss,suspect
+  	,grnd1,order,pattern1,pattern_out,danger1,danger_out).
+
+AbsUnfoldStep(APRED(selected,args),pass,program,head,rest,subst,var
+				,selectable,sss,suspect,ground,order,pattern
+				,pattern1,danger,danger1) <-
+	IF  MemberCheck(selected,selectable)
+	  THEN  AbsUnfoldStep(rest,pass,program,head,EMPTY,subst,var,selectable
+		,sss,suspect,ground,order,pattern,pattern1,danger,danger1)
+	  ELSE  AUnfoldAtom(selected,args,pass,program,head,rest,subst,var
+				,selectable,sss,suspect,ground,order,pattern
+				,pattern1,danger,danger1).
+
+AbsUnfoldStep(ANOT(formula),pass,program,head,rest,subst,var,selectable,sss
+						,suspect,ground,order,pattern
+						,pattern1,danger,danger1) <-
+	AbsUnfoldStep(formula,pass,program,EMPTY,EMPTY,subst,var,selectable
+		,sss1,suspect,ground,order,pattern,pattern2,danger,danger2) &
+	AbsUnfoldStep(rest,pass,program,head,EMPTY,subst,var,sss1,sss,suspect
+		,ground,order,pattern2,pattern1,danger2,danger1).
+
+AbsUnfoldStep(left AND right,pass,program,head,rest,subst,var,selectable,sss
+						,suspect,ground,order,pattern
+						,pattern1,danger,danger1) <-
+	ANDwithEmpty(right,rest,rest1) &
+	AbsUnfoldStep(left,pass,program,head,rest1,subst,var,selectable,sss
+		,suspect,ground,order,pattern,pattern1,danger,danger1).
+
+AbsUnfoldStep(left AOR right,pass,program,head,rest,subst,var,selectable,sss
+						,suspect,ground,order,pattern
+						,pattern1,danger,danger1) <-
+	AbsUnfoldStep(left,pass,program,head,rest,subst,var,selectable,sss1
+		,suspect,ground,order,pattern,pattern2,danger,danger2) &
+	AbsUnfoldStep(right,pass,program,head,rest,subst,var,sss1,sss
+		,suspect,ground,order,pattern2,pattern1,danger2,danger1).
+
+
+
+PREDICATE  AUnfoldAtom : Name * List(ATerm) * Integer * Program * AFormula
+			 * AFormula * List(ABind) * Integer * List(Name)
+			 * List(Name) * List(Name) * Integer * List(AOrder)
+			 * List(GroundPattern) * List(GroundPattern)
+			 * List(AFormula) * List(AFormula).
+
+AUnfoldAtom(selected,args,pass,program,head,rest,subst,var
+				,selectable,sss,suspect,ground,order,pattern
+				,pattern1,danger,danger1) <-
+  DefinitionInProgram(program,mod_string,selected,defn) |
+  {( args ~= [] &
+     ProgramPredicateName(program,mod_string,pred_string,_,selected)
+   ) \/
+   ( args = [] &
+     ProgramPropositionName(program,mod_string,pred_string,selected)
+   )} &
+  WriteString(StdOut,mod_string++"."++pred_string) &
+  NewLine(StdOut) &
+  IF  mod_string = "Syntax"
+    THEN 
+( 
+IF  (pred_string ~= "Resolve" & pred_string ~= "ResolveAll")
+  THEN  (
+	  SetToList({Delay(c_args,cond): SOME [atom] (
+		PredicateAtom(atom,selected,c_args) &
+		DelayInModule(program,"Syntax",Export,atom,cond))},control) &
+	  IF  control = []
+	    THEN
+	      AbstractUnfold(defn,head,APRED(selected,args),rest,subst,var
+			,suspect,ground,order,nodes) &
+	      AbstractInterpretation(nodes,pass,program,selectable,sss,suspect
+			,pattern,pattern1,danger,danger1)
+	    ELSE
+	      AUnfoldClosed(control,"Syntax",pred_string,args,subst,s1
+			,ground,g1,order,_,var,_) &
+	      AbsUnfoldStep(rest,pass,program,head,EMPTY,s1,var,selectable,sss
+			,suspect,g1,order,pattern,pattern1,danger,danger1)
+	)
+  ELSE  (
+	  args = [_,sts|_] &
+	  IF  AbstractGroundTerm(sts,subst)
+	    THEN  sel1 = selectable
+	    ELSE  sel1 = [selected|selectable]
+	) &
+	AbsUnfoldStep(rest,pass,program,head,EMPTY,subst,var,sel1,sss
+			,suspect,ground,order,pattern,pattern1,danger,danger1)
+)
+    ELSE  AbstractUnfold(defn,head,APRED(selected,args),rest,subst,var,suspect
+			,ground,order,nodes) &
+	  AbstractInterpretation(nodes,pass,program,selectable,sss,suspect
+				,pattern,pattern1,danger,danger1).
+
+AUnfoldAtom(selected,args,pass,program,head,rest,subst,var
+					,selectable,sss,suspect,ground,order
+					,pattern,pattern1,danger,danger1) <-
+  MakeAtom(args,selected,atom) &
+  DeclaredInClosedModule(program,mod_string,atom) |
+  {( args ~= [] &
+     ProgramPredicateName(program,mod_string,pred_string,_,selected)
+   ) \/
+   ( args = [] &
+     ProgramPropositionName(program,mod_string,pred_string,selected)
+   )} &
+  WriteString(StdOut,mod_string++"."++pred_string) &
+  NewLine(StdOut) &
+  {
+  IF  mod_string = "" & pred_string = "="
+    THEN
+      (
+      args = [a1,a2] &
+      IF SOME [s2,g2]  GetAValue(a1,a2,subst,s2,order,_,ground,g2)
+	THEN  AbsUnfoldStep(rest,pass,program,head,EMPTY,s2,var,selectable,sss
+			,suspect,g2,order,pattern,pattern1,danger,danger1)
+	ELSE  pattern1 = pattern &
+	      danger1 = danger
+      )
+    ELSE  SetToList({Delay(c_args,cond): SOME [atom] (
+		PredicateAtom(atom,selected,c_args) &
+		DelayInModule(program,mod_string,Closed,atom,cond))},control) &
+	  AUnfoldClosed(control,mod_string,pred_string,args,subst,s1
+			,ground,g1,order,order1,var,var1) &
+	  AbsUnfoldStep(rest,pass,program,head,EMPTY,s1,var1,selectable,sss
+			,suspect,g1,order1,pattern,pattern1,danger,danger1)
+  }.
+
+
+PREDICATE  AUnfoldClosed : List(Control) * String * String * List(ATerm)
+	  * List(ABind) * List(ABind) * Integer * Integer * List(AOrder)
+          * List(AOrder) * Integer * Integer.
+
+AUnfoldClosed([],module,name,args,subst,subst1,ground,ground1
+						,order,order1,var,var1) <-
+  {
+  IF  module = "Programs" & 
+	( name = "AndCondition" \/
+	  name = "GroundCondition" \/
+	  name = "OrCondition" \/
+	  name = "NonVarCondition" )
+    THEN  AUCond(name,args,subst,subst1,order,order1,ground,ground1,var,var1)
+    ELSE IF  module = "Integers"
+      THEN  subst1 = subst &
+            ground1 = ground &
+	    order1 = order &
+            var1 = var
+      ELSE  GrindArgs(args,ground,subst,subst1,order,_,ground,ground1) &
+	    order1 = order &
+            var1 = var
+  }.
+
+AUnfoldClosed([Delay(c_args,cond)|rest],_,_,args,subst,subst1,ground,ground1
+						,order,order,var,var) <-
+
+  GetDelayVars(args,c_args,subst,c_vars) &
+  {
+  IF  AbsCheckDelay(cond,c_vars)
+    THEN  AUnfoldClosed1(rest,args,subst,subst1,ground,ground1,order)
+    ELSE  subst1 = subst &
+	  ground1 = ground
+  }.
+
+
+PREDICATE  AUCond : String * List(ATerm) * List(ABind) * List(ABind)
+         * List(AOrder) * List(AOrder) * Integer * Integer * Integer * Integer.
+
+AUCond("AndCondition",[a1,a2,a3],s,s1,o,o1,g,g1,v,v+2) <-
+  NewProgram("Programs",prog) &
+  ProgramFunctionName(prog,"Programs","And",2,name) &
+  ADeref(a3,s,a4) &
+  GetAValue1(a4,NGT(name,[V(v),V(v+1)]),[v ! a1,v+1 ! a2|s],s1,o,o1,g,g1).
+
+AUCond("OrCondition",[a1,a2,a3],s,s1,o,o1,g,g1,v,v+2) <-
+  NewProgram("Programs",prog) &
+  ProgramFunctionName(prog,"Programs","Or",2,name) &
+  ADeref(a3,s,a4) &
+  GetAValue1(a4,NGT(name,[V(v),V(v+1)]),[v ! a1,v+1 ! a2|s],s1,o,o1,g,g1).
+
+AUCond("NonVarCondition",[a1,a2],s,s1,o,o1,g,g1,v,v+1) <-
+  NewProgram("Programs",prog) &
+  ProgramFunctionName(prog,"Programs","NonVar",1,name) &
+  ADeref(a2,s,a4) &
+  GetAValue1(a4,NGT(name,[V(v)]),[v ! a1|s],s1,o,o1,g,g1).
+
+AUCond("GroundCondition",[a1,a2],s,s1,o,o1,g,g1,v,v+1) <-
+  NewProgram("Programs",prog) &
+  ProgramFunctionName(prog,"Programs","Ground",1,name) &
+  ADeref(a2,s,a4) &
+  GetAValue1(a4,NGT(name,[V(v)]),[v ! a1|s],s1,o,o1,g,g1).
+
+
+PREDICATE  AUnfoldClosed1 : List(Control) * List(ATerm) * List(ABind)
+			    * List(ABind) * Integer * Integer * List(AOrder).
+
+AUnfoldClosed1([],args,subst,subst1,ground,ground1,order) <-
+  GrindArgs(args,ground,subst,subst1,order,_,ground,ground1).
+
+AUnfoldClosed1([Delay(c_args,cond)|rest],args,subst,subst1,ground,ground1
+								,order) <-
+
+  GetDelayVars(args,c_args,subst,c_vars) &
+  {
+  IF  AbsCheckDelay(cond,c_vars)
+    THEN  AUnfoldClosed1(rest,args,subst,subst1,ground,ground1,order)
+    ELSE  subst1 = subst &
+	  ground1 = ground
+  }.
+
+
+PREDICATE  GetDelayVars : List(ATerm) * List(Term) * List(ABind)
+			  * List(Term).
+
+GetDelayVars([],[],_,[]).
+
+GetDelayVars([arg|rest1],[c_arg|rest2],subst,c_vars) <-
+  GetDelayVars(rest1,rest2,subst,c_vars1) &
+  IF  AbstractGroundTerm(arg,subst)
+    THEN  TermVariables(c_arg,vvv) &
+	  Append(vvv,c_vars1,c_vars)
+    ELSE  c_vars = c_vars1.
+
+
+PREDICATE  AbsCheckDelay : Condition * List(Term).
+
+AbsCheckDelay(cond,vars) <-
+	AndCondition(c1,c2,cond) |
+	AbsCheckDelay(c1,vars) &
+	AbsCheckDelay(c2,vars).
+
+AbsCheckDelay(cond,vars) <-
+	OrCondition(c1,c2,cond) |
+	AbsCheckDelay(c1,vars) \/
+	AbsCheckDelay(c2,vars).
+
+AbsCheckDelay(cond,vars) <-
+	GroundCondition(var,cond) |
+	MemberCheck(var,vars).
+
+AbsCheckDelay(cond,vars) <-
+	NonVarCondition(var,cond) |
+	MemberCheck(var,vars).
+
+AbsCheckDelay(cond,_) <-
+	TrueCondition(cond) |.
+
+
+PREDICATE  MakeAtom : List(ATerm) * Name * Formula.
+
+MakeAtom([arg|rest],pred,atom) <-
+	MakeArgs(rest,arg,0,args) &
+	PredicateAtom(atom,pred,args).
+
+MakeAtom([],prop,atom) <-
+	PropositionAtom(atom,prop).
+
+
+PREDICATE  MakeArgs : List(ATerm) * ATerm * Integer * List(Term).
+
+MakeArgs([],_,n,[var]) <-
+	VariableName(var,"v",n).
+
+MakeArgs([arg|rest1],_,n,[var|rest2]) <-
+	VariableName(var,"v",n) &
+	MakeArgs(rest1,arg,n+1,rest2).
+
+
+PREDICATE  RecursivePattern : Program * Integer * Name * List(ATerm)
+			 * List(ATerm) * List(ABind) * List(ABind)
+			 * Integer * Integer * List(AOrder) * Integer
+			 * List(Name) * List(Name) * List(Name)
+			 * List(GroundPattern) * List(GroundPattern)
+			 * List(AFormula) * List(AFormula).
+
+RecursivePattern(program,pass,pred,selected,head_args,subst,subst1
+			,ground,ground1,order,var,selectable,sss,suspect
+			,pattern_in,pattern_out,danger_in,danger_out) <-
+	DeleteFirst(Pattern(pred,in,out),pattern_in,pattern1) &
+	{
+	IF  SOME  [in1]  AbstractOrder(in,in1,subst,selected,head_args,order)
+	  THEN  UpdateOutputPattern(out,out1,selected,head_args,subst) &
+		ApplyPattern(out1,selected,subst,subst1,ground,ground1) &
+		pattern_out = [Pattern(pred,in1,out1)|pattern1] &
+		danger_out = danger_in &
+		sss = selectable
+	  ELSE  (
+		DeletePatterns(pattern1,pred,pattern9) &
+		subst1 = subst &
+		ground1 = ground &
+		IF SOME [args1,var1]
+		    GeneraliseAArgs(head_args,selected,1,1,subst,args1
+				    ,var,var1,[],_)
+		  THEN  AbsUnfoldStep(APRED(pred,args1),pass,program
+			,APRED(pred,args1),EMPTY,[],var1,selectable,sss
+			,suspect,ground,order,pattern9,pattern_out
+			,[Cov(pred,pass,args1)|danger_in],danger_out)
+		  ELSE  pattern_out = pattern9 &
+  			ApplyASubstToArgs(selected,subst,args2) &
+			danger_out = [Cov(pred,pass,args2)|danger_in] &
+			sss = selectable
+		)
+	}.
+
+
+PREDICATE  DeletePatterns : List(GroundPattern) * Name * List(GroundPattern).
+
+DeletePatterns([],_,[]).
+
+DeletePatterns([Pattern(n,in,out)|rest],pred,new) <-
+  DeletePatterns(rest,pred,new1) &
+  IF  n = pred
+    THEN  new = new1
+    ELSE  new = [Pattern(n,in,out)|new1].
+
+
+PREDICATE  UpdateOutputPattern : List(APattern) * List(APattern)
+                                 * List(ATerm) * List(ATerm) * List(ABind).
+
+UpdateOutputPattern([],[],[],[],_).
+
+UpdateOutputPattern([out|r1],[out1|r2],[arg|r3],[head_arg|r4],subst) <-
+	UOP(out,out1,arg,head_arg,subst) &
+	UpdateOutputPattern(r1,r2,r3,r4,subst).
+
+
+PREDICATE  UOP : APattern * APattern * ATerm * ATerm * List(ABind).
+
+UOP(ANG,ANG,_,_,_).
+
+UOP(AG,new,arg,head_arg,subst) <-
+  ApplyASubstToTerm(arg,subst,arg1) &
+  AVars(head_arg,[],h_vars) &
+  {
+  IF  CheckVars(arg1,h_vars)
+    THEN  new = AG
+    ELSE  new = ANG
+  }.
+
+
+PREDICATE  AVars : ATerm * List(Integer) * List(Integer).
+
+AVars(GT(_),v,v).
+
+AVars(V(var),v,[var|v]).
+
+AVars(NGT(_,args),v,v1) <-
+  AVars1(args,v,v1).
+
+
+PREDICATE  AVars1 : List(ATerm) * List(Integer) * List(Integer).
+
+AVars1([],v,v).
+
+AVars1([arg|rest],v,v1) <-
+  AVars(arg,v,v2) &
+  AVars1(rest,v2,v1).
+
+
+PREDICATE  CheckVars : ATerm * List(Integer).
+
+CheckVars(GT(_),_).
+
+CheckVars(V(var),v) <-
+  MemberCheck(var,v).
+
+CheckVars(NGT(_,args),v) <-
+  CheckVars1(args,v).
+
+
+PREDICATE  CheckVars1 : List(ATerm) * List(Integer).
+
+CheckVars1([],_).
+
+CheckVars1([arg|rest],v) <-
+  CheckVars(arg,v) &
+  CheckVars1(rest,v).
+
+
+PREDICATE  AbstractOrder : List(APattern) * List(APattern) * List(ABind)
+			 * List(ATerm) * List(ATerm) * List(AOrder).
+
+AbstractOrder([input|rest1],[input_new|rest2],subst,[selected_arg|rest3]
+						,[head_arg|rest4],order) <-
+  IF  input = ANG
+    THEN  input_new = input &
+  	  AbstractOrder(rest1,rest2,subst,rest3,rest4,order)
+    ELSE  (
+  	  ApplyASubstToTerm(head_arg,subst,head_arg1) &
+  	  ApplyASubstToTerm(selected_arg,subst,selected_arg1) &
+          IF  input = AGNO & AbstractGroundTerm1(selected_arg1,[])
+	    THEN  input_new = input &
+  		  AbstractOrder(rest1,rest2,subst,rest3,rest4,order)
+            ELSE
+	      IF  AbstractOrdered(head_arg1,selected_arg1,order)
+		THEN  input_new = AG &
+    		      AbstractOrder1(rest1,rest2,subst,rest3,rest4,order)
+		ELSE  input_new = AGNO &
+		      AbstractOrder(rest1,rest2,subst,rest3,rest4,order)
+	  ).
+
+
+PREDICATE  AbstractOrder1 : List(APattern) * List(APattern) * List(ABind)
+			 * List(ATerm) * List(ATerm) * List(AOrder).
+
+AbstractOrder1([],[],_,[],[],_).
+
+AbstractOrder1([input|rest1],[input_new|rest2],subst,[selected_arg|rest3]
+						,[head_arg|rest4],order) <-
+	IF  input = ANG
+	  THEN  input_new = input &
+		AbstractOrder1(rest1,rest2,subst,rest3,rest4,order)
+	  ELSE  (
+		ApplyASubstToTerm(head_arg,subst,head_arg1) &
+		ApplyASubstToTerm(selected_arg,subst,selected_arg1) &
+		IF  AbstractOrdered(head_arg1,selected_arg1,order)
+		  THEN  input_new = AG &
+			AbstractOrder1(rest1,rest2,subst,rest3,rest4,order)
+		  ELSE  input_new = AGNO &
+			AbstractOrder1(rest1,rest2,subst,rest3,rest4,order)
+		).
+
+
+PREDICATE  AbstractOrdered : ATerm * ATerm * List(AOrder).
+
+AbstractOrdered(GT(g1),GT(g2),order) <-
+	AbstractOrdered1(g1,g2,order).
+
+AbstractOrdered(NGT(_,args),arg,order) <-
+	AbstractSubTerm(arg,args,order).
+
+
+PREDICATE  AbstractOrdered1 : Integer * Integer * List(AOrder).
+
+AbstractOrdered1(g1,g2,order) <-
+	MemberCheck(LT(g2,g1),order) |.
+
+AbstractOrdered1(g1,g2,order) <-
+	Delete(LT(g2,g3),order,order1) &
+	AbstractOrdered1(g1,g3,order1) |.
+
+AbstractOrdered1(g1,g2,order) <-
+	Equivalent(g1,e1,g2,e2,order) &
+	AbstractOrdered1(e1,e2,order) |.
+
+
+PREDICATE  AbstractSubTerm : ATerm * List(ATerm) * List(AOrder).
+
+AbstractSubTerm(arg,[arg1|rest],order) <-
+	{
+	IF  arg = arg1
+		THEN  True
+		ELSE  IF  AbstractOrdered(arg1,arg,order)
+			THEN  True
+			ELSE  AbstractSubTerm(arg,rest,order)
+	}.
+
+
+PREDICATE  Equivalent : Integer * Integer * Integer * Integer * List(AOrder).
+
+Equivalent(g1,a1,g2,g2,order) <-
+	Member(Eq(g1,a1),order).
+
+Equivalent(g1,a1,g2,g2,order) <-
+	Member(Eq(a1,g1),order).
+
+Equivalent(g1,g1,g2,a2,order) <-
+	Member(Eq(g2,a2),order).
+
+Equivalent(g1,g1,g2,a2,order) <-
+	Member(Eq(g2,a2),order).
+
+
+PREDICATE  MatchingPattern : Name * List(ATerm) * List(ABind)
+			 * List(GroundPattern) * List(APattern).
+
+MatchingPattern(pred,args,subst,patterns,output) <-
+	Member(Pattern(pred,input,output),patterns) &
+	MatchingPattern1(input,args,subst).
+
+
+PREDICATE  MatchingPattern1 : List(APattern) * List(ATerm) * List(ABind).
+
+MatchingPattern1([],[],_).
+
+MatchingPattern1([p|rest1],[arg|rest2],subst) <-
+	IF  p = ANG
+		THEN  MatchingPattern1(rest1,rest2,subst)
+		ELSE  AbstractGroundTerm(arg,subst) &
+		      MatchingPattern1(rest1,rest2,subst).
+
+
+PREDICATE  ApplyPattern : List(APattern) * List(ATerm) * List(ABind)
+			 * List(ABind) * Integer * Integer.
+
+ApplyPattern([],[],subst,subst,ground,ground).
+
+ApplyPattern([pattern|p_rest],[arg|a_rest],subst,subst1,grnd_in,grnd_out) <-
+	( 
+	IF  pattern = ANG
+	  THEN  subst2 = subst &
+		g1 = grnd_in
+	  ELSE  ADeref(arg,subst,arg1) &
+		GrindPatternArg(arg1,subst,subst2,grnd_in,g1) ) &
+	ApplyPattern(p_rest,a_rest,subst2,subst1,g1,grnd_out).
+
+
+PREDICATE  GrindPatternArg : ATerm * List(ABind) * List(ABind) * Integer
+			 * Integer.
+
+GrindPatternArg(V(n),subst,[n ! GT(ground)|subst],ground,ground+1).
+
+GrindPatternArg(GT(_),subst,subst,ground,ground).
+
+GrindPatternArg(NGT(_,args),subst,subst1,ground_in,ground_out) <-
+	GrindPatternArg1(args,subst,subst1,ground_in,ground_out).
+
+
+PREDICATE  GrindPatternArg1 : List(ATerm) * List(ABind) * List(ABind)
+			 * Integer * Integer.
+
+GrindPatternArg1([],subst,subst,ground,ground).
+
+GrindPatternArg1([arg|rest],subst,subst1,ground_in,ground_out) <-
+	ADeref(arg,subst,arg1) &
+	GrindPatternArg(arg1,subst,subst2,ground_in,g1) &
+	GrindPatternArg1(rest,subst2,subst1,g1,ground_out).
+
+
+PREDICATE  GeneraliseAArgs : List(ATerm) * List(ATerm) * Integer * Integer 
+			 * List(ABind) * List(ATerm) * Integer * Integer
+			 * List(SG) * List(SG).
+
+GeneraliseAArgs([arg1|rest1],[arg2|rest2],pass,pass1,subst,[arg3|rest3]
+								,v,v1,d,d1) <-
+	ADeref(arg2,subst,arg4) &
+	GeneraliseATerms(arg1,arg4,pass,pass1,subst,arg3,rest1,rest2,rest3
+			,v,v1,d,d1).
+
+
+PREDICATE  GeneraliseATerms : ATerm * ATerm * Integer * Integer
+			 * List(ABind) * ATerm
+			 * List(ATerm) * List(ATerm) * List(ATerm)
+			 * Integer * Integer
+			 * List(SG) * List(SG).
+
+GeneraliseATerms(V(n),term,pass,pass1,subst,V(new),rest1,rest2,rest3
+								,v,v1,d,d1) <-
+	GVar(term,n,v,v2,new,d,d2) &
+	GeneraliseAArgs(rest1,rest2,pass,pass1,subst,rest3,v2,v1,d2,d1).
+
+GeneraliseATerms(GT(g),arg,pass,pass1,subst,arg1,rest1,rest2,rest3
+								,v,v1,d,d1) <-
+	IF arg ~= GT(g) & pass = pass1  % Could improve this with Equivalent/3
+	  THEN  arg1 = V(v) &
+		GeneraliseAArgs1(rest1,rest2,pass,pass1,subst,rest3
+				,v+1,v1,d,d1)
+	  ELSE  arg1 = arg &
+		GeneraliseAArgs(rest1,rest2,pass,pass1,subst,rest3,v,v1,d,d1).
+
+GeneraliseATerms(NGT(name,args),arg,pass,pass1,subst,arg1,rest1,rest2,rest3
+								,v,v1,d,d1) <-
+	IF SOME [args1] arg = NGT(name,args1)
+	  THEN  (
+		IF SOME [args2,v2,d2] 
+			  GeneraliseAArgs(args,args1,pass,pass1,subst,args2
+					  ,v,v2,d,d2)
+		  THEN  arg1 = NGT(name,args2) &
+			GeneraliseAArgs1(rest1,rest2,pass,pass1,subst,rest3
+					,v2,v1,d2,d1)
+		  ELSE  arg1 = NGT(name,args) &
+			GeneraliseAArgs(rest1,rest2,pass,pass1,subst,rest3
+					,v,v1,d,d1)
+		)
+	  ELSE  arg1 = V(v) &
+		GeneraliseAArgs1(rest1,rest2,pass,pass1,subst,rest3
+					,v+1,v1,d,d1).
+
+
+PREDICATE  GeneraliseAArgs1 : List(ATerm) * List(ATerm) * Integer * Integer 
+			 * List(ABind) * List(ATerm)
+			 * Integer * Integer
+			 * List(SG) * List(SG).
+
+GeneraliseAArgs1([],[],_,_,_,[],v,v,d,d).
+
+GeneraliseAArgs1([arg1|rest1],[arg2|rest2],pass,pass1,subst,[arg3|rest3]
+								,v,v1,d,d1) <-
+	ADeref(arg2,subst,arg4) &
+	GeneraliseATerms1(arg1,arg4,pass,pass1,subst,arg3,v,v2,d,d2) &
+	GeneraliseAArgs1(rest1,rest2,pass,pass1,subst,rest3,v2,v1,d2,d1).
+
+
+PREDICATE  GeneraliseATerms1 : ATerm * ATerm * Integer * Integer
+			 * List(ABind) * ATerm
+			 * Integer * Integer
+			 * List(SG) * List(SG).
+
+GeneraliseATerms1(V(n),term,_,_,_,V(new),v,v1,d,d1) <-
+	GVar(term,n,v,v1,new,d,d1).
+
+GeneraliseATerms1(GT(g),arg,pass,pass1,_,arg1,v,v1,d,d) <-
+	IF arg ~= GT(g) & pass1 = pass
+	  THEN  arg1 = V(v) & v1 = v+1
+	  ELSE  arg1 = arg & v1 = v.
+
+GeneraliseATerms1(NGT(name,args),arg,pass,pass1,subst,arg1,v,v1,d,d1) <-
+	IF SOME [args1] arg = NGT(name,args1)
+	  THEN  GeneraliseAArgs1(args,args1,pass,pass1,subst,args2,v,v1,d,d1) &
+		arg1 = NGT(name,args2)
+	  ELSE  arg1 = V(v) & v1 = v+1.
+
+
+PREDICATE  GVar : ATerm * Integer * Integer * Integer * Integer
+			  * List(SG) * List(SG).
+
+GVar(V(a),h,v,v1,new,d,d1) <-
+	{
+	IF SOME [new1] Member(Gen(h,a,new1),d)
+	  THEN  new = new1 & v1 = v & d1 = d
+	  ELSE  new = v & v1 = v+1 & d1 = [Gen(h,a,v)|d]
+	}.
+
+GVar(GT(_),_,v,v+1,v,d,d).
+
+GVar(NGT(_,_),_,v,v+1,v,d,d).
+
+
+PREDICATE  MakePattern : Name * List(ATerm) * List(ATerm)
+                         * List(ABind) * Integer * GroundPattern.
+
+MakePattern(pred,args,args1,subst,var,Pattern(pred,input,output)) <-
+	MakePattern1(args,args1,0,var,subst,input,output).
+
+
+PREDICATE  MakePattern1 : List(ATerm) * List(ATerm) * Integer * Integer
+                          * List(ABind) * List(APattern) * List(APattern).
+
+MakePattern1([],[],var,var,_,[],[]).
+
+MakePattern1([arg|rest1],[a|r],g,g1,subst,[input|rest2],[AG|rest3]) <-
+        ApplyASubstToTerm(arg,subst,arg1) &
+	{ IF  AbstractGroundTerm(arg1,[])
+		THEN  MakeGroundTerm(arg1,a,g,g2,input)
+		ELSE  input = ANG &
+                      a = V(g) &
+		      g2 = g+1 } &
+	MakePattern1(rest1,r,g2,g1,subst,rest2,rest3).
+
+
+PREDICATE  MakeGroundTerm : ATerm * ATerm * Integer * Integer * APattern.
+
+MakeGroundTerm(GT(n),GT(n),g,g,AG).
+
+MakeGroundTerm(NGT(_,_),GT(g),g,g+1,AG).
+
+
+PREDICATE  AbstractUnfold : List(Formula) * AFormula * AFormula
+			 * AFormula * List(ABind) * Integer
+			 * List(Name) * Integer
+			 * List(AOrder) * List(ANode).
+
+AbstractUnfold([],_,_,_,_,_,_,_,_,[]).
+
+AbstractUnfold([clause|rest],head,selected,body,subst,var,suspect,grnd
+							,order,nodes) <-
+	{
+	IF SOME [s,v,o,g,b]
+		    AResolve(selected,clause,suspect,subst,s,var,v,order
+				,o,grnd,g,b)
+	  THEN  ANDwithEmpty(b,body,body2) &
+		nodes = [ANODE(head,body2,s,v,g,o)|nodes1]
+	  ELSE  nodes = nodes1
+	} &
+	AbstractUnfold(rest,head,selected,body,subst,var,suspect,grnd
+			,order,nodes1).
+
+
+PREDICATE  ANDwithEmpty : AFormula * AFormula * AFormula.
+
+ANDwithEmpty(l AND r,right,and) <-
+	ANDwithEmpty1(right,l AND r,and).
+
+ANDwithEmpty(l AOR r,right,and) <-
+	ANDwithEmpty1(right,l AOR r,and).
+
+ANDwithEmpty(EMPTY,right,right).
+
+ANDwithEmpty(APRED(n,args),right,and) <-
+	ANDwithEmpty1(right,APRED(n,args),and).
+
+ANDwithEmpty(SUSP(n,args),right,and) <-
+	ANDwithEmpty1(right,SUSP(n,args),and).
+
+ANDwithEmpty(SYS(v,left),right,and) <-
+	ANDwithEmpty1(right,SYS(v,left),and).
+
+ANDwithEmpty(CMT(l,left),right,and) <-
+	ANDwithEmpty1(right,CMT(l,left),and).
+
+ANDwithEmpty(NOT(f),right,and) <-
+	ANDwithEmpty1(right,NOT(f),and).
+
+ANDwithEmpty(ANOT(f),right,and) <-
+	ANDwithEmpty1(right,ANOT(f),and).
+
+ANDwithEmpty(IFTHNLSE(test,then,else),right,and) <-
+	ANDwithEmpty1(right,IFTHNLSE(test,then,else),and).
+
+ANDwithEmpty(IFSMTHNLSE(some,test,then,else),right,and) <-
+	ANDwithEmpty1(right,IFSMTHNLSE(some,test,then,else),and).
+
+ANDwithEmpty(BDY(left),right,and) <-
+	IF  EmptyFormula(left)
+	  THEN  and = right
+	  ELSE  ANDwithEmpty1(right,BDY(left),and).
+
+
+PREDICATE  ANDwithEmpty1 : AFormula *AFormula * AFormula.
+
+ANDwithEmpty1(l AND r,left,left AND l AND r).
+
+ANDwithEmpty1(l AOR r,left,left AND (l AOR r)).
+
+ANDwithEmpty1(EMPTY,left,left).
+
+ANDwithEmpty1(APRED(v,right),left,left AND APRED(v,right)).
+
+ANDwithEmpty1(SUSP(v,right),left,left AND SUSP(v,right)).
+
+ANDwithEmpty1(SYS(v,right),left,left AND SYS(v,right)).
+
+ANDwithEmpty1(CMT(l,right),left,left AND CMT(l,right)).
+
+ANDwithEmpty1(NOT(f),left,left AND NOT(f)).
+
+ANDwithEmpty1(ANOT(f),left,left AND ANOT(f)).
+
+ANDwithEmpty1(IFTHNLSE(test,then,else),left
+		,left AND IFTHNLSE(test,then,else)).
+
+ANDwithEmpty1(IFSMTHNLSE(some,test,then,else),left
+		,left AND IFSMTHNLSE(some,test,then,else)).
+
+ANDwithEmpty1(BDY(right),left,and) <-
+	IF  EmptyFormula(right)
+	  THEN  and = left
+	  ELSE  and = left AND BDY(right).
+
+
+PREDICATE  AResolve : AFormula * Formula * List(Name)
+			 * List(ABind) * List(ABind)
+			 * Integer * Integer * List(AOrder) * List(AOrder)
+			 * Integer * Integer * AFormula.
+
+AResolve(APRED(pred,a_args),statement,suspect,subst,subst1,var,var1
+					,order,order1,ground,ground1,body) <-
+	IsImpliedBy(head,body1,statement) &
+	PredicateAtom(head,pred,h_args) |
+	UnifyAArgs(h_args,a_args,subst,subst1,var,var2,order,order1,ground
+			,ground1,[],bind) &
+	AbstractApplySubst(body1,suspect,bind,_,var2,var1,body).
+
+AResolve(APRED(prop,[]),statement,suspect,subst,subst,var,var1,order,order
+						,ground,ground,body) <-
+	IsImpliedBy(head,body1,statement) &
+	PropositionAtom(head,prop) |
+	AbstractApplySubst(body1,suspect,[],_,var,var1,body).
+
+
+PREDICATE  UnifyAArgs : List(Term) * List(ATerm) * List(ABind) * List(ABind)
+			 * Integer * Integer * List(AOrder) * List(AOrder)
+			 * Integer * Integer * List(AResBind) * List(AResBind).
+
+UnifyAArgs([],[],subst,subst,var,var,order,order,ground,ground,bind,bind).
+
+UnifyAArgs([arg|rest],[arg1|rest1],subst,subst1,var,var1,order,order1
+						,ground,ground1,bind,bind1) <-
+	UnifyATerms(arg,arg1,subst,subst2,var,var2,order,order2,ground,ground2
+			,bind,bind2) &
+	UnifyAArgs(rest,rest1,subst2,subst1,var2,var1,order2,order1
+			,ground2,ground1,bind2,bind1).
+
+
+PREDICATE  UnifyATerms : Term * ATerm * List(ABind) * List(ABind)
+			 * Integer * Integer * List(AOrder) * List(AOrder)
+			 * Integer * Integer * List(AResBind) * List(AResBind).
+
+UnifyATerms(arg,arg1,subst,subst1,var,var,order,order1,ground,ground1
+								,bind,bind1) <-
+	Variable(arg) |
+	{
+	IF  SOME  [term]  MemberCheck(arg @ term,bind)
+	  THEN  GetAValue(arg1,term,subst,subst1,order,order1,ground,ground1) &
+		bind1 = bind
+	  ELSE  bind1 = [arg @ arg1|bind] &
+		subst1 = subst &
+		order1 = order &
+		ground1 = ground
+	}.
+
+UnifyATerms(arg,arg1,subst,subst1,var,var,order,order,ground,ground
+								,bind,bind) <-
+	(ConstantTerm(arg,name)\/OpaqueTerm(arg,name)) |
+	GetAConst(arg1,name,subst,subst1).
+
+UnifyATerms(arg,arg1,subst,subst1,var,var1,order,order1,ground,ground1
+								,bind,bind1) <-
+	FunctionTerm(arg,f,args) |
+	GetAFunct(arg1,f,args1,subst,subst2,mode) &
+	CheckAArgs(args,args1,mode,subst2,subst1,var,var1,order,order1
+			,ground,ground1,bind,bind1).
+
+
+PREDICATE  CheckAArgs : List(Term) * List(ATerm) * Mode * List(ABind)
+			 * List(ABind) * Integer * Integer * List(AOrder)
+			 * List(AOrder) * Integer * Integer * List(AResBind)
+			 * List(AResBind).
+
+CheckAArgs([],[],_,subst,subst,var,var,order,order,ground,ground,bind,bind).
+
+CheckAArgs([arg|rest],[arg1|rest1],mode,subst,subst1,var,var1,order,order1
+						,ground,ground1,bind,bind1) <-
+	CheckAArg(arg,arg1,mode,subst,subst2,var,var2,order,order2,ground
+			,ground2,bind,bind2) &
+	CheckAArgs(rest,rest1,mode,subst2,subst1,var2,var1,order2,order1
+			,ground2,ground1,bind2,bind1).
+
+
+PREDICATE  CheckAArg : Term * ATerm * Mode * List(ABind) * List(ABind)
+			 * Integer * Integer * List(AOrder) * List(AOrder)
+			 * Integer * Integer * List(AResBind) * List(AResBind).
+
+CheckAArg(arg,arg1,mode,subst,subst1,var,var1,order,order1,ground,ground1
+								,bind,bind1) <-
+	Variable(arg) |
+	{
+	IF  SOME  [term]  MemberCheck(arg @ term,bind)
+	  THEN  UnifyAValue(mode,arg1,term,subst,subst1,order,order1,ground
+				,ground1) &
+		var1 = var &
+		bind1 = bind
+	  ELSE  UnifyAVar(mode,arg1,var,var1,order,order1,ground,ground1) &
+		subst1 = subst &
+		bind1 = [arg @ arg1|bind]
+	}.
+
+CheckAArg(arg,arg1,mode,subst,subst1,var,var,order,order,ground,ground
+								,bind,bind) <-
+	(ConstantTerm(arg,name)\/OpaqueTerm(arg,name)) |
+	UnifyAConst(mode,arg1,name,subst,subst1).
+
+CheckAArg(arg,arg1,mode,subst,subst1,var,var1,order,order1,ground,ground1
+								,bind,bind1) <-
+	FunctionTerm(arg,f,args) |
+	UnifyAFunct(mode,arg1,f,args1,subst,subst2,mode1) &
+	CheckAArgs(args,args1,mode1,subst2,subst1,var,var1,order,order1
+			,ground,ground1,bind,bind1).
+
+
+PREDICATE  GetAValue : ATerm * ATerm * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+GetAValue(term1,term2,subst,subst1,order,order1,ground,ground1) <-
+	ADeref(term1,subst,t1) &
+	ADeref(term2,subst,t2) &
+	GetAValue1(t1,t2,subst,subst1,order,order1,ground,ground1).
+
+
+PREDICATE  GetAValue1 : ATerm * ATerm * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+GetAValue1(V(n),arg,subst,subst1,order,order,g,g) <-
+	IF  arg ~= V(n)
+	  THEN  ANotOccur(arg,n,subst) &
+		subst1 = [n ! arg|subst]
+	  ELSE  subst1 = subst.
+
+GetAValue1(NGT(name,args),arg,subst,subst1,order,order1,g,g1) <-
+	IF SOME [v] arg = V(v)
+	  THEN  ANotOccur1(args,v,subst) &
+		subst1 = [v ! NGT(name,args)|subst] &
+		order1 = order &
+		g1 = g
+	  ELSE  IF SOME [n] arg = GT(n)
+		  THEN  GrindArgs(args,n,subst,subst1,order,order1,g,g1)
+		  ELSE  arg = NGT(name,args1) &
+			GetAValue2(args,args1,subst,subst1,order,order1,g,g1).
+
+GetAValue1(GT(n),arg,subst,subst1,order,order1,g,g1) <-
+	IF SOME [v] arg = V(v)
+	  THEN  subst1 = [v ! GT(n)|subst] &
+		order1 = order &
+		g1 = g
+	  ELSE  IF SOME [n1] arg = GT(n1)
+		  THEN  ~AbstractOrdered1(n1,n,order) &
+			~AbstractOrdered1(n,n1,order) &
+			TransitiveOrder(order,n,n1,order1) &
+			subst1 = subst &
+			g1 = g
+		  ELSE  arg = NGT(_,args) &
+			GrindArgs(args,n,subst,subst1,order,order1,g,g1).
+
+
+PREDICATE  GetAValue2 : List(ATerm) * List(ATerm) * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+GetAValue2([],[],s,s,o,o,g,g).
+
+GetAValue2([arg1|rest1],[arg2|rest2],subst,subst1,order,order1,g,g1) <-
+	GetAValue(arg1,arg2,subst,subst2,order,order2,g,g2) &
+	GetAValue2(rest1,rest2,subst2,subst1,order2,order1,g2,g1).
+
+
+PREDICATE  ANotOccur : ATerm * Integer * List(ABind).
+
+ANotOccur(V(n),n1,_) <-
+	n ~= n1.
+
+ANotOccur(GT(_),_,_).
+
+ANotOccur(NGT(_,args),n,subst) <-
+	ANotOccur1(args,n,subst).
+
+
+PREDICATE  ANotOccur1 : List(ATerm) * Integer * List(ABind).
+
+ANotOccur1([],_,_).
+
+ANotOccur1([arg|rest],n,subst) <-
+	ADeref(arg,subst,arg1) &
+	ANotOccur(arg1,n,subst) &
+	ANotOccur1(rest,n,subst).
+
+
+PREDICATE  GetAConst : ATerm * Name * List(ABind) * List(ABind).
+
+GetAConst(arg,name,subst,subst1) <-
+	ADeref(arg,subst,term) &
+	GetAConst1(term,name,subst,subst1).
+
+
+PREDICATE  GetAConst1 : ATerm * Name * List(ABind) * List(ABind).
+
+GetAConst1(V(n),name,subst,[n ! NGT(name,[])|subst]).
+
+GetAConst1(NGT(name,[]),name,subst,subst).
+
+GetAConst1(GT(_),_,subst,subst).
+
+
+PREDICATE  GetAFunct : ATerm * Name * List(ATerm) * List(ABind) * List(ABind)
+			 * Mode.
+
+GetAFunct(arg,f,args,subst,subst1,mode) <-
+	ADeref(arg,subst,term) &
+	GetAFunct1(term,f,args,subst,subst1,mode).
+
+
+PREDICATE  GetAFunct1 : ATerm * Name * List(ATerm) * List(ABind) * List(ABind)
+			 * Mode.
+
+GetAFunct1(V(n),f,args,subst,[n ! NGT(f,args)|subst],Write).
+
+GetAFunct1(NGT(f,args),f,args,subst,subst,Read).
+
+GetAFunct1(GT(n),_,_,subst,subst,Grind(n)).
+
+
+PREDICATE  UnifyAValue : Mode * ATerm * ATerm * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+UnifyAValue(Read,term1,term2,subst,subst1,order,order1,ground,ground1) <-
+	GetAValue(term1,term2,subst,subst1,order,order1,ground,ground1).
+
+UnifyAValue(Write,term,term,subst,subst,order,order,ground,ground).
+
+UnifyAValue(Grind(n),_,term,subst,subst1,order,order1,ground,ground1) <-
+	ADeref(term,subst,term1) &
+	GrindArg(term1,n,subst,subst1,order,order1,ground,ground1).
+
+
+PREDICATE  UnifyAVar : Mode * ATerm * Integer * Integer * List(AOrder)
+			 * List(AOrder) * Integer * Integer.
+
+UnifyAVar(Read,_,var,var,order,order,ground,ground).
+
+UnifyAVar(Write,V(var),var,var+1,order,order,ground,ground).
+
+UnifyAVar(Grind(g),GT(ground),var,var,ord,[LT(ground,g)|ord],ground,ground+1).
+
+
+PREDICATE  UnifyAConst : Mode * ATerm * Name * List(ABind) * List(ABind).
+
+UnifyAConst(Read,arg,name,subst,subst1) <-
+	GetAConst(arg,name,subst,subst1).
+
+UnifyAConst(Write,NGT(name,[]),name,subst,subst).
+
+UnifyAConst(Grind(_),_,_,subst,subst).
+
+
+PREDICATE  UnifyAFunct : Mode * ATerm * Name * List(ATerm) * List(ABind)
+			 * List(ABind) * Mode.
+
+UnifyAFunct(Read,arg,f,args,subst,subst1,mode) <-
+	GetAFunct(arg,f,args,subst,subst1,mode).
+
+UnifyAFunct(Write,NGT(f,args),f,args,subst,subst,Write).
+
+UnifyAFunct(Grind(n),_,_,_,subst,subst,Grind(n)).
+
+
+PREDICATE  ADeref : ATerm * List(ABind) * ATerm.
+
+ADeref(V(n),subst,term) <-
+	{
+	IF  SOME  [t1]  MemberCheck(n ! t1,subst)
+	  THEN  ADeref(t1,subst,term)
+	  ELSE  term = V(n)
+	}.
+
+ADeref(NGT(f,args),_,NGT(f,args)).
+
+ADeref(GT(n),_,GT(n)).
+
+
+PREDICATE  AbstractApplySubst : Formula * List(Name) * List(AResBind)
+			 * List(AResBind) * Integer * Integer * AFormula.
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,a_formula) <-
+	( And(left1,right1,formula)
+	  \/ Equivalent(left1,right1,formula)
+	  \/ IfThen(left1,right1,formula)
+	  \/ IfSomeThen(_,left1,right1,formula) ) |
+	AbstractApplySubst(left1,suspect,subst,subst2,var,var2,left) &
+	AbstractApplySubst(right1,suspect,subst2,subst1,var2,var1,right) &
+	ANDwithEmpty(left,right,a_formula).
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,a_atom) <-
+	PredicateAtom(formula,pred,args1) |
+	ApplyAbstractSubstToArgs(args1,subst,subst1,var,var1,args) &
+	{ 
+	IF  MemberCheck(pred,suspect)
+	  THEN  a_atom = SUSP(pred,args)
+	  ELSE  a_atom = APRED(pred,args)
+	}.
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,formula1) <-
+	( Some(_,f1,formula)
+	  \/ All(_,f1,formula)
+	  \/ Commit(_,f1,formula) ) |
+	AbstractApplySubst(f1,suspect,subst,subst1,var,var1,formula1).
+
+AbstractApplySubst(formula,_,subst,subst,var,var,EMPTY) <-
+	EmptyFormula(formula) |.
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,test_then AOR else) <-
+	( IfThenElse(test1,then1,else1,formula)
+	  \/ IfSomeThenElse(_,test1,then1,else1,formula) ) |
+	AbstractApplySubst(test1,suspect,subst,subst2,var,var2,test) &
+	AbstractApplySubst(then1,suspect,subst2,subst3,var2,var3,then) &
+	AbstractApplySubst(else1,suspect,subst3,subst1,var3,var1,else) &
+	ANDwithEmpty(test,then,test_then).
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,ANOT(formula1)) <-
+	Not(f1,formula) |
+	AbstractApplySubst(f1,suspect,subst,subst1,var,var1,formula1).
+
+AbstractApplySubst(formula,_,subst,subst,var,var,EMPTY) <-
+	OpaqueAtom(formula) |.
+
+AbstractApplySubst(formula,suspect,subst,subst,var,var,a_atom) <-
+	PropositionAtom(formula,pred) |
+	{ 
+	IF  MemberCheck(pred,suspect)
+	  THEN  a_atom = SUSP(pred,[])
+	  ELSE  a_atom = APRED(pred,[])
+	}.
+
+AbstractApplySubst(formula,suspect,subst,subst1,var,var1,left AOR right) <-
+	( Or(left1,right1,formula)
+	  \/ Implies(left1,right1,formula)
+	  \/ IsImpliedBy(left1,right1,formula) ) |
+	AbstractApplySubst(left1,suspect,subst,subst2,var,var2,left) &
+	AbstractApplySubst(right1,suspect,subst2,subst1,var2,var1,right).
+
+
+PREDICATE  ApplyAbstractSubstToTerm : Term * List(AResBind) * List(AResBind)
+			 * Integer * Integer * ATerm.
+
+ApplyAbstractSubstToTerm(arg,subst,subst1,var,var1,arg1) <-
+	Variable(arg) |
+	{
+	IF  SOME  [term]  MemberCheck(arg @ term,subst)
+	  THEN  arg1 = term &
+		subst1 = subst &
+		var1 = var
+	  ELSE  arg1 = V(var) &
+		subst1 = [arg @ arg1|subst] &
+		var1 = var+1
+	}.
+
+ApplyAbstractSubstToTerm(arg,subst,subst,var,var,NGT(name,[])) <-
+	(ConstantTerm(arg,name)\/OpaqueTerm(arg,name)) |.
+
+ApplyAbstractSubstToTerm(arg,subst,subst1,var,var1,NGT(name,args1)) <-
+	FunctionTerm(arg,name,args) |
+	ApplyAbstractSubstToArgs(args,subst,subst1,var,var1,args1).
+
+
+PREDICATE  ApplyAbstractSubstToArgs : List(Term) * List(AResBind)
+			 * List(AResBind) * Integer * Integer * List(ATerm).
+
+ApplyAbstractSubstToArgs([],subst,subst,var,var,[]).
+
+ApplyAbstractSubstToArgs([arg|rest],subst,subst1,var,var1,[arg1|rest1]) <-
+	ApplyAbstractSubstToTerm(arg,subst,subst2,var,var2,arg1) &
+	ApplyAbstractSubstToArgs(rest,subst2,subst1,var2,var1,rest1).
+
+
+PREDICATE  TransitiveOrder : List(AOrder) * Integer * Integer * List(AOrder).
+
+TransitiveOrder(order,x,y,order1) <-
+	IF  x > y
+	  THEN  order1 = [Eq(x,y)|order]
+	  ELSE  IF  x < y
+		  THEN  order1 = [Eq(y,x)|order]
+		  ELSE  order1 = order.
+
+
+PREDICATE  GrindArgs : List(ATerm) * Integer * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+GrindArgs([],_,subst,subst,order,order,ground,ground).
+
+GrindArgs([arg|rest],n,subst,subst1,order_in,order_out,ground_in,ground_out) <-
+	ADeref(arg,subst,arg1) &
+	GrindArg(arg1,n,subst,subst2,order_in,order1,ground_in,ground1) &
+	GrindArgs(rest,n,subst2,subst1,order1,order_out,ground1,ground_out).
+
+
+PREDICATE  GrindArg : ATerm * Integer * List(ABind) * List(ABind)
+			 * List(AOrder) * List(AOrder) * Integer * Integer.
+
+GrindArg(V(var),n,subst,[var ! GT(g)|subst],order,[LT(g,n)|order],g,g+1).
+
+GrindArg(GT(n1),n,subst,subst,order,[LT(n1,n)|order],ground,ground) <-
+	~AbstractOrdered1(n1,n,order) &
+	IF n1 > n
+	  THEN  ~Equivalent(n1,n,order)
+	  ELSE  ~Equivalent(n,n1,order).
+
+GrindArg(NGT(_,args),n,subst,subst1,order_in,order_out,ground_in,ground_out) <-
+	GrindArgs(args,n,subst,subst1,order_in,order_out,ground_in,ground_out).
+
+
+PREDICATE  Equivalent : Integer * Integer * List(AOrder).
+
+Equivalent(n,n1,order) <-
+	Member(Eq(n,n1),order).
+
+Equivalent(n,n1,order) <-
+	Delete(Eq(n,n2),order,order1) &
+	Equivalent(n2,n1,order1).
+
+Equivalent(n,n1,order) <-
+	Delete(Eq(n2,n),order,order1) &
+	Equivalent(n2,n1,order1).
+
+
+PREDICATE  ApplyASubstToTerm : ATerm * List(ABind) * ATerm.
+
+ApplyASubstToTerm(V(n),subst,term) <-
+	{
+	IF  SOME  [t1]  MemberCheck(n ! t1,subst)
+	  THEN  ApplyASubstToTerm(t1,subst,term)
+	  ELSE  term = V(n)
+	}.
+
+ApplyASubstToTerm(NGT(f,args),subst,NGT(f,args1)) <-
+	ApplyASubstToArgs(args,subst,args1).
+
+ApplyASubstToTerm(GT(n),_,GT(n)).
+
+
+PREDICATE  ApplyASubstToArgs : List(ATerm) * List(ABind) * List(ATerm).
+
+ApplyASubstToArgs([],_,[]).
+
+ApplyASubstToArgs([arg|rest],subst,[arg1|rest1]) <-
+	ApplyASubstToTerm(arg,subst,arg1) &
+	ApplyASubstToArgs(rest,subst,rest1).
+
+
+FreeVars([],[]).
+
+FreeVars([arg|rest],fvs) <-
+	TermVariables(arg,vars) &
+	FreeVars(rest,fvs1) &
+	Append(vars,fvs1,fvs).
+
+PREDICATE  OpaqueTerm : Term * Name.
+
+ OpaqueTerm(arg,name) <-
+	OpaqueTerm(arg) &
+	NewProgram("Opaque",p) &
+	ProgramConstantName(p,"Opaque","Opaque",name).
+
+
+PREDICATE SetToList : Set(a) * List(a).
+
+SetToList({},[]) <-
+  |.
+
+SetToList(set,[x|rest1]) <-
+  x In set |
+  SetToList(set\{x},rest1).
+
+%  ============================================================
+%  ============================================================

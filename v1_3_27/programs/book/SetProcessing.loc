@@ -1,0 +1,29 @@
+MODULE     SetProcessing.
+
+IMPORT     Sets.
+
+PREDICATE  Sum : Set(Integer) * Integer.
+
+Sum(s,y) <-
+        x In s &
+        Sum1(s\{x},x,y).
+
+PREDICATE  Sum1 : Set(Integer) * Integer * Integer.
+
+Sum1({},x,x).
+Sum1(s,x,x+w) <-
+        z In s &
+        Sum1(s\{z},z,w).
+
+PREDICATE  Max : Set(Integer) * Integer.
+
+Max(s,y) <-
+        x In s &
+        Max1(s\{x},x,y).
+
+PREDICATE  Max1 : Set(Integer) * Integer * Integer.
+
+Max1({},x,x).
+Max1(s,x,y) <-
+        z In s &
+        IF z>x THEN Max1(s\{z},z,y) ELSE Max1(s\{z},x,y).

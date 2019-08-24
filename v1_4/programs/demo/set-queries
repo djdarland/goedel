@@ -1,0 +1,145 @@
+% Load Sets
+
+x = Null.                                               (x = {})
+
+
+x = Null + {1}.                                         (x = {1})
+
+
+x = Inc(1,Inc(2,Inc(1+1,Null))).                        (x = {1,2})
+
+
+x = {3, 1+2}.                                           (x = {3})
+
+
+x = {1,y,1}.                                            (flounders)
+
+
+x = {1,2|{2,3}}.                                        (x = {1,2,3})
+
+
+x = {1, {1}}.                                           (type error)
+
+
+x = {1, x}.                                             (type error)
+
+
+x = {1,2,3} \ {4,3,2,1}.                                (x = {})
+
+
+x = {43 Div 3, 14} * {23, 15-1} + {1}.                  (x = {1,14})
+
+
+x = {1,2,3,4,5} + {4,5,6,7,8} \ {3,4,5,6}.              (x = {1,2,7,8})
+
+
+{1,1,2,2} = {2,1}.                                      (Yes)
+
+
+x In {1,2,2,1}.                                         (x = 1; x = 2)
+
+
+x = {s : s StrictSubset {1,2,3}}.                     (x = {{},{1},..., {2,3}})
+
+
+x = {s : s Subset {z : n Mod z = 0 & 1 =< z < 10}} & n = 10.
+                                 
+                                 (n=10, x = {{},{1},{2},{5},{1,2},...,{1,2,5}})
+
+
+Size({1,2-1},n).                                        (n = 1)
+
+
+Size({s : s Subset {1,2,3,4,5,6,7,8}}, n).              (n = 256)
+
+
+{1,2,x} = {1,2,3}.                                      (flounders)
+
+
+{1|x} = {2|x}.                                          (flounders)
+
+
+x = {{n^2 : 1 =< n =< m} : 1 =< m =< 5}.
+
+                             (x = {{1},{1,4},{1,4,9},{1,4,9,16},{1,4,9,16,25}})
+
+
+x = {y : SOME [m] (y = {n^2 : 1 =< n =< m} & 1 =< m =< 5)}.
+
+                                                       (same as previous query)
+
+
+
+x = {y : 1 =< y =< 5} & IF x ~= {} THEN z = x ELSE z = {0}.
+                                                          (x = {1,2,3,4,5}
+                                                           z = {1,2,3,4,5})
+
+IF SOME [x] x = {y : 1 =< y =< 5} & x ~= {} THEN z = x ELSE z = {0}.
+                                                          (z = {1,2,3,4,5})
+
+
+
+% Load Sports
+
+
+x = {p : Likes(p,Tennis)}.                              (x = {Mary, Bill, Joe})
+
+
+x = {s : Likes(Fred,s)}.                                (x = {})
+
+
+x = {p : Likes(p,s)}.                                   (flounders)
+
+
+x = {p : Likes(p,s)} & s In {Cricket,Football}.
+
+                        (s = Cricket, x = {Mary,Bill}; s = Football, x = {Joe})
+
+
+x = {p : SOME [s] Likes(p,s)}.                          (x = {Mary, Bill, Joe})
+
+
+
+x = {Pair(p,y) : y = {s : Likes(p,s)} & p In {Mary,Bill,Joe,Fred}}.     
+
+                (x = {Pair(Mary,{Cricket,Tennis}), Pair(Bill,{Cricket,Tennis}),
+                      Pair(Joe,{Tennis,Football}), Pair(Fred,{})})
+
+
+
+x = {Pair(p,y) : y = {s : Likes(p,s)}}.                 (flounders)     
+
+
+
+% Load Search   (Wolf-Goat-Cabbage problem)
+
+
+Run(x).                             
+
+(x = 
+[LeftToRight({Farmer,Goat}),RightToLeft({Farmer}),LeftToRight({Cabbage,Farmer}),
+RightToLeft({Farmer,Goat}),LeftToRight({Farmer,Wolf}),RightToLeft({Farmer}),
+LeftToRight({Farmer,Goat})]  ;
+
+x = 
+[LeftToRight({Farmer,Goat}),RightToLeft({Farmer}),LeftToRight({Farmer,Wolf}),
+RightToLeft({Farmer,Goat}),LeftToRight({Cabbage,Farmer}),RightToLeft({Farmer}),
+LeftToRight({Farmer,Goat})]
+)
+
+
+% Load SetProcessing
+
+
+Sum({1,2,3,3},s).                                                       (s = 6)
+
+
+Sum({x : 100 Mod x = 0 & 1 < x < 100}, s).                            (s = 116)
+
+
+Max({x^2 + y^2 : -100 =< x =< 20  &  -10 =< y =< 30}, m).           (m = 10900)
+
+
+% set of primes under 100
+
+primes = { prime : 1<prime<100 & ALL [x] (1<x<prime -> prime Mod x ~= 0)}.

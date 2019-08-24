@@ -1,0 +1,43 @@
+Goedel Release 1.4 for IBM PC compatibles running Linux:
+========================================================
+
+This directory contains the executable binary Goedel system for IBM PC
+compatibles running Linux 0.99.15 (or later).  It includes the
+executable 'goedel', system files with postfix '.ql' and a SICStus
+Prolog supporting directory runtime/Runtime.  The minimum hardware
+requirement is a 386 PC with 8 MB memory.
+
+
+How to use the executable binary Goedel:
+=======================================
+
+1. In the runtime directory, there is an executable file called 'goedel'.
+   Running this file starts the Goedel system.  It needs to be installed
+   in a directory which users can access, for example, /usr/local/bin.
+
+2. The runtime directory has to be moved to somewhere globally
+   accessable, for example, /usr/local/lib/goedel.
+
+3. To run 'goedel', users have to set the following environment variables:
+      GOEDEL_RUNTIME : the full path to /goedel/runtime
+      SP_PATH	     : the same as GOEDEL_RUNTIME
+
+   Note SP_PATH is the environment variable used by SICStus Prolog's runtime
+   systems.  Changing it might cause problems to your other SICStus runtime
+   systems, if you have a SICStus Prolog which is different from the one with
+   which the Goedel runtime system was prepared.
+
+   These environment variables can be set in users' .cshrc/.login files,
+   if csh is used, with commands, for example, 
+      setenv GOEDEL_RUNTIME /usr/local/lib/goedel/runtime
+      setenv SP_PATH /usr/local/lib/goedel/runtime
+   
+   or in .bashrc/.profile files, if bash is used,
+      export GOEDEL_RUNTIME=/usr/local/lib/goedel/runtime
+      export SP_PATH=/usr/local/lib/goedel/runtime
+
+%----------------------------------------------------------------------------
+
+If you have any problems concerning the installation of the Goedel system,
+please contact:
+	goedel@compsci.bristol.ac.uk.

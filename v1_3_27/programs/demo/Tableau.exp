@@ -1,0 +1,26 @@
+EXPORT      Tableau.
+
+% This module contains an implementation of a tableau propositional 
+% theorem prover as described, for example, in "Logic for Computer 
+% Science", S. Reeves and M. Clarke, Addison-Wesley, 1990, pages 64-75. 
+% The connectives admitted are &, \/, ->, and ~.
+
+IMPORT      Flocks.
+
+BASE        Indicator.
+%
+% The type of the constants YES, indicating a formula is a theorem of
+% a theory, and NO, indicating that it is not.
+
+
+CONSTANT    YES, NO : Indicator.
+
+
+PREDICATE   Prove : 
+
+  Flock          % A propositional theory. 
+* Unit           % A propositional formula.
+* Indicator.     % YES, if the formula is a theorem of the theory,
+                 % and NO, if it is not.
+
+DELAY       Prove(x,y,_) UNTIL GROUND(x) & GROUND(y).

@@ -1,0 +1,85 @@
+LOCAL BreadthFirst.
+
+BASE SLDNode.
+
+FUNCTION Node : Formula * TermSubst -> SLDNode.
+
+
+BreadthFirst(program, goal, computed_answer) <-
+   ConjunctionOfAtoms(goal) &
+   EmptyVarTyping(empty_var_types) &
+   FormulaInProgram(program, empty_var_types, goal, _) &
+   IsImpliedBy(goal, goal, resultant) &
+   EmptyTermSubst(empty_subst) &
+   Breadth(program, [Node(resultant, empty_subst)], answer) &
+   RestrictSubstToFormula(goal, answer, computed_answer).
+
+
+PREDICATE Breadth : Program * List(SLDNode) * TermSubst.
+
+Breadth(program, [node|nodes], answer) <-
+   IF SOME [answer_substitution] Solved(node, answer_substitution)
+   THEN 
+      ( answer = answer_substitution \/
+        Breadth(program, nodes, answer)
+      )
+   ELSE
+      SLDChildren(program, node, children) &
+      Append(nodes, children, new_nodes) &
+      Breadth(program, new_nodes, answer).
+
+
+PREDICATE Solved : SLDNode * TermSubst.
+
+Solved(Node(resultant, answer), answer) <-
+   IsImpliedBy(_, empty_formula, resultant) &
+   EmptyFormula(empty_formula).
+
+
+PREDICATE SLDChildren : Program * SLDNode * List(SLDNode).
+
+SLDChildren(program, Node(resultant, substitution), children) <-
+   IsImpliedBy(head, body, resultant) &
+   Select(body, left, selected, right) &
+   PredicateAtom(selected, predicate, _) &
+   DefinitionInProgram(program, _, predicate, [statement|statements]) &
+   AllDerivations([statement|statements], head, left, selected, right
+      , substitution, children). 
+
+
+PREDICATE AllDerivations : 
+   List(Formula) * Formula * Formula * Formula * Formula 
+      * TermSubst * List(SLDNode).
+
+AllDerivations([], _, _, _, _, _, []).
+
+AllDerivations([statement|statements], head, left, selected, right
+      , substitution_so_far, children
+      ) <-
+   RenameFormulas([head, left, selected, right], [statement]
+      , [renamed_statement]) &
+   ( IF SOME [mgu, resultant]
+        Derive(head, left, selected, right, renamed_statement
+           , mgu, resultant)
+     THEN
+        ComposeTermSubsts(substitution_so_far, mgu, substitution) &
+        children = [Node(resultant, substitution)|children1]
+     ELSE
+        children = children1
+   ) &
+   AllDerivations(statements, head, left, selected, right, substitution_so_far
+      , children1).
+
+
+PREDICATE Select : Formula * Formula * Formula * Formula. 
+
+Select(atom, empty, atom, empty) <-
+   Atom(atom) |
+   EmptyFormula(empty).
+
+Select(body, left, selected, right) <-
+   And(left_body, right_body, body) |
+   Select(left_body, left, selected, right1) &
+   AndWithEmpty(right1, right_body, right).
+
+

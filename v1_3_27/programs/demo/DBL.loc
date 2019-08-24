@@ -1,0 +1,24 @@
+LOCAL       DBL.
+
+CONSTANT Albert, Jane, Sue, Liz : Person.
+
+Ancestor(x,y) <-
+	    Ancestor(x,z) &
+	    Parent(z,y).
+Ancestor(x,y) <-
+	    Parent(x,y).
+
+Parent(x,y) <-
+  	    Mother(x,y).
+Parent(x,y) <-
+ 	    Father(x,y).
+
+Father(Fred, Mary).
+Father(George, James).
+Father(John, Fred).
+Father(Albert, Jane).
+
+Mother(Sue, Mary).
+Mother(Jane, Sue).
+Mother(Liz, Fred).
+Mother(Sue, James).

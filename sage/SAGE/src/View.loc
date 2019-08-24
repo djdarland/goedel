@@ -1,0 +1,69 @@
+
+%  ============================================================
+%
+%  Program View - Simple script viewer.
+%                 Based on code from Anthony Bowers.
+%
+%  ============================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+
+MODULE View.
+
+IMPORT ScriptsIO, Sets.
+
+PREDICATE ViewScript : String.
+ 
+ViewScript(script_string) <-
+   WriteString(StdOut,"\n Statements in Script: " ++ script_string
+		       ++ "\n ----------------------------------\n\n") &
+   FindInput(script_string++".scr", result) &
+   {
+   IF  result = NotFound
+     THEN  WriteString(StdOut,"\nScript file not found\n")
+     ELSE  
+       result = In(ins) &
+       IF  SOME  [script]  GetScript(ins, script)
+  	  THEN  ViewAll({s : StatementInScript(script, s)}, script, StdOut)
+  	  ELSE  WriteString(StdOut,"\nCannot read script from file\n")
+   } &
+   EndInput(ins) &
+   NewLine(StdOut).
+
+PREDICATE  ViewAll : Set(Formula) * Script * OutputStream.
+
+ViewAll(formulas, script, stream) <-
+   { IF SOME [w] w In formulas
+     THEN
+        ( IF SOME [chars] FormulaChars(w, script, chars)
+          THEN
+             WriteChars(chars, stream)
+          ELSE 
+             IsImpliedBy(head, _, w) &
+             ( IF SOME [chars] FormulaChars(head, script, chars)
+               THEN
+                  WriteChars(chars, stream) &
+                  WriteString(stream, " <- ** UNTRANSLATABLE **")
+               ELSE
+                  WriteString(stream, "** COMPLETELY UNTRANSLATABLE **")
+             )
+        ) &
+        WriteString(stream, ".\n\n") &
+        Flush(StdOut) &
+        ViewAll(formulas\{w}, script, stream)
+   }.
+
+PREDICATE FormulaChars : Formula * Script * List(Integer).
+
+PREDICATE WriteChars : List(Integer) * OutputStream.
+
+WriteChars([], _).
+
+WriteChars([c|cs], stream) <-
+   Put(stream, c) &
+   WriteChars(cs, stream).
+
+%  ============================================================
+%  ============================================================

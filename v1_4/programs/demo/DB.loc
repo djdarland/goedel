@@ -1,0 +1,24 @@
+MODULE        DB.
+
+BASE          Person.
+ 
+CONSTANT      Fred, Mary, George, James, Jane, Sue : Person.
+
+PREDICATE     Ancestor, Parent, Mother, Father : Person * Person.
+
+Ancestor(x,y) <- 
+              Parent(x,y).
+Ancestor(x,y) <- 
+              Parent(x,z) &
+              Ancestor(z,y).
+
+Parent(x,y) <- 
+              Mother(x,y).
+Parent(x,y) <- 
+              Father(x,y).
+
+Father(Fred, Mary).
+Father(George, James).
+
+Mother(Sue, Mary).
+Mother(Jane, Sue).

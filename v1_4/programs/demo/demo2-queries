@@ -1,0 +1,13 @@
+
+% Need to program-compile Append and M3.
+
+Go("Append", "Append(Cons(Mon, Cons(Tue, Nil)), Cons(Wed, Nil), x)", answer).
+
+Go("Append", "Append(x,y,Cons(Mon, Cons(Tue, Nil)))", answer).
+
+Go("M3", "Append3(Cons(Monday, Cons(Tuesday, Nil)), Nil, Cons(Wednesday, Nil),
+                                                                  x)", answer).
+
+% the next one loops.
+
+Go("M3", "Append3(x, y, z, Cons(Monday, Cons(Tuesday, Nil)))", answer).

@@ -1,0 +1,29 @@
+MODULE    Ancestors.
+
+BASE      Person.
+
+CONSTANT  A,B,C,D : Person.
+
+
+PREDICATE Ancestor : Person * Person.
+
+Ancestor(x,y) <- 
+          Parent(x,y).
+Ancestor(x,y) <-
+          Ancestor1(x,z) &
+          Parent(z,y).
+
+
+PREDICATE Ancestor1 : Person * Person.
+DELAY     Ancestor1(x,y) UNTIL NONVAR(y).
+
+Ancestor1(x,y) <- 
+          Ancestor(x,y).
+
+
+PREDICATE Parent : Person * Person.
+
+Parent(A,B).
+Parent(A,C).
+Parent(B,D).
+

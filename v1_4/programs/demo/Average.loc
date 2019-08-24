@@ -1,0 +1,15 @@
+MODULE      Average.
+
+IMPORT      Lists, Rationals.
+
+PREDICATE   Average : List(Rational) * Rational.
+
+Average(list, sum/(length//1)) <- 
+     Sum(list, sum) &
+     Length(list, length).
+
+PREDICATE   Sum : List(Rational) * Rational.
+
+Sum([], 0).
+Sum([x|xs], sum+x) <-
+     Sum(xs, sum).

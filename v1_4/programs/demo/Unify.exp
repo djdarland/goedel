@@ -1,0 +1,9 @@
+EXPORT     Unify.
+
+IMPORT     Syntax.
+
+PREDICATE  MyUnifyTerms : 
+
+  Term          % Representation of a term.
+* Term          % Representation of a term.
+* TermSubst.    % Representation of an mgu for these terms.

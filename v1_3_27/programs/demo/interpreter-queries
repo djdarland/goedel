@@ -1,0 +1,69 @@
+
+% MySucceed goals.
+
+% Need to program-compile M4 first.
+
+
+Go1("M4", "Append([Monday, Tuesday], [Wednesday], x)", answer).
+
+
+Go1("M4", "Append(x, y, [Monday, Tuesday])", answer).
+
+
+Go1("M4", "Append3([Monday, Tuesday], [Wednesday], [Thursday], x)", answer).
+
+
+Go1("M4", "~ Append([Monday, Tuesday], [Wednesday], [])", answer).
+
+
+Go1("M4", "3*y-2 = 1 & 2*x+1 = y+2", answer).
+
+
+% Need to program-compile Qsort first.
+
+
+Go1("Qsort", "Quicksort([1,3,4,2],x)", answer).
+
+
+
+************************************************************************
+
+
+% MyFail goals.
+
+
+Go2("M4", "Append([Monday, Tuesday], [Wednesday], [])").       % yes
+
+
+Go2("M4", "Append3([Monday, Tuesday], [Wednesday], [Thursday], [])").     % yes
+
+
+Go2("M4", "1 + 2 = 4").           % yes
+
+
+Go2("Qsort", "Quicksort([3,2,1],[1,3,2])").       % yes
+
+
+Go2("Qsort", "Quicksort([1],[])").       % yes
+
+
+Go2("Qsort", "Append([],[1],[])").       % yes
+
+
+Go2("Qsort", "Quicksort([],[])").        % no
+
+
+
+% Need to program-compile M3 first.
+
+
+Go2("M3", "Append(Cons(Monday,Nil), Cons(Wednesday,Nil), Nil)").    % yes
+
+
+Go2("M3", "Append3(Cons(Monday,Nil), Cons(Wednesday,Nil), Cons(Thursday,Nil), 
+                                                                        Nil)").
+                                                                    % yes
+
+Go2("M3", "Append(Nil,Cons(Monday,Nil),Nil)").               % yes
+
+

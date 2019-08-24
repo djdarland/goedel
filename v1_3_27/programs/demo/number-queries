@@ -1,0 +1,83 @@
+
+% Various queries involving integers.  
+%
+% Load Integers.
+
+32*4 >= (130 Mod 4).
+
+x + 43 = 73 + (34 Mod 4).
+
+0 =< x =< 10  &  0 < y =< 10  &  35*x + 33*y =< 34.
+
+0 < x =< 10  &  x ~= 2  &  x^2 < 12.
+
+2*i + 7 = 3*j + 1  &  1=<i=<100  &  1=<j=<100.
+
+
+% Pythagorean numbers (by exhaustive search). 
+
+x^2 + y^2 = z^2  &  0 < x < 50  &  0 < y < 50  &  0 < z.
+
+
+% Linear equations.
+%
+% Only limited solving of integer linear equations is currently implemented. 
+% (The equations must be in triangular form.)
+
+2*x+1 = y+2  &  3*y-2 = 1.
+
+
+
+% Factorial program. Compile and load Factorial.loc.
+
+Fac(39,y).
+
+Fac(x,20397882081197443358640281739902897356800000000).
+
+% Generate the factorial table.
+
+Fac(x, y).
+
+% Involving constraints.
+
+Fac(y+2, x-10) & y = 9.         % asking for another answer causes looping
+                                % because Fac generates the whole factorial
+                                % table.
+
+
+
+% Fibonacci program. Compile and load Fibonacci.loc.
+
+Fib(235,y).
+
+Fib(x,5789092068864820527338372482892113982249794889765).
+
+Fib(x,y).
+
+
+
+% Solve bounded integer constraints.
+%
+% Send More Money Puzzle.
+%
+% Taking each letter as a variable, satisfy the addition:
+%         SEND
+%       + MORE
+%       ------
+%        MONEY
+% Digits assigned to variables are distinct.
+%
+% Compile and load SendMoreMoney.loc
+
+Go(send, more, money).
+
+
+
+% Averages program - uses rational. Compile and load Average.loc.
+
+
+Average([3,4,5,6,7,8],x).
+
+Average([33/45,2,67],x).
+
+

@@ -1,0 +1,205 @@
+LOCAL		P2G.
+
+IMPORT		Numbers.
+
+Convert(flock_string, file_string) <-
+   FindInput(flock_string++".flk", In(flock_stream)) &
+   GetFlock(flock_stream, flock) &
+   FindOutput(file_string, Out(file_stream)) &
+   ConvertAux(flock, file_stream) &
+   EndInput(flock_stream) &
+   EndOutput(file_stream).
+
+
+PREDICATE	ConvertAux : Flock * OutputStream.
+
+ConvertAux(flock, _) <-
+   EmptyFlock(flock).
+ConvertAux(flock, stream) <-
+   DeleteUnit(flock, prolog_unit, 1, flock2) &
+   ConvertUnit(prolog_unit, goedel_unit, Dict(0, []), _) &
+   PrintGoedelProgram(stream, goedel_unit) &
+   ConvertAux(flock2, stream).
+
+%------------------------------------------------------------------------------
+
+BASE		Pair, VarDictionary.
+
+FUNCTION	Pair : String * String -> Pair;
+		Dict : Integer * List(Pair) -> VarDictionary. 
+
+PREDICATE       ConvertUnit : Unit * Unit
+				   * VarDictionary * VarDictionary.
+
+ConvertUnit(prolog_unit, goedel_unit, dict, new_dict) <-
+   UnitParts(prolog_unit, head, arguments) &
+   IF SOME [equivalent] Equivalent(head, equivalent)
+   THEN arguments = [left, right] &
+	ConvertUnit(left, new_left, dict, dict2) &
+	ConvertUnit(right, new_right, dict2, new_dict) &
+	UnitParts(goedel_unit, equivalent, [new_left, new_right])
+   ELSE IF head = ";"
+	THEN Conditional(arguments, goedel_unit, dict, new_dict)
+	ELSE IF head = "->"
+	     THEN Conditional2(arguments, goedel_unit, dict, new_dict)
+	     ELSE IF ( head = "not" \/ head = "\\+" )
+	          THEN arguments = [unit] &
+		       ConvertUnit(unit, unit2, dict, new_dict) &
+		       UnitParts(goedel_unit, "~", [unit2])
+	          ELSE AtomAndTerm(head, arguments, goedel_unit, dict, new_dict).
+		
+%------------------------------------------------------------------------------
+
+PREDICATE	Conditional, Conditional2 : List(Unit) * Unit
+                            		    * VarDictionary * VarDictionary.
+
+Conditional([left, right], goedel_unit, dict, new_dict) <-
+   ConvertUnit(right, right2, dict, dict2) &
+   IF SOME [cond, then] UnitParts(left, "->", [cond, then])
+   THEN ConvertUnit(then, then2, dict2, dict3) &
+	ConvertUnit(cond, cond2, dict3, new_dict) &
+	UnitParts(goedel_unit, "IF_THEN_ELSE", [cond2, then2, right2])
+   ELSE ConvertUnit(left, left2, dict2, new_dict) &
+	UnitParts(goedel_unit, "\\/", [left2, right2]).
+
+Conditional2([left, right], goedel_unit, dict, new_dict) <-
+   ConvertUnit(left, left2, dict, dict2) &
+   ConvertUnit(right, right2, dict2, new_dict) &
+   UnitParts(false, "False", []) &
+   UnitParts(goedel_unit, "IF_THEN_ELSE", [left2, right2, false]).
+
+%------------------------------------------------------------------------------
+
+PREDICATE       AtomAndTerm : String * List(Unit) * Unit
+                              * VarDictionary * VarDictionary.
+
+AtomAndTerm(head, units, goedel_unit, dict, new_dict) <-
+   ChangeCase(head, new_head, dict, dict2) &
+   ProcessTerms(units, new_units, dict2, new_dict) &
+   UnitParts(goedel_unit, new_head, new_units).
+
+
+PREDICATE       ProcessTerms : List(Unit) * List(Unit)
+                               * VarDictionary * VarDictionary.
+
+ProcessTerms([], [], dict, dict).
+ProcessTerms([unit|units], [g_stru|g_strus], dict, new_dict) <-
+   UnitParts(unit, head, sub_units) &
+   AtomAndTerm(head, sub_units, g_stru, dict, dict2) &
+   ProcessTerms(units, g_strus, dict2, new_dict).
+
+%------------------------------------------------------------------------------
+
+PREDICATE	Equivalent : String * String;
+		ChangeCase : String * String * VarDictionary * VarDictionary.
+
+Equivalent(":-", "<-").
+Equivalent("','", "&").
+Equivalent("is", "=").
+
+
+ChangeCase(string, new_string, Dict(index, list), Dict(index2, list2)) <-
+   StringInts(string, [first_char|int_list]) &
+   ( IF 65 =< first_char =< 90
+     THEN StringInts(new_string, [first_char+32|int_list])
+     ELSE IF 97 =< first_char =< 122
+	  THEN StringInts(new_string, [first_char-32|int_list])
+	  ELSE IF first_char = 95
+	       THEN ( IF Member(Pair(string, _), list) 
+		      THEN Member(Pair(string, new_string), list) &
+			   index = index2 & list = list2
+		      ELSE IntegerString(index, index_string) &
+			   new_string = "x" ++ index_string &
+			   index2 = index + 1 &
+			   list2 = [Pair(string, new_string)|list]
+		    )
+	       ELSE new_string = string
+   ) &
+   IF first_char ~= 95
+   THEN index = index2 & list = list2.
+
+%------------------------------------------------------------------------------
+
+PREDICATE	PrintGoedelProgram : OutputStream * Unit.
+
+PrintGoedelProgram(stream, unit) <-
+   GoedelUnit2String(unit, string) &
+   WriteString(stream, string) &
+   WriteString(stream, ".") &
+   NewLine(stream).
+
+
+PREDICATE	GoedelUnit2String : Unit * String;
+		GoedelUnit2StringAux : List(Unit) * String.
+
+GoedelUnit2String(unit, string) <-
+   StringInts(newline_string, [10,32,32,32]) &
+   UnitParts(unit, head, sub_units) &
+   IF SOME [left, right] sub_units = [left, right] 
+   THEN GoedelUnit2String(left, string1) &
+	GoedelUnit2String(right, string2) &
+        ( IF Connective(head)
+	  THEN string = string1 ++ " " ++ head ++ newline_string ++ string2
+	  ELSE IF BinaryInfix(head)
+	       THEN string = string1 ++ " " ++ head ++ " " ++ string2
+	       ELSE IF head = "'.'"
+		    THEN ProcessList(sub_units, list_string) &
+			 string = "[" ++ list_string ++ "]"
+		    ELSE string = 
+			    head ++ "(" ++ string1 ++ ", " ++ string2 ++ ")"
+	)
+   ELSE IF head = "IF_THEN_ELSE"
+	THEN sub_units = [cond, then, else] &
+	     GoedelUnit2String(cond, cond_string) &
+	     GoedelUnit2String(then, then_string) &
+	     GoedelUnit2String(else, else_string) &
+	     string = "IF " ++ cond_string ++ newline_string ++
+		      "THEN " ++ then_string ++ newline_string ++ 
+		      "ELSE " ++ else_string
+        ELSE GoedelUnit2StringAux(sub_units, string3) &
+	     IF string3 = ""
+	     THEN string = head
+	     ELSE string = head ++ "(" ++ string3 ++ ")".
+
+
+GoedelUnit2StringAux([], "").
+GoedelUnit2StringAux([unit|units], string) <-
+   GoedelUnit2String(unit, string1) &
+   GoedelUnit2StringAux(units, string2) &
+   IF string2 = ""
+   THEN string = string1
+   ELSE string = string1 ++ ", " ++ string2.
+
+
+PREDICATE       ProcessList : List(Unit) * String.
+
+ProcessList([], "").
+ProcessList([unit, list_unit], string) <-
+   GoedelUnit2String(unit, string1) &
+   UnitParts(list_unit, head2, units2) &
+   IF head2 = "'.'"
+   THEN ProcessList(units2, string2) &
+        ( IF string2 = ""
+          THEN string = string1
+          ELSE string = string1 ++ ", " ++ string2
+	)
+   ELSE string = string1 ++ "|" ++ string3 &
+        GoedelUnit2String(list_unit, string3).
+
+
+PREDICATE       Connective, BinaryInfix : String.
+
+BinaryInfix("=").
+BinaryInfix("+").
+BinaryInfix("-").
+BinaryInfix("*").
+BinaryInfix("/").
+BinaryInfix(">").
+BinaryInfix("<").
+BinaryInfix(">=").
+BinaryInfix("=<").
+
+Connective("<-").
+Connective("&").
+Connective("\/").
+

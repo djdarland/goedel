@@ -1,0 +1,44 @@
+CLOSED       TheoriesIO.
+
+% Module providing input/output for the ground representation of 
+% polymorphic many-sorted theories.
+
+IMPORT       IO, Theories.
+
+
+PREDICATE    GetTheory : 
+
+  InputStream    % An open input stream corresponding to a file with a 
+                 % .thy extension.
+* Theory.        % The ground representation of the theory in the file 
+                 % corresponding to the input stream in the first 
+                 % argument is read into this argument.
+
+DELAY        GetTheory(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    PutTheory : 
+
+  OutputStream   % An open output stream corresponding to a file with a
+                 % .thy extension.
+* Theory.        % The ground representation of the theory in this 
+                 % argument is written to the output stream in the first
+                 % argument.
+
+DELAY        PutTheory(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE    TheoryCompile :
+
+  String         % The name of a theory.
+* Theory.        % The ground representation of this theory.
+
+DELAY        TheoryCompile(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    TheoryDecompile :
+
+  Theory.        % The ground representation of a theory which is
+                 % written to a file containing this theory.
+
+DELAY        TheoryDecompile(x) UNTIL GROUND(x).

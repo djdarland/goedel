@@ -1,0 +1,135 @@
+
+This message announces the availability of the source code for SAGE, a
+partial evaluator written in the logic programming language Goedel
+which specialises Goedel programs. Although capable of specialising
+any Goedel program SAGE was developed primarily to specialise
+meta-programs which use a ground representation. 
+
+Goedel is a declarative, general-purpose language which provides a number
+of higher-level programming features, including extensive support for
+meta-programming with a ground representation. The ground representation is
+a standard tool in mathematical logic in which object level variables are
+represented by ground terms at the meta-level.
+
+This message announces the release of the source code for the SAGE
+program, the View program (a utility for partial evaluation in Goedel)
+and the file SageManual.dvi which contains the document:
+
+@techreport{sage_manual,
+   author      = {C A Gurr},
+   institution = {Human Communication Research Centre,
+                  University of Edinburgh},
+   number      = {Draft copy},
+   title       = {A Guide to Specialising Goedel Programs with the
+		  Partial Evaluator SAGE}, 
+   year        = {1994}
+}
+
+To assist users of SAGE this document gives an overview of SAGE, a
+manual for its use and a guide to writing Goedel programs,
+particularly meta-programs, in a style which makes them amenable to
+specialisation. 
+
+SAGE is comprised of four modules: SAGE, PE, Analyse and Assemble.
+The module SAGE is the smallest of these; it imports the module PE and
+defines the user-interface for SAGE. This is the only module which
+uses Goedel's input/output facilities. The module PE defines the code
+which computes partial evaluations. PE imports the two subsidiary
+modules Analyse, which defines the code that computes SAGE's static
+analyses, and Assemble, which defines the code that performs the
+post-processing optimisations and assembles the specialised program
+into a recognisable format. 
+
+Support for viewing the specialised programs produced by SAGE  is
+currently provided by the program View. This program consists of the
+single module View.
+
+Please note that SAGE and the user-guide are both in draft form and
+that the code for SAGE is largely uncommented (although it is hoped
+that the code at least partially self-documenting). All comments,
+queries or notification of errors in SAGE are welcomed.
+
+
+How to obtain Goedel
+----------------------
+
+The system is available by anonymous ftp.  The ftp sites are
+
+ftp.cs.kuleuven.ac.be     (134.58.41.2)
+
+and
+
+ftp.cs.bris.ac.uk     (137.222.102.102).
+
+At the Leuven site, the file README in the directory
+
+/pub/logic-prgm/goedel
+
+gives further instructions on how to obtain the system.  For the Bristol site,
+the README file is in the directory
+
+/goedel.
+
+
+How to obtain more information on SAGE
+---------------------------------------
+
+Three further papers providing a detailed technical description of
+SAGE and other issues related to self-applicable partial evaluation in
+logic programming are available by anonymous ftp from the Bristol
+Goedel ftp site:
+
+ftp.cs.bris.ac.uk
+
+in the file /goedel/Gurr-PhD-Thesis.tar.Z
+
+This tar-compressed file contains the files  ReadMe, GurrThesis.dvi,
+GurrAbstract.dvi and GurrTR30.dvi. The file ReadMe provides abstracts
+of the enclosed three papers: 
+
+The file GurrThesis.dvi contains the thesis:
+
+@phdthesis{sage,
+   author = {C A Gurr},
+   school = {Department of Computer Science, University of Bristol},
+   title  = {A Self-Applicable Partial Evaluator for the
+             Logic Programming Language Goedel},
+   month  = jan,
+   year   = {1994}
+   }
+
+The file GurrAbstract.dvi contains a draft paper:
+
+@techreport{gurr94,
+   author      = {C A Gurr},
+   institution = {Human Communication Research Centre,
+                  University of Edinburgh},
+   number      = {Draft copy},
+   title       = {A Self-Applicable Partial Evaluator for the
+                  Logic Programming Language Goedel (Extended Abstract)},
+   year   = {1994}
+   }
+
+which provides a summary of this Phd thesis.
+
+The file GurrTR30.dvi contains the paper:
+
+@techreport{gurr92,
+   author      = {C A Gurr},
+   institution = {Department of Computer Science, University of Bristol},
+   number      = {CSTR-92-30},
+   title       = {Specialising the Ground Representation in the Logic
+                  Programming Language Goedel,
+   year = {1992}
+   }
+
+and is to appear in the proceedings of LoPSTr'93, Springer-Verlag.
+
+------------------------------------------------------------------------
+Corin Gurr
+Human Communication Research Centre   Tel.: +41 31 650 4448
+Edinburgh University                  Email: corin@cogsci.ed.ac.uk
+2 Buccleuch Place                     FAX: +41 31 650 4587
+Edinburgh EH8 9LW
+Scotland
+

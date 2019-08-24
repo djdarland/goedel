@@ -1,0 +1,22 @@
+% Kowalski's favourite - bicycle fault diagnosis program [Kowalski 90]
+
+MODULE		Bike.
+
+PROPOSITION	WobblyWheel, FlatTyre, BrokenSpokes, PuncturedTube,
+		TyreHoldsAir, LeakyValve.
+
+PROPOSITION	Inconsistent.
+
+
+WobblyWheel <-	FlatTyre.
+
+WobblyWheel <-	BrokenSpokes.
+
+FlatTyre <-	PuncturedTube.
+
+FlatTyre <-	LeakyValve.
+
+
+% Representation of integrity constraints
+
+Inconsistent <- FlatTyre & TyreHoldsAir.

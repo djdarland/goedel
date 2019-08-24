@@ -1,0 +1,12 @@
+MODULE        ParametricTypes.
+
+BASE          M.
+
+CONSTRUCTOR   L/1.
+
+FUNCTION      F : a -> L(a).
+
+PREDICATE     P : L(M);
+              Q : a.
+
+P(F(x)) <- Q(x).

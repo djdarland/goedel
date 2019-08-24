@@ -1,0 +1,801 @@
+
+%  ====================================================================
+%
+%  Module Assemble - Construct Residual Script from Partial Evaluation.
+%
+%  ====================================================================
+
+%					Corin Gurr. (18/4/94).
+%					-----------------------
+
+
+LOCAL		Assemble.
+
+BASE		New, Same, Ex, Remove.
+
+IMPORT 		Sets.
+
+FUNCTION	NewPred : Name * List(Formula) -> New;
+		NewProp : Name * List(Formula) -> New;
+		Ex : Name * List(Type) -> Ex;
+		Axe : Name * List(Formula) -> Remove;
+		Same : List(Formula) * List(Condition) -> Same.
+
+
+CreateScript(pe,conds,program,selectable,script,changes) <-
+	{OptimiseCode(pe,program,[],changes,sames,sames1,[],pe1)} &
+	AppendExtra(conds,extra,program,pe1,pe2) &
+	{
+        IF  ModuleInProgram(program,"Syntax")
+	  THEN  FindSyntaxFrozen(pe2,program,selectable,selectable1)
+	  ELSE  selectable1 = selectable
+	} &
+	{FindFrozenPredicates(selectable1,program,sames1,selectable1,frozen)} &
+	ProgramToScript(program,page) &
+        SetToList1({Axe(ppp,defn): 
+		DefinitionInScript(page,ppp,defn) &
+		NotMember(frozen,ppp) },list_of_defns) &
+	{DeleteAllCode(list_of_defns,page,page1)} &
+	{PerformOptimisation(pe2,changes,pe3)} &
+	InsertNewPredicates(changes,page1,page2) &
+	InsertExtraPredicates(extra,page2,page3) &
+	InsertOldPredicates(sames,page3,page4) &
+	InsertCode(pe3,page4,script).
+
+
+PREDICATE  FindSyntaxFrozen : List(New) * Program * List(Name) * List(Name).
+
+FindSyntaxFrozen([],_,s,s).
+
+FindSyntaxFrozen([NewPred(_,pe)|rest],p,s,s1) <-
+  | FindSyntaxFrozen1(pe,p,s,s2) &
+  FindSyntaxFrozen(rest,p,s2,s1).
+
+FindSyntaxFrozen([NewProp(_,pe)|rest],p,s,s1) <-
+  | FindSyntaxFrozen1(pe,p,s,s2) &
+  FindSyntaxFrozen(rest,p,s2,s1).
+
+
+PREDICATE  FindSyntaxFrozen1 : List(Formula) * Program * List(Name)
+			     * List(Name).
+
+FindSyntaxFrozen1([],_,s,s).
+
+FindSyntaxFrozen1([f|rest],p,s,s1) <-
+  FindSF(p,f,s,s2) &
+  FindSyntaxFrozen1(rest,p,s2,s1).
+
+
+PREDICATE  FindSF : Program * Formula * List(Name) * List(Name).
+
+FindSF(program,body,s,s1) <-
+	And(left,right,body) |
+	FindSF(program,left,s,s2) &
+	FindSF(program,right,s2,s1).
+
+FindSF(program,body,s,s1) <-
+  PredicateAtom(body,pred,_) |
+  {
+  IF ProgramPredicateName(program,"Syntax",_,_,pred) & NotMember(s,pred)
+    THEN  s1 = [pred|s]
+    ELSE  s1 = s
+  }.
+
+FindSF(program,body,s,s1) <-
+	( Some(_,body1,body)
+	  \/ Commit(_,body1,body)
+	  \/ Not(body1,body)
+	  \/ All(_,body1,body) ) |
+	FindSF(program,body1,s,s1).
+
+FindSF(_,body,s,s) <-
+	( EmptyFormula(body)
+	  \/ OpaqueAtom(body)
+	  \/ PropositionAtom(body,_) ) |.
+
+FindSF(program,body,s,s1) <-
+	( IfSomeThenElse(_,test,then,else,body)
+	  \/ IfThenElse(test,then,else,body) ) |
+	FindSF(program,test,s,s2) &
+	FindSF(program,then,s2,s3) &
+	FindSF(program,else,s3,s1).
+
+FindSF(program,body,s,s1) <-
+	( Or(left,right,body)
+	  \/ IfSomeThen(_,left,right,body)
+	  \/ IfThen(left,right,body)
+	  \/ Implies(left,right,body)
+	  \/ IsImpliedBy(left,right,body)
+	  \/ Equivalent(left,right,body) ) |
+	FindSF(program,left,s,s2) &
+	FindSF(program,right,s2,s1).
+
+
+PREDICATE  FindFrozenPredicates : List(Name) * Program * List(Name)
+			 * List(Name) * List(Name).
+
+FindFrozenPredicates([],_,_,s,s).
+
+FindFrozenPredicates([pred|rest],program,same,s,s1) <-
+	{
+	IF SOME [defn] DefinitionInProgram(program,_,pred,defn)
+	  THEN  FindFrozen(defn,program,same,s,s2)
+	  ELSE  s2 = s
+	} &
+	FindFrozenPredicates(rest,program,same,s2,s1).
+
+
+PREDICATE  FindFrozen : List(Formula) * Program * List(Name) * List(Name)
+			 * List(Name).
+
+FindFrozen([],_,_,s,s).
+
+FindFrozen([clause|rest],program,sames,s,s1) <-
+	IsImpliedBy(_,body,clause) &
+	FindFrozen1(program,body,sames,s,s2) &
+	FindFrozen(rest,program,sames,s2,s1).
+
+
+PREDICATE  FindFrozen1 : Program * Formula * List(Name) * List(Name)
+			 * List(Name).
+
+FindFrozen1(program,body,sames,s,s1) <-
+	And(left,right,body) |
+	FindFrozen1(program,left,sames,s,s2) &
+	FindFrozen1(program,right,sames,s2,s1).
+
+FindFrozen1(program,body,sames,s,s1) <-
+  PredicateAtom(body,pred,_) \/ PropositionAtom(body,pred) |
+  {
+  IF (Member(pred,s) \/ Member(pred,sames))
+    THEN  s1 = s
+    ELSE  IF SOME [defn] DefinitionInProgram(program,_,pred,defn)
+	    THEN  FindFrozen(defn,program,sames,[pred|s],s1)
+	    ELSE  s1 = s
+  }.
+
+FindFrozen1(program,body,sames,s,s1) <-
+	( Some(_,body1,body)
+	  \/ Commit(_,body1,body)
+	  \/ Not(body1,body)
+	  \/ All(_,body1,body) ) |
+	FindFrozen1(program,body1,sames,s,s1).
+
+FindFrozen1(_,body,_,s,s) <-
+	( EmptyFormula(body)
+	  \/ OpaqueAtom(body) ) |.
+
+FindFrozen1(program,body,sames,s,s1) <-
+	( IfSomeThenElse(_,test,then,else,body)
+	  \/ IfThenElse(test,then,else,body) ) |
+	FindFrozen1(program,test,sames,s,s2) &
+	FindFrozen1(program,then,sames,s2,s3) &
+	FindFrozen1(program,else,sames,s3,s1).
+
+FindFrozen1(program,body,sames,s,s1) <-
+	( Or(left,right,body)
+	  \/ IfSomeThen(_,left,right,body)
+	  \/ IfThen(left,right,body)
+	  \/ Implies(left,right,body)
+	  \/ IsImpliedBy(left,right,body)
+	  \/ Equivalent(left,right,body) ) |
+	FindFrozen1(program,left,sames,s,s2) &
+	FindFrozen1(program,right,sames,s2,s1).
+
+
+PREDICATE  DeleteAllCode : List(Remove) * Script * Script.
+
+DeleteAllCode([],page,page).
+
+DeleteAllCode([Axe(pred,defn)|rest],page,page1) <-
+  {
+  IF SOME [delays,conds]  ControlInScript(page,pred,delays,conds)
+    THEN  DeleteControl(delays,conds,page,page2) &
+	  DeleteDefinition(defn,page2,page3)
+    ELSE  DeleteDefinition(defn,page,page3)
+  } &
+  DeleteAllCode(rest,page3,page1).
+	
+
+PREDICATE  DeleteDefinition : List(Formula) * Script * Script.
+
+DeleteDefinition([],script,script).
+
+DeleteDefinition([statement|rest],script,script1) <-
+	DeleteStatement(script,statement,script2) &
+	DeleteDefinition(rest,script2,script1).
+
+
+PREDICATE  DeleteControl : List(Formula) * List(Condition)
+			 * Script * Script.
+
+DeleteControl([],[],script,script).
+
+DeleteControl([delay|rest],[cond|rest1],script,script1) <-
+	DeleteDelay(script,delay,cond,script2) &
+	DeleteControl(rest,rest1,script2,script1).
+
+
+NotMember([],_).
+
+NotMember([name|rest],pred) <-
+	pred ~= name &
+	NotMember(rest,pred).
+
+
+PREDICATE  OptimiseCode : List(PE) * Program * List(Name) * List(Change)
+			 * List(Same) * List(Name) * List(New) * List(New).
+
+OptimiseCode([],_,_,[],[],[],pe,pe).
+
+OptimiseCode([PE_Of(atom,pe_of_atom)|rest],program,new_preds,changes,sames
+				,same_ps,pe,[NewPred(pred,pred_pe)|pe1]) <-
+	PredicateAtom(atom,pred,args) |
+	DeclaredInOpenModule(program,module,atom) &
+	ControlInProgram(program,module,pred,delays,conds) &
+	EmptyVarTyping(empty) &
+	FormulaInProgram(program,empty,atom,typing) &
+	PredicateInModule(program,_,_,pred,_,old_types,_) &
+	OptimiseArgs(args,typing,pattern,types,[],0,arity) &
+	{
+	IF  VariantTypes(old_types,types)
+	  THEN
+	    new_preds1 = new_preds &
+	    pred_pe = pe_of_atom &
+	    sames = [Same(delays,conds)|sames1] &
+	    same_ps = [pred|same_ps1] &
+	    changes = changes1
+	  ELSE
+	    NewPredicate(program,new_preds,pred,arity,new_pred) &
+	    new_preds1 = [new_pred|new_preds] &
+	    RenameHeads(pe_of_atom,pred_pe,new_pred,pattern) &
+	    UpdateDelays(delays,conds,new_pred,pattern,dlys,cns) &
+	    changes = [Change(atom,pred,new_pred,pattern,types,dlys,cns)
+			|changes1] &
+	    sames = sames1 &
+	    same_ps = same_ps1
+	} &
+	OptimiseCode(rest,program,new_preds1,changes1,sames1,same_ps1,pe,pe1).
+	
+OptimiseCode([PE_Of(atom,pe_of_atom)|rest],program,new_preds,changes,sames
+			,[pred|same_ps],pe,[NewProp(pred,pe_of_atom)|pe1]) <-
+	PropositionAtom(atom,pred) |
+	OptimiseCode(rest,program,new_preds,changes,sames,same_ps,pe,pe1).
+
+
+PREDICATE  AppendExtra : List(PE) * List(Ex) * Program * List(New) * List(New).
+
+AppendExtra([],[],_,pe,pe).
+
+AppendExtra([PE_Of(atom,pe_of_atom)|rest],[Ex(pred,types)|rest1],program,pe
+					,[NewPred(pred,pe_of_atom)|pe1]) <-
+  PredicateAtom(atom,pred,args) |
+  MakeTypes1(args,0,types1) &
+  MakeTypes(pe_of_atom,program,types1,types) &
+  AppendExtra(rest,rest1,program,pe,pe1).
+
+AppendExtra([PE_Of(atom,pe_of_atom)|rest],[Ex(pred,[])|rest1],program,pe
+					,[NewProp(pred,pe_of_atom)|pe1]) <-
+  PropositionAtom(atom,pred) |
+  AppendExtra(rest,rest1,program,pe,pe1).
+
+
+PREDICATE  MakeTypes : List(Formula) * Program * List(Type) * List(Type).
+
+MakeTypes([],_,types,types).
+
+MakeTypes([f|rest],program,types,types1) <-
+  IsImpliedBy(h,b,f) &
+  EmptyVarTyping(empty) &
+  FormulaInProgram(program,empty,b,typing) &
+  PredicateAtom(h,_,args) &
+  GetTypes(args,program,typing,types,types2) &
+  MakeTypes(rest,program,types2,types1).
+
+
+PREDICATE  GetTypes : List(Term) * Program * VarTyping * List(Type)
+		 * List(Type).
+
+GetTypes([],_,_,[],[]).
+
+GetTypes([var|rest],program,typing,[t|rest1],[type|rest2]) <-
+  TermInProgram(program,typing,var,t1,typing1) &
+  EmptyTypeSubst(empty) &
+  UnifyTypes(t,t1,empty,s) &
+  ApplySubstToType(t,s,type)  &
+  GetTypes(rest,program,typing1,rest1,rest2).
+
+
+PREDICATE  MakeTypes1 : List(Term) * Integer * List(Type).
+
+MakeTypes1([],_,[]).
+
+MakeTypes1([_|rest],n,[type|rest1]) <-
+  ParameterName(type,"alpha",n) &
+  MakeTypes1(rest,n+1,rest1).
+
+
+PREDICATE  UpdateDelays : List(Formula) * List(Condition) * Name
+			 * List(Pattern) * List(Formula) * List(Condition).
+
+UpdateDelays([],[],_,_,[],[]).
+
+UpdateDelays([atom|rest],[cond|rest1],pred,pattern,delays,conds) <-
+	PredicateAtom(atom,_,args) &
+	{
+	IF SOME [args1,cond1] 
+                ( UpdateArgs(args,pattern,0,_,args1,[],cond,cond1) &
+                  ~TrueCondition(cond1) )
+	  THEN  NewAtom(args1,pred,atom1) &
+		delays = [atom1|delays1] &
+		conds = [cond1|conds1]
+	  ELSE  delays = delays1 &
+		conds = conds1
+	} &
+	UpdateDelays(rest,rest1,pred,pattern,delays1,conds1).
+
+
+PREDICATE  UpdateArgs : List(Term) * List(Pattern) * Integer * Integer
+			 * List(Term) * List(Term) * Condition * Condition.
+
+UpdateArgs([],[],var,var,args,args,cond,cond).
+
+UpdateArgs([arg|rest1],[pattern|rest2],var,var1,args,args1,cond,cond1) <-
+	UpdateTerm(pattern,arg,var,var2,args,args2,cond,cond2) &
+	UpdateArgs(rest1,rest2,var2,var1,args2,args1,cond2,cond1).
+
+
+PREDICATE  UpdateTerm : Pattern * Term * Integer * Integer
+			 * List(Term) * List(Term) * Condition * Condition.
+
+UpdateTerm(Del(term),term1,var,var,args,args,cond,cond1) <-
+	EmptyTermSubst(empty) &
+	UnifyTerms(term,term1,empty,_) &
+	TermVariables(term1,vars) &
+	DelVarsInCond(vars,cond,cond1).
+
+UpdateTerm(Arg,term,var,var,[term|args],args,cond,cond).
+
+UpdateTerm(F(functor,pattern),term,var,var1,args,args1,cond,cond1) <-
+	IF  Variable(term)
+	  THEN  CreateArgs(pattern,var,var1,args,args1,vars,[]) &
+		UpdateCondition(cond,term,vars,cond1)
+	  ELSE  FunctionTerm(term,functor,args2) &
+		UpdateArgs(args2,pattern,var,var1,args,args1,cond,cond1).
+
+UpdateTerm(C(name),term,var,var,args,args,cond,cond1) <-
+	IF  Variable(term)
+	  THEN  UpdateCondition(cond,term,[],cond1)
+	  ELSE  ConstantTerm(term,name).
+
+
+PREDICATE  DelVarsInCond : List(Term) * Condition * Condition.
+
+DelVarsInCond([],cond,cond).
+
+DelVarsInCond([var|rest],cond,cond1) <-
+	UpdateCondition(cond,var,[],cond2) &
+	DelVarsInCond(rest,cond2,cond1).
+
+
+PREDICATE  UpdateCondition : Condition * Term * List(Term) * Condition.
+
+UpdateCondition(cond,var,vars,cond1) <-
+	AndCondition(c1,c2,cond) |
+	UpdateCondition(c1,var,vars,c3) &
+	UpdateCondition(c2,var,vars,c4) &
+	AndWithTrue(c3,c4,cond1).
+
+UpdateCondition(cond,var,vars,cond1) <-
+	OrCondition(c1,c2,cond) |
+	UpdateCondition(c1,var,vars,c3) &
+	UpdateCondition(c2,var,vars,c4) &
+	OrWithTrue(c3,c4,cond1).
+
+UpdateCondition(cond,var,vars,cond1) <-
+	GroundCondition(var1,cond) |
+	IF  var1 = var
+	  THEN  GrindVars(vars,cond1)
+	  ELSE  cond1 = cond.
+
+UpdateCondition(cond,var,_,cond1) <-
+	NonVarCondition(var1,cond) |
+	IF  var1 = var
+	  THEN  TrueCondition(cond1)
+	  ELSE  cond1 = cond.
+
+
+PREDICATE  CreateArgs : List(Pattern) * Integer * Integer * List(Term)
+			 * List(Term) * List(Term) * List(Term).
+
+CreateArgs([],var,var,args,args,vars,vars).
+
+CreateArgs([arg|rest],var,var1,args,args1,vars,vars1) <-
+	CreateTerm(arg,var,var2,args,args2,vars,vars2) &
+	CreateArgs(rest,var2,var1,args2,args1,vars2,vars1).
+
+
+PREDICATE  CreateTerm : Pattern * Integer * Integer * List(Term)
+			 * List(Term) * List(Term) * List(Term).
+
+CreateTerm(Del(_),var,var,args,args,vars,vars).
+
+CreateTerm(Arg,var,var+1,[term|args],args,[term|vars],vars) <-
+	VariableName(term,"v",var).
+
+CreateTerm(F(_,pattern),var,var1,args,args1,vars,vars1) <-
+	CreateArgs(pattern,var,var1,args,args1,vars,vars1).
+
+CreateTerm(C(_),var,var,args,args,vars,vars).
+
+
+PREDICATE  GrindVars : List(Term) * Condition.
+
+GrindVars([],cond) <-
+	TrueCondition(cond).
+
+GrindVars([var|rest],cond) <-
+	GrindVars1(rest,var,cond).
+
+
+PREDICATE  GrindVars1 : List(Term) * Term * Condition.
+
+GrindVars1([],var,cond) <-
+	GroundCondition(var,cond).
+
+GrindVars1([var|rest],var1,cond) <-
+	GrindVars1(rest,var,cond2) &
+	GroundCondition(var1,cond1) &
+	AndCondition(cond1,cond2,cond).
+
+PREDICATE  AndWithTrue : Condition * Condition * Condition.
+
+AndWithTrue(cond1,cond2,and) <-
+	IF  TrueCondition(cond1)
+	  THEN  and = cond2
+	  ELSE  IF  TrueCondition(cond2)
+		  THEN  and = cond1
+		  ELSE  AndCondition(cond1,cond2,and).
+
+
+PREDICATE  OrWithTrue : Condition * Condition * Condition.
+
+OrWithTrue(cond1,cond2,or) <-
+	IF  TrueCondition(cond1) \/ TrueCondition(cond2)
+	  THEN  TrueCondition(or)
+	  ELSE  OrCondition(cond1,cond2,or).
+
+
+PREDICATE  OptimiseArgs : List(Term) * VarTyping * List(Pattern)
+			 * List(Type) * List(Type) * Integer * Integer.
+
+OptimiseArgs([],_,[],types,types,arity,arity).
+
+OptimiseArgs([arg|rest],typing,[p|pattern],types,types1,arity,arity1) <-
+	IF  GroundTerm(arg)
+	  THEN  p = Del(arg) &
+		OptimiseArgs(rest,typing,pattern,types,types1,arity,arity1)
+	  ELSE  OptimiseTerm(arg,typing,p,types,types2,arity,arity2) &
+		OptimiseArgs(rest,typing,pattern,types2,types1,arity2,arity1).
+
+
+PREDICATE  OptimiseTerm : Term * VarTyping * Pattern * List(Type)
+			 * List(Type) * Integer * Integer.
+
+OptimiseTerm(term,typing,Arg,[type|rest],rest,arity,arity+1) <-
+	Variable(term) |
+	BindingInVarTyping(typing,term,type).
+
+OptimiseTerm(term,typing,F(functor,args),types,types1,arity,arity1) <-
+	FunctionTerm(term,functor,args1) |
+	OptimiseArgs(args1,typing,args,types,types1,arity,arity1).
+
+OptimiseTerm(term,_,C(name),types,types,arity,arity) <-
+	ConstantTerm(term,name) |.
+
+
+PREDICATE  NewPredicate : Program * List(Name) * Name * Integer * Name.
+
+NewPredicate(program,new_preds,pred,arity,new_pred) <-
+	StringInts("0",[zero]) &
+	IF  arity = 0
+	  THEN  NewProposition(program,zero,1,new_preds,pred,new_pred)
+	  ELSE  NewPredicate1(program,zero,1,new_preds,pred,arity,new_pred).
+
+
+PREDICATE  NewProposition : Program * Integer * Integer * List(Name) * Name
+			 * Name.
+
+NewProposition(program,zero,n,new_preds,pred,new_pred) <-
+	NumberAsString(zero,n,[],ns) &
+	ProgramPredicateName(program,m,ps,_,pred) &
+	ProgramPropositionName(program,m,ps++"_"++ns,pred1) &
+	{
+	IF (PropositionInModule(program,_,_,pred1,_) \/
+	    MemberCheck(pred1,new_preds))
+	  THEN  NewProposition(program,zero,n+1,new_preds,pred,new_pred)
+	  ELSE  new_pred = pred1
+	}.
+
+
+PREDICATE  NewPredicate1 : Program * Integer * Integer * List(Name) * Name
+			 * Integer * Name.
+
+NewPredicate1(program,zero,n,new_preds,pred,arity,new_pred) <-
+	NumberAsString(zero,n,[],ns) &
+	ProgramPredicateName(program,m,ps,_,pred) &
+	ProgramPredicateName(program,m,ps++"_"++ns,arity,pred1) &
+	{
+	IF (PredicateInModule(program,_,_,pred1,_,_,_) \/
+	    MemberCheck(pred1,new_preds))
+	  THEN  NewPredicate1(program,zero,n+1,new_preds,pred,arity,new_pred)
+	  ELSE  new_pred = pred1
+	}.
+
+
+NumberAsString(zero,n,ns,strng) <-
+        IF  n < 10
+                THEN  StringInts(strng,[(n Mod 10)+zero|ns])
+                ELSE  NumberAsString(zero,n Div 10,[(n Mod 10)+zero|ns],strng).
+
+
+PREDICATE  RenameHeads : List(Formula) * List(Formula) * Name
+			 * List(Pattern).
+
+RenameHeads([],[],_,_).
+
+RenameHeads([statement|rest],[statement1|rest1],new_pred,pattern) <-
+	IsImpliedBy(head,body,statement) &
+	PredicateAtom(head,_,args) &
+	ChangeArgs(args,pattern,args1,[]) &
+	NewAtom(args1,new_pred,head1) &
+	IsImpliedBy(head1,body,statement1) &
+	RenameHeads(rest,rest1,new_pred,pattern).
+
+
+PREDICATE  PerformOptimisation : List(New) * List(Change) * List(New).
+
+PerformOptimisation([],_,[]).
+
+PerformOptimisation([pe|rest],changes,[pe1|rest1]) <-
+	PerformOptimisation1(pe,changes,pe1) &
+	PerformOptimisation(rest,changes,rest1).
+
+
+PREDICATE  PerformOptimisation1 : New * List(Change) * New.
+
+PerformOptimisation1(NewProp(prop,pe),changes,NewProp(prop,pe1)) <-
+	PerformOptimisation2(pe,changes,pe1).
+
+PerformOptimisation1(NewPred(pred,pe),changes,NewPred(pred,pe1)) <-
+	PerformOptimisation2(pe,changes,pe1).
+
+
+PREDICATE  PerformOptimisation2 : List(Formula) * List(Change)
+			 * List(Formula).
+
+PerformOptimisation2([],_,[]).
+
+PerformOptimisation2([statement|rest],changes,[statement1|rest1]) <-
+	IsImpliedBy(head,body,statement) &
+	ChangeBody(body,changes,body1) &
+	IsImpliedBy(head,body1,statement1) &
+	PerformOptimisation2(rest,changes,rest1).
+
+
+PREDICATE  ChangeBody : Formula * List(Change) * Formula.
+
+ChangeBody(body,changes,new_body) <-
+	And(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	And(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	PredicateAtom(body,pred,args) |
+	{
+	IF  SOME  [pattern,new_pred,new_args]  
+		( MemberCheck(Change(_,pred,new_pred,pattern,_,_,_),changes) &
+		  ChangeArgs(args,pattern,new_args,[]) )
+		THEN  NewAtom(new_args,new_pred,new_body)
+		ELSE  new_body = body
+	}.
+
+ChangeBody(body,changes,new_body) <-
+	Some(some,body1,body) |
+	ChangeBody(body1,changes,body2) &
+	Some(some,body2,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	IfSomeThenElse(some,test,then,else,body) |
+	ChangeBody(test,changes,test1) &
+	ChangeBody(then,changes,then1) &
+	ChangeBody(else,changes,else1) &
+	IfSomeThenElse(some,test1,then1,else1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	Commit(label,body1,body) |
+	ChangeBody(body1,changes,body2) &
+	Commit(label,body2,new_body).
+
+ChangeBody(body,_,body) <-
+	EmptyFormula(body) |.
+
+ChangeBody(body,_,body) <-
+	PropositionAtom(body,_) |.
+
+ChangeBody(body,_,body) <-
+	OpaqueAtom(body) |.
+
+ChangeBody(body,changes,new_body) <-
+	Not(body1,body) |
+	ChangeBody(body1,changes,body2) &
+	Not(body2,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	IfThenElse(test,then,else,body) |
+	ChangeBody(test,changes,test1) &
+	ChangeBody(then,changes,then1) &
+	ChangeBody(else,changes,else1) &
+	IfThenElse(test1,then1,else1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	IfSomeThen(some,left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	IfSomeThen(some,left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	IfThen(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	IfThen(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	Or(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	Or(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	Implies(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	Implies(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	IsImpliedBy(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	IsImpliedBy(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	Equivalent(left,right,body) |
+	ChangeBody(left,changes,left1) &
+	ChangeBody(right,changes,right1) &
+	Equivalent(left1,right1,new_body).
+
+ChangeBody(body,changes,new_body) <-
+	All(all,body1,body) |
+	ChangeBody(body1,changes,body2) &
+	All(all,body2,new_body).
+
+
+PREDICATE  ChangeArgs : List(Term) * List(Pattern) * List(Term)
+			 * List(Term).
+
+ChangeArgs([],[],args,args).
+
+ChangeArgs([arg|rest],[pattern|rest1],new_args,new_args1) <-
+	ChangeTerm(pattern,arg,new_args,new_args2) &
+	ChangeArgs(rest,rest1,new_args2,new_args1).
+
+
+PREDICATE  ChangeTerm : Pattern * Term * List(Term) * List(Term).
+
+% *********************************************
+ChangeTerm(Del(_term),_term,new_args,new_args).
+
+ChangeTerm(Arg,term,[term|new_args],new_args).
+
+ChangeTerm(F(functor,pattern),term,new_args,new_args1) <-
+	FunctionTerm(term,functor,args) &
+	ChangeArgs(args,pattern,new_args,new_args1).
+
+ChangeTerm(C(name),term,new_args,new_args) <-
+	ConstantTerm(term,name).
+
+
+PREDICATE  NewAtom : List(Term) * Name * Formula.
+
+NewAtom([],prop,atom) <-
+	PropositionAtom(atom,prop).
+
+NewAtom([arg|rest],pred,atom) <-
+	PredicateAtom(atom,pred,[arg|rest]).
+
+
+PREDICATE  InsertNewPredicates : List(Change) * Script * Script.
+
+InsertNewPredicates([],page,page).
+
+InsertNewPredicates([Change(_,_,pred,_,types,delays,conds)|rest],page,page1) <-
+	InsertDeclaration(types,pred,page,page2) &
+	InsertControl(delays,conds,page2,page3) &
+	InsertNewPredicates(rest,page3,page1).
+
+
+PREDICATE  InsertExtraPredicates : List(Ex) * Script * Script.
+
+InsertExtraPredicates([],page,page).
+
+InsertExtraPredicates([Ex(pred,types)|rest],page,page1) <-
+	InsertDeclaration(types,pred,page,page2) &
+	InsertExtraPredicates(rest,page2,page1).
+
+
+PREDICATE  InsertOldPredicates : List(Same) * Script * Script.
+
+InsertOldPredicates([],page,page).
+
+InsertOldPredicates([Same(delays,conds)|rest],page,page1) <-
+	InsertControl(delays,conds,page,page2) &
+	InsertOldPredicates(rest,page2,page1).
+
+
+PREDICATE  InsertDeclaration : List(Type) * Name * Script * Script.
+
+InsertDeclaration([],prop,page,page1) <-
+	InsertScriptProposition(page,prop,page1).
+
+InsertDeclaration([type|rest],pred,page,page1) <-
+	InsertScriptPredicate(page,pred,NoPredInd,[type|rest],page1).
+
+
+PREDICATE  InsertCode : List(New) * Script * Script.
+
+InsertCode([],script,script).
+
+InsertCode([pe|rest],page,script) <-
+	InsertCode1(pe,page,page1) &
+	InsertCode(rest,page1,script).
+
+
+PREDICATE  InsertCode1 : New * Script * Script.
+
+InsertCode1(NewProp(_,pe_of_prop),page,script) <-
+	InsertDefinition(pe_of_prop,page,script).
+
+InsertCode1(NewPred(_,pe_of_pred),page,script) <-
+	InsertDefinition(pe_of_pred,page,script).
+	
+
+PREDICATE  InsertDefinition : List(Formula) * Script * Script.
+
+InsertDefinition([],script,script).
+
+InsertDefinition([statement|rest],page,script) <-
+	InsertStatement(page,statement,page1) &
+	InsertDefinition(rest,page1,script).
+
+
+PREDICATE  InsertControl : List(Formula) * List(Condition) * Script* Script.
+
+InsertControl([],[],script,script).
+
+InsertControl([delay|rest1],[cond|rest2],script,script1) <-
+	InsertDelay(script,delay,cond,script2) &
+	InsertControl(rest1,rest2,script2,script1).
+
+
+PREDICATE SetToList1 : Set(a) * List(a).
+
+SetToList1({},[]) <-
+  |.
+
+SetToList1(set,[x|rest1]) <-
+  x In set |
+  SetToList1(set\{x},rest1).
+
+%  ====================================================================
+%  ====================================================================

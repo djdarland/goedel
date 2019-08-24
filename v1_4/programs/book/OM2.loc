@@ -1,0 +1,5 @@
+LOCAL       OM2.
+
+Statement(OAppend(ONil,x,x) If Empty).
+Statement(OAppend(OCons(u,x),y,OCons(u,z)) If OAppend(x,y,z)).
+Statement(OAppend3(x,y,z,u) If OAppend(x,y,w) And OAppend(w,z,u)).
