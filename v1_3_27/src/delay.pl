@@ -1,4 +1,4 @@
-
+:- multifile(delay).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -29,8 +29,7 @@
  *==============================================================================
  */
 
-'$$module'('@(#)delay.pl 1.18 last updated 93/05/18 16:26:15 by jiwei
-').
+%% '$$module'('@(#)delay.pl 1.18 last updated 93/05/18 16:26:15 by jiwei').
 
 :- op(500, yfx, and).
 :- op(400, yfx, or).

@@ -1,0 +1,94 @@
+
+% Need to flock-compile theory first.
+%
+% theory is:
+%
+% ->(&(A,B),~(~(E))).
+% ->(E,&(C,D)).
+% ->(A,F).
+% ->(F,A).
+% ->(\/(E,~(F)),D).
+
+TestProve("theory", "->(B,\\/(C,D))", indicator).
+TestProve("theory", "&(A,B)", indicator).         (NO)
+
+
+% Need to flock-compile theory1 first. (theory1 is empty.)
+
+TestProve("theory1", "->(A,->(B,A))", indicator).
+TestProve("theory1", "->(->(A,->(B,C)),->(->(A,B),->(A,C)))", indicator).
+TestProve("theory1", "->(&(A,B),A)", indicator).
+TestProve("theory1", "->(&(A,B),B)", indicator).
+TestProve("theory1", "->(A,->(B,&(A,B)))", indicator).
+TestProve("theory1", "->(A,\\/(A,B))", indicator).
+TestProve("theory1", "->(B,\\/(A,B))", indicator).
+TestProve("theory1", "->(->(A,C),->(->(B,C),->(\\/(A,B),C)))", indicator).
+TestProve("theory1", "->(->(A,B),->(->(A,~(B)),~(A)))", indicator).
+TestProve("theory1", "->(~(~(A)),A)", indicator).
+TestProve("theory1", "->(~(B),->(B,C))", indicator).
+TestProve("theory1", "\\/(A,~(A))", indicator). 
+TestProve("theory1", "->(A,~(~(A)))", indicator).
+TestProve("theory1", "\\/(A,~(~(~(A))))", indicator).
+TestProve("theory1", "->(->(C,A),->(->(B,C),->(\\/(A,B),C)))", indicator).  (NO)
+
+
+% Need to flock-compile theory2 first.
+%
+% theory2 is:
+%
+% H.
+% \/(~(H),\/(P,Q)).
+% \/(~(P),C).
+% \/(~(Q),C).
+
+TestProve("theory2", "C", indicator).
+
+
+% Need to flock-compile theory3 first.
+%
+% theory3 is:
+%
+% \/(A,B).
+% \/(A,C).
+% \/(~(B),~(C)).
+
+TestProve("theory3", "A", indicator).
+
+
+% Need to flock-compile theory4 first.
+%
+% theory4 is:
+%
+% ->(&(T,P),&(R,S)).
+% \/(P,Q).
+% ->(&(R,S),P).
+% &(P,T).
+
+TestProve("theory4", "Q", indicator).   (NO)
+
+
+% Need to flock-compile theory5 first.
+%
+% theory5 is:
+%
+% ->(&(P,S),\/(R,T)).
+% \/(S,P).
+% ~(&(R,T)).
+% \/(&(P,S),&(R,T)).
+% ->(\/(R,T),Q).
+
+TestProve("theory5", "&(Q,\\/(S,P))", indicator).
+
+
+% Need to flock-compile theory6 first.
+%
+% theory6 is:
+%
+% P.
+% ->(P,&(\/(E,C),~(&(E,C)))).
+% ->(E,\/(W,T)).
+% ->(C,W).
+% ->(W,S).
+
+TestProve("theory6", "&(W,S)", indicator).  (NO)
+TestProve("theory6", "~(&(S,&(W,T)))", indicator).  (NO)

@@ -1,0 +1,4 @@
+% UseDBL is the object program that BreadthFirst operates on.
+% It needs to be program-compiled first.
+
+Go("UseDBL", "Ancestor(x, y)", s).

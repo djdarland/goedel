@@ -1,0 +1,12 @@
+MODULE Succeed.
+
+IMPORT ProgramsIO, Answers.
+
+PREDICATE Run : String * String * String.
+
+Run(program_name,  goal_string, answer_string) <-
+   FindInput(program_name ++ ".prm", In(s)) &
+   GetProgram(s, program) &
+   StringToProgramFormula(program, program_name, goal_string, [goal]) &
+   Succeed(program, goal, answer) &
+   AnswerString(program, program_name, answer, answer_string).

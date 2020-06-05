@@ -1,0 +1,138 @@
+CLOSED       Rationals.
+
+% Module providing the rationals and some standard functions and 
+% predicates with rational arguments.
+%
+% The intended interpretation of the symbols in this module is as 
+% follows.
+%
+% The intended domain is the rationals Q. The various functions, such as 
+% +, -, etc., have their usual interpetation as mappings from Q x Q (or 
+% Q, as appropriate) into Q. Similarly, the various predicates, such as 
+% >, <, etc., have their usual interpretation on Q x Q. The details are
+% given below.
+%
+% Note that infinite precision rational arithmetic is provided.
+
+IMPORT       Integers.
+
+BASE         Rational.    
+%
+% Type of the rationals.
+
+
+FUNCTION     // : yFx(520) : Integer * Integer -> Rational.
+%
+% For integers x and y, x//y is the rational obtained from the quotient
+% of x by y. 
+%
+% Note that // gives conversion from Integer to Rational in that x//1 
+% is the rational corresponding to the integer x. Conversion from 
+% Rational to Integer can be achieved with a call of the form x//1 = y,
+% where y is a rational (reducible to) N/1, for some integer N. 
+%
+% // is defined to be 0 when the second argument is 0 to make it a 
+% total function. This result will never be used. If // is called with 
+% the second argument 0, the computation will halt with an error
+% message.
+
+
+FUNCTION     ^ : yFx(540) : Rational * Integer -> Rational.
+%
+% Exponentiation.
+%
+% ^ is defined to be 0 when the first argument is 0 and the second 
+% argument is negative to make it a total function. This result will
+% never be used. If such an exponentiation is attempted, the 
+% computation will halt with an error message.
+
+
+FUNCTION     - : Fy(530) : Rational -> Rational.
+%
+% Unary minus.
+
+
+FUNCTION     * : yFx(520) : Rational * Rational -> Rational.
+%
+% Multiplication.
+
+
+FUNCTION     / : yFx(520) : Rational * Rational -> Rational.
+%
+% Division.
+%
+% / is defined to be 0 when the second argument is 0 to make it a total 
+% function. This result will never be used. If division by 0 is 
+% attempted, the computation will halt with an error message. 
+
+
+FUNCTION     + : yFx(510) : Rational * Rational -> Rational.
+%
+% Addition.
+
+
+FUNCTION     - : yFx(510) : Rational * Rational -> Rational.
+%
+% Subtraction.
+
+
+FUNCTION     Abs : Rational -> Rational.
+%
+% Absolute value.
+
+
+FUNCTION     Sign : Rational -> Rational.
+%
+% Sign of a rational.
+%
+% Sign is defined by
+%     Sign(x) =  1,   if x > 0
+%             =  0,   if x = 0
+%             = -1,   if x < 0
+
+
+FUNCTION     Max : Rational * Rational -> Rational.
+%
+% Maximum.
+
+
+FUNCTION     Min : Rational * Rational -> Rational.
+%
+% Minimum.
+
+
+PREDICATE    > : zPz : 
+
+  Rational      % A rational greater than the rational in the second
+                % argument. 
+* Rational.     % A rational.
+
+
+PREDICATE    < : zPz :
+
+  Rational      % A rational less than the rational in the second 
+                % argument. 
+* Rational.     % A rational.
+
+
+PREDICATE    >= : zPz :
+
+  Rational      % A rational greater than or equal to the rational in 
+                % the second argument. 
+* Rational.     % A rational.
+
+
+PREDICATE    =< : zPz :
+
+  Rational      % A rational less than or equal to the rational in the
+                % second argument. 
+* Rational.     % A rational.
+
+
+PREDICATE    StandardRational :
+
+  Rational      % A rational.
+* Integer       % The numerator of the standard form of this rational. 
+* Integer.      % The denominator of the standard form of this rational.
+
+DELAY        StandardRational(x,_,_) UNTIL GROUND(x).

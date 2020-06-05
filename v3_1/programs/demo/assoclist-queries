@@ -1,0 +1,7 @@
+
+% Queries for AssocList.
+
+Lookup(5, value, [Pair(5,"abc"), Pair(5,"xyz"), Pair(1,"lmn")], list).
+
+Lookup(4, "rst", [Pair(5,"abc"), Pair(2,"xyz"), Pair(1,"lmn")], list).
+

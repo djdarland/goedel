@@ -1,4 +1,4 @@
-
+:- multifile(avltrees).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -29,8 +29,7 @@ Date:		20 Feb 1992
 ================================================================================
 */
 
-'$$module'('@(#)avltrees.pl 1.5 last updated 93/05/20 18:13:38 by jiwei
-').
+%% '$$module'('@(#)avltrees.pl 1.5 last updated 93/05/20 18:13:38 by jiwei').
 
 
 'AVLTrees.Adjustment.P4'('AVLTrees.EQ.C0', 'AVLTrees.Left.C0', 'AVLTrees.LH.C0', 'AVLTrees.No.C0') :- !.

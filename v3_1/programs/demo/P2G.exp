@@ -1,0 +1,25 @@
+% A program which converts programs in Prolog syntax into ones in Goedel  
+% syntax.  Unfortunately, module declarations and language declarations are
+% not generated.  Also, cut and other Prolog's special predicates are not
+% properly treated.  You may still need to do some hand editing before having
+% a syntactically correct Goedel program.
+%
+% You need to prepare your Prolog program in the following way:
+%  [P2G]<- ;cp "prolog-program" "foo".	% canonicalise the prolog program
+%  [P2G]<- ;fc "foo" "foo".		% flock_compile "foo" to flock "foo.flk"
+%  [P2G]<- Convert("foo", "goedel-program").
+%
+%					Jiwei Wang 4/12/92
+%
+% Known bugs: cannot cope with unary :-, - and +.
+
+
+EXPORT		P2G.
+
+IMPORT		FlocksIO.
+
+PREDICATE	Convert :
+
+   String	% The name of the flock containing the Prolog program.
+ * String.	% The name of the file containing the Prolog program in
+		% Goedel syntax.

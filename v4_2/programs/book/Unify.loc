@@ -1,0 +1,57 @@
+LOCAL      Unify.
+
+% PREDICATE  MyUnifyTerms : Term * Term * TermSubst.
+
+MyUnifyTerms(t,t1,s) <-
+           EmptyTermSubst(e) &
+           UnifyingSubst(t,t1,e,s).
+
+
+PREDICATE  UnifyingSubst : Term * Term * TermSubst * TermSubst. 
+ 
+UnifyingSubst(t,t1,s,s1) <-
+           ApplySubstToTerm(t,s,ts) &
+           ApplySubstToTerm(t1,s,t1s) &
+           UnifyingSubst1(ts,t1s,s,s1).
+
+
+PREDICATE  UnifyingSubst1 : Term * Term * TermSubst * TermSubst. 
+
+UnifyingSubst1(t,t,s,s).
+UnifyingSubst1(t1,v,s,s1) <-
+           Variable(v) &
+           NotOccur(v,t1) &
+           BindingToTermSubst(v,t1,r) &
+           ComposeTermSubsts(r,s,s1).
+UnifyingSubst1(v,t1,s,s1) <-
+           Variable(v) &
+           NotOccur(v,t1) &
+           BindingToTermSubst(v,t1,r) &
+           ComposeTermSubsts(r,s,s1).
+UnifyingSubst1(t,t1,s,s1) <-
+           t ~= t1 &
+           FunctionTerm(t,x,tas) &
+           FunctionTerm(t1,x,tas1) &
+           UnifyingSubst2(tas,tas1,s,s1).
+
+PREDICATE  UnifyingSubst2 : List(Term) * List(Term) * TermSubst * 
+                            TermSubst. 
+
+UnifyingSubst2([],[],s,s).
+UnifyingSubst2([t|ts],[t1|ts1],s,s1) <-
+           UnifyingSubst(t,t1,s,s2) &
+           UnifyingSubst2(ts,ts1,s2,s1).
+
+
+PREDICATE  NotOccur : Term * Term.
+
+NotOccur(s,t) <-
+           s ~= t &
+           ALL [t1] (NotOccur(s,t1) <- Subterm(t,t1)).
+
+
+PREDICATE  Subterm : Term * Term.
+
+Subterm(t,t1) <-
+           FunctionTerm(t,_,ts) &
+           Member(t1,ts).

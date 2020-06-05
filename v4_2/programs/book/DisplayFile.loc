@@ -1,0 +1,30 @@
+LOCAL       DisplayFile.
+
+IMPORT      IO.
+
+% PREDICATE   Display : String.
+
+Display(file) <-
+            FindInput(file, result) &
+            ProcessStream(result).
+
+
+PREDICATE   ProcessStream : ResultOfFind.
+
+ProcessStream(In(stream)) <-
+            Get(stream, c) &
+            DisplayStream(stream, c) &
+            EndInput(stream).
+
+ProcessStream(NotFound) <-
+            WriteString(StdOut, "File not found\n").
+
+
+PREDICATE   DisplayStream : InputStream * Integer.
+
+DisplayStream(stream, c) <-
+            IF c ~= -1 
+            THEN
+              Put(StdOut, c) &
+              Get(stream, c1) &
+              DisplayStream(stream, c1).

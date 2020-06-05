@@ -1,0 +1,35 @@
+EXPORT     Interpreter.
+
+% This module implements an interpreter for SLDNF-resolution using the 
+% ground representation. The computation rule employed is the safe
+% "leftmost literal" one, that is, the selected literal is the leftmost
+% literal which is either an atom or a ground negative literal. This 
+% module assumes the existence of one above it which handles the 
+% conversion of goals and answers between their string representation 
+% and their ground representation.
+
+IMPORT     Programs.
+
+PREDICATE  MySucceed : 
+
+  Program       % Representation of a normal program (excluding commits 
+                % and conditionals).
+* Formula       % Representation of the body of a normal goal to this 
+                % program.
+* TermSubst.    % Representation of a computed answer for this goal 
+                % and program using SLDNF-resolution and the safe 
+                % leftmost literal computation rule.
+
+DELAY      MySucceed(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  MyFail :
+
+  Program       % Representation of a normal program (excluding commits
+                % and conditionals).
+* Formula.      % Representation of the body of a normal goal to this 
+                % program such that this goal and this program have a 
+                % finitely failed SLDNF-tree using the safe leftmost 
+                % literal computation rule.
+
+DELAY      MyFail(x,y) UNTIL GROUND(x) & GROUND(y).

@@ -1,0 +1,917 @@
+EXPORT     Syntax.
+
+% Module providing a number of abstract data types for representing
+% object-level expressions (using a ground representation) and 
+% predicates for processing terms of these types.
+
+IMPORT     Strings.
+
+BASE       Name,           % Type of a term representing the name of
+                           % a symbol.
+           Type,           % Type of a term representing a type.
+           Term,           % Type of a term representing a term.
+           Formula,        % Type of a term representing a formula.
+           TypeSubst,      % Type of a term representing a type 
+                           % substitution. 
+           TermSubst,      % Type of a term representing a term 
+                           % substitution. 
+           FunctionInd,    % Type of a term representing a function 
+                           % indicator.
+           PredicateInd,   % Type of a term representing a predicate 
+                           % indicator.
+           VarTyping.      % Type of a term representing a variable 
+                           % typing.
+
+CONSTANT   NoPredInd : PredicateInd.
+%
+% Constant stating that a predicate has no indicator.
+
+CONSTANT   ZPZ, ZP, PZ :  PredicateInd.
+% 
+% Constants representing the predicate indicators zPz, zP, and Pz 
+% (resp.).
+
+CONSTANT   NoFunctInd : FunctionInd.
+%
+% Constant stating that a function has no indicator.
+
+
+FUNCTION   XFX, XFY, YFX, XF, FX, YF, FY : Integer -> FunctionInd.
+%
+% Functions representing the function indicators xFx, xFy, yFx, xF, Fx,
+% yF, and Fy (resp.).
+
+
+PREDICATE  And : 
+
+  Formula         % Representation of a formula W.
+* Formula         % Representation of a formula V.
+* Formula.        % Representation of the formula  W & V.
+
+
+PREDICATE  AndWithEmpty :
+
+  Formula         % Representation of possibly empty formula W.
+* Formula         % Representation of possibly empty formula V.
+* Formula.        % Representation of W & V, if W and V are non-empty;
+                  % W, if V is the empty formula; and V, if W is the
+                  % empty formula.
+
+DELAY      AndWithEmpty(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  Or : 
+
+  Formula         % Representation of a formula W.
+* Formula         % Representation of a formula V.
+* Formula.        % Representation of the formula W \/ V. 
+
+
+PREDICATE  Not : 
+
+  Formula         % Representation of a formula W.
+* Formula.        % Representation of the formula ~ W. 
+
+
+PREDICATE  Implies : 
+
+  Formula         % Representation of a formula W.
+* Formula         % Representation of a formula V.
+* Formula.        % Representation of the formula W -> V. 
+
+
+PREDICATE  IsImpliedBy : 
+
+  Formula         % Representation of a formula W.
+* Formula         % Representation of a formula V.
+* Formula.        % Representation of the formula W <- V. 
+
+
+PREDICATE  Equivalent : 
+
+  Formula         % Representation of a formula W.
+* Formula         % Representation of a formula V.
+* Formula.        % Representation of the formula W <-> V. 
+
+
+PREDICATE  Some : 
+
+  List(Term)      % List of representations of variables. 
+* Formula         % Representation of a formula.
+* Formula.        % Representation of the formula obtained by taking 
+                  % the existential quantification over the set of 
+                  % variables in the first argument of the formula in 
+                  % the second argument.
+
+
+PREDICATE  All : 
+
+  List(Term)      % List of representations of variables. 
+* Formula         % Representation of a formula.
+* Formula.        % Representation of the formula obtained by taking 
+                  % the universal quantification over the set of 
+                  % variables in the first argument of the formula in 
+                  % the second argument.
+
+
+PREDICATE  IfThen : 
+
+  Formula         % Representation of a formula, Condition.
+* Formula         % Representation of a formula, Formula.
+* Formula.        % Representation of the IF-THEN construct which has 
+                  % the form IF Condition THEN Formula.
+
+
+PREDICATE  IfSomeThen : 
+
+  List(Term)      % List of representations of variables, v1,...,vn.
+* Formula         % Representation of a formula, Condition.
+* Formula         % Representation of a formula, Formula.
+* Formula.        % Representation of the IF-THEN construct which has
+                  % the form IF SOME [v1,...,vn] Condition THEN Formula.
+
+
+PREDICATE  IfThenElse : 
+
+  Formula         % Representation of a formula, Condition.
+* Formula         % Representation of a formula, Formula1.
+* Formula         % Representation of a formula, Formula2.
+* Formula.        % Representation of the IF-THEN-ELSE construct which
+                  % has the form IF Condition THEN Formula1 ELSE 
+                  % Formula2.
+
+
+PREDICATE  IfSomeThenElse : 
+
+  List(Term)      % List of representations of variables, v1,...,vn.
+* Formula         % Representation of a formula, Condition.
+* Formula         % Representation of a formula, Formula1.
+* Formula         % Representation of a formula, Formula2.
+* Formula.        % Representation of the IF-THEN-ELSE construct which 
+                  % has the form IF SOME [v1,...,vn] Condition THEN 
+                  % Formula1 ELSE Formula2.
+
+
+PREDICATE  Commit : 
+
+  Integer         % Commit label.
+* Formula         % Representation of a formula.
+* Formula.        % Representation of the formula obtained by enclosing 
+                  % the formula in the second argument using a commit 
+                  % with this label. 
+
+
+PREDICATE  IntensionalSet :
+
+  Term            % Representation of a term T.
+* Formula         % Representation of a formula W.
+* Term.           % Representation of the intensional set term {T : W}.
+
+
+PREDICATE  Parameter : 
+
+  Type.           % Representation of a parameter.
+
+DELAY      Parameter(x) UNTIL GROUND(x).
+
+
+PREDICATE  ParameterName :
+
+  Type            % Representation of a parameter.
+* String          % The root of the name of the parameter.
+* Integer.        % The index of the parameter.
+
+
+PREDICATE  TypeMaxParIndex : 
+
+  List(Type)      % List of representations of types.
+* Integer.        % One more than the maximum index of parameters 
+                  % appearing in these types. (If there are no such 
+                  % parameters, this argument is 0.)
+
+DELAY      TypeMaxParIndex(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  Variable : 
+
+  Term.           % Representation of a variable.
+
+DELAY      Variable(x) UNTIL GROUND(x).
+
+
+PREDICATE  VariableName :
+
+  Term            % Representation of a variable.
+* String          % The root of the name of the variable.
+* Integer.        % The index of the variable.
+
+
+PREDICATE  TermMaxVarIndex :
+
+  List(Term)      % List of representations of terms.
+* Integer.        % One more than the maximum index of variables 
+                  % appearing in these terms. (If there are no such 
+                  % variables, this argument is 0.)
+
+DELAY      TermMaxVarIndex(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  FormulaMaxVarIndex : 
+
+  List(Formula)   % List of representations of formulas.
+* Integer.        % One more than the maximum index of variables 
+                  % appearing in these formulas. (If there are no such
+                  % variables, this argument is 0.)
+
+DELAY      FormulaMaxVarIndex(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  TypeParameters :
+
+  Type            % Representation of a type.
+* List(Type).     % List (in some order) of the representations of the
+                  % parameters occurring in this type.
+
+DELAY      TypeParameters(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  TermVariables :
+
+  Term            % Representation of a term.
+* List(Term).     % List (in some order) of the representations of the
+                  % (free) variables occurring in this term.
+
+DELAY      TermVariables(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  FormulaVariables :
+
+  Formula         % Representation of a formula.
+* List(Term).     % List (in some order) of the representations of the 
+                  % free variables occurring in this formula.
+
+DELAY      FormulaVariables(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  EmptyFormula : 
+
+  Formula.        % Representation of the empty formula.
+
+
+PREDICATE  EmptyTypeSubst : 
+
+  TypeSubst.      % Representation of the empty type substitution.
+
+
+PREDICATE  EmptyTermSubst : 
+
+  TermSubst.      % Representation of the empty term substitution.
+
+
+PREDICATE  EmptyVarTyping : 
+
+  VarTyping.      % Representation of the empty variable typing.
+
+
+PREDICATE  NonParameter : 
+
+  Type.           % Representation of a non-parameter type.
+
+DELAY      NonParameter(x) UNTIL GROUND(x).
+
+
+PREDICATE  NonVariable : 
+
+  Term.           % Representation of a non-variable term.
+
+DELAY      NonVariable(x) UNTIL GROUND(x).
+
+
+PREDICATE  Atom : 
+
+  Formula.        % Representation of an atom.
+
+DELAY      Atom(x) UNTIL GROUND(x).
+
+
+PREDICATE  ConjunctionOfAtoms : 
+
+  Formula.        % Representation of a conjunction of atoms.
+
+DELAY      ConjunctionOfAtoms(x) UNTIL GROUND(x).
+
+
+PREDICATE  Literal : 
+
+  Formula.        % Representation of a literal.
+
+DELAY      Literal(x) UNTIL GROUND(x).
+
+
+PREDICATE  ConjunctionOfLiterals : 
+
+  Formula.        % Representation of a conjunction of literals.
+
+DELAY      ConjunctionOfLiterals(x) UNTIL GROUND(x).
+
+
+PREDICATE  CommitFreeFormula : 
+
+  Formula.        % Representation of a commit-free formula.
+
+DELAY      CommitFreeFormula(x) UNTIL GROUND(x).
+
+
+PREDICATE  GroundType : 
+
+  Type.           % Representation of a parameter-free type.
+
+DELAY      GroundType(x) UNTIL GROUND(x).
+
+
+PREDICATE  GroundTerm : 
+
+  Term.           % Representation of a term with no free variables.
+
+DELAY      GroundTerm(x) UNTIL GROUND(x).
+
+
+PREDICATE  GroundAtom : 
+
+  Formula.        % Representation of an atom with no free variables.
+
+DELAY      GroundAtom(x) UNTIL GROUND(x).
+
+
+PREDICATE  ClosedFormula : 
+
+  Formula.        % Representation of a formula with no free variables.
+
+DELAY      ClosedFormula(x) UNTIL GROUND(x).
+
+
+PREDICATE  Body : 
+
+  Formula.        % Representation of a standard body.
+
+DELAY      Body(x) UNTIL GROUND(x).
+
+
+PREDICATE  NormalBody : 
+
+  Formula.        % Representation of a normal body.
+
+DELAY      NormalBody(x) UNTIL GROUND(x).
+
+
+PREDICATE  DefiniteBody : 
+
+  Formula.        % Representation of a definite body.
+
+DELAY      DefiniteBody(x) UNTIL GROUND(x).
+
+
+PREDICATE  Goal : 
+
+  Formula.        % Representation of a standard goal.
+
+DELAY      Goal(x) UNTIL GROUND(x).
+
+
+PREDICATE  NormalGoal : 
+
+  Formula.        % Representation of a normal goal.
+
+DELAY      NormalGoal(x) UNTIL GROUND(x).
+
+
+PREDICATE  DefiniteGoal : 
+
+  Formula.        % Representation of a definite goal.
+
+DELAY      DefiniteGoal(x) UNTIL GROUND(x).
+
+
+PREDICATE  Resultant : 
+
+  Formula.        % Representation of a standard resultant.
+
+DELAY      Resultant(x) UNTIL GROUND(x).
+
+
+PREDICATE  NormalResultant : 
+
+  Formula.        % Representation of a normal resultant.
+
+DELAY      NormalResultant(x) UNTIL GROUND(x).
+
+
+PREDICATE  DefiniteResultant : 
+
+  Formula.        % Representation of a definite resultant.
+
+DELAY      DefiniteResultant(x) UNTIL GROUND(x).
+
+
+PREDICATE  Statement : 
+
+  Formula.        % Representation of a standard statement.
+
+DELAY      Statement(x) UNTIL GROUND(x).
+
+
+PREDICATE  NormalStatement : 
+
+  Formula.        % Representation of a normal statement.
+
+DELAY      NormalStatement(x) UNTIL GROUND(x).
+
+
+PREDICATE  DefiniteStatement : 
+
+  Formula.        % Representation of a definite statement.
+
+DELAY      DefiniteStatement(x) UNTIL GROUND(x).
+
+
+PREDICATE  BaseType : 
+
+  Type            % Representation of a non-opaque base.
+* Name.           % Representation of the name of this base.
+
+
+PREDICATE  ConstructorType : 
+
+  Type            % Representation of a non-opaque type with a 
+                  % constructor at the top level.
+* Name            % Representation of the name of this constructor.
+* List(Type).     % List of representations of the top-level subtypes 
+                  % of this type.
+
+
+PREDICATE  ConstantTerm : 
+
+  Term            % Representation of a non-opaque constant.
+* Name.           % Representation of the name of this constant.
+
+
+PREDICATE  FunctionTerm : 
+
+  Term            % Representation of a non-opaque term with a function
+                  % at the top level.
+* Name            % Representation of the name of this function.
+* List(Term).     % List of representations of the top-level subterms 
+                  % of this term.
+
+
+PREDICATE  PropositionAtom : 
+
+  Formula         % Representation of a non-opaque proposition.
+* Name.           % Representation of the name of this proposition.
+
+
+PREDICATE  PredicateAtom :
+
+  Formula         % Representation of a non-opaque atom with a predicate 
+                  % at the top level.
+* Name            % Representation of the name of this predicate.
+* List(Term).     % List of representations of the top-level terms of 
+                  % this atom.
+
+
+PREDICATE  OpaqueType :
+
+  Type.           % Representation of an opaque type.
+
+DELAY      OpaqueType(x) UNTIL GROUND(x).
+
+
+PREDICATE  OpaqueTerm :
+
+  Term.            % Representation of an opaque term.
+
+DELAY      OpaqueTerm(x) UNTIL GROUND(x).
+
+
+PREDICATE  OpaqueAtom :
+
+  Formula.        % Representation of an opaque atom.
+
+DELAY      OpaqueAtom(x) UNTIL GROUND(x).
+
+
+PREDICATE  ApplySubstToType : 
+
+  Type            % Representation of a type.
+* TypeSubst       % Representation of a type substitution.
+* Type.           % Representation of the type obtained by applying 
+                  % this substitution to this type.
+
+DELAY      ApplySubstToType(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  ApplySubstToTerm : 
+
+  Term            % Representation of a term.
+* TermSubst       % Representation of a term substitution.
+* Term.           % Representation of the term obtained by applying 
+                  % this substitution to this term.
+
+DELAY      ApplySubstToTerm(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  ApplySubstToFormula : 
+
+  Formula         % Representation of a formula.
+* TermSubst       % Representation of a term substitution.
+* Formula.        % Representation of the formula obtained by applying
+                  % this substitution to this formula.
+
+DELAY      ApplySubstToFormula(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  ComposeTypeSubsts : 
+
+  TypeSubst       % Representation of a type substitution.
+* TypeSubst       % Representation of a type substitution.
+* TypeSubst.      % Representation of the substitution obtained by 
+                  % composing these two substitutions (in the order 
+                  % that they appear as arguments).
+
+DELAY      ComposeTypeSubsts(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  ComposeTermSubsts : 
+
+  TermSubst       % Representation of a term substitution.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the substitution obtained by 
+                  % composing these two substitutions (in the order 
+                  % that they appear as arguments).
+
+DELAY      ComposeTermSubsts(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  CombineVarTypings : 
+
+  VarTyping       % Representation of a variable typing.
+* VarTyping       % Representation of a variable typing.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining these two variable typings.
+
+DELAY      CombineVarTypings(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RestrictSubstToType : 
+
+  Type            % Representation of a type.
+* TypeSubst       % Representation of a type substitution.
+* TypeSubst.      % Representation of the substitution obtained by 
+                  % restricting this type substitution to the 
+                  % parameters in this type. 
+
+DELAY      RestrictSubstToType(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RestrictSubstToTerm : 
+
+  Term            % Representation of a term.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the substitution obtained by 
+                  % restricting this term substitution to the variables 
+                  % in this term. 
+
+DELAY      RestrictSubstToTerm(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RestrictSubstToFormula : 
+
+  Formula         % Representation of a formula.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the substitution obtained by
+                  % restricting this term substitution to the free 
+                  % variables in this formula. 
+
+DELAY      RestrictSubstToFormula(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  BindingToTypeSubst : 
+
+  Type            % Representation of a parameter.
+* Type            % Representation of a type.
+* TypeSubst.      % Representation of the type substitution containing 
+                  % just the binding in which this parameter is bound 
+                  % to this type. 
+
+DELAY      BindingToTypeSubst(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  BindingToTermSubst : 
+
+  Term            % Representation of a variable.
+* Term            % Representation of a term.
+* TermSubst.      % Representation of the term substitution containing 
+                  % just the binding in which this variable is bound 
+                  % to this term. 
+
+DELAY      BindingToTermSubst(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  BindingToVarTyping : 
+
+  Term            % Representation of a variable.
+* Type            % Representation of a type.
+* VarTyping.      % Representation of the variable typing containing 
+                  % just the binding in which this variable is bound
+                  % to this type. 
+
+DELAY      BindingToVarTyping(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  BindingInTypeSubst : 
+
+  TypeSubst       % Representation of a type substitution.
+* Type            % Representation of a parameter in the first
+                  % component of a binding in this substitution.
+* Type.           % Representation of the type to which this parameter
+                  % is bound in this substitution.
+
+DELAY      BindingInTypeSubst(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  BindingInTermSubst : 
+
+  TermSubst       % Representation of a term substitution.
+* Term            % Representation of a variable in the first
+                  % component of a binding in this substitution.
+* Term.           % Representation of the term to which this variable 
+                  % is bound in this substitution.
+
+DELAY      BindingInTermSubst(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  BindingInVarTyping : 
+
+  VarTyping       % Representation of a variable typing.
+* Term            % Representation of a variable in a binding in 
+                  % this variable typing.
+* Type.           % Representation of the type to which this variable 
+                  % is bound in this variable typing.
+
+DELAY      BindingInVarTyping(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  DelBindingInTypeSubst :
+
+  TypeSubst       % Representation of a type substitution.
+* Type            % Representation of a parameter.
+* Type            % Representation of a type.
+* TypeSubst.      % Representation of the type substitution obtained 
+                  % from the first argument by deleting the binding of
+                  % this parameter to this type.
+
+DELAY      DelBindingInTypeSubst(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  DelBindingInTermSubst :
+
+  TermSubst       % Representation of a term substitution.
+* Term            % Representation of a variable.
+* Term            % Representation of a term.
+* TermSubst.      % Representation of the term substitution obtained 
+                  % from the first argument by deleting the binding of
+                  % this variable to this term.
+
+DELAY      DelBindingInTermSubst(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  DelBindingInVarTyping :
+
+  VarTyping       % Representation of a variable typing.
+* Term            % Representation of a variable.
+* Type            % Representation of a type.
+* VarTyping.      % Representation of the variable typing obtained 
+                  % from the first argument by deleting the binding 
+                  % of this variable to this type.
+
+DELAY      DelBindingInVarTyping(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  UnifyTypes : 
+
+  Type            % Representation of a type.
+* Type            % Representation of a type.
+* TypeSubst       % Representation of a type substitution.
+* TypeSubst.      % Representation of the type substitution obtained by
+                  % composing the type substitution in the third 
+                  % argument with a specific, unique mgu for the types
+                  % which are obtained by applying the type substitution 
+                  % in the third argument to the types in the first two
+                  % arguments. (The mgu binds a parameter in the first
+                  % argument to a parameter in the second argument, not 
+                  % the other way around.) 
+
+DELAY      UnifyTypes(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).
+
+
+PREDICATE  UnifyTerms : 
+
+  Term            % Representation of a term.
+* Term            % Representation of a term.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the term substitution obtained by 
+                  % composing the term substitution in the third 
+                  % argument with a specific, unique mgu for the terms
+                  % which are obtained by applying the term substitution
+                  % in the third argument to the terms in the first two
+                  % arguments. (The mgu binds a variable in the first 
+                  % argument to a variable in the second argument, not
+                  % the other way around.)
+
+DELAY      UnifyTerms(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).
+
+
+PREDICATE  UnifyAtoms : 
+
+  Formula         % Representation of an atom.
+* Formula         % Representation of an atom.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the term substitution obtained by 
+                  % composing the term substitution in the third 
+                  % argument with a specific, unique mgu for the atoms 
+                  % which are obtained by applying the term substitution
+                  % in the third argument to the atoms in the first two
+                  % arguments. (The mgu binds a variable in the first 
+                  % argument to a variable in the second argument, not
+                  % the other way around.)
+
+DELAY      UnifyAtoms(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).
+
+
+PREDICATE  RenameTypes : 
+
+  List(Type)      % List of representations of types.
+* List(Type)      % List of representations of types.
+* List(Type).     % List of representations of the types obtained by
+                  % renaming the parameters of the types in the second 
+                  % argument by a specific, unique type substitution 
+                  % such that they become distinct from the parameters 
+                  % in the types in the first argument.
+
+DELAY      RenameTypes(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RenameTerms : 
+
+  List(Term)      % List of representations of terms.
+* List(Term)      % List of representations of terms.
+* List(Term).     % List of representations of the terms obtained by 
+                  % renaming the (free) variables of the terms in the
+                  % second argument by a specific, unique term 
+                  % substitution such that they become distinct from 
+                  % the (free) variables in the terms in the first 
+                  % argument.
+
+DELAY      RenameTerms(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RenameFormulas : 
+
+  List(Formula)   % List of representations of formulas.
+* List(Formula)   % List of representations of formulas.
+* List(Formula).  % List of representations of the formulas obtained
+                  % by renaming the free variables of the formulas in 
+                  % the second argument by a specific, unique term 
+                  % substitution such that they become distinct from 
+                  % the free variables in the formulas in the first 
+                  % argument.
+
+DELAY      RenameFormulas(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  VariantTypes : 
+
+  List(Type)      % List of representation of types.
+* List(Type).     % List of representations of types which are variants
+                  % of the types in the first argument.
+
+DELAY      VariantTypes(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  VariantTerms : 
+
+  List(Term)      % List of representation of terms.
+* List(Term).     % List of representations of terms which are variants 
+                  % of the terms in the first argument.
+
+DELAY      VariantTerms(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  VariantFormulas : 
+
+  List(Formula)   % List of representations of formulas.
+* List(Formula).  % List of representations of formulas which are 
+                  % variants of the formulas in the first argument.
+
+DELAY      VariantFormulas(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  StandardiseFormula :
+
+  Formula         % Representation of a formula.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* Formula.        % Representation of the formula obtained by 
+                  % systematically replacing the variables of the 
+                  % formula in the first argument by variables with 
+                  % indexes greater than or equal to the second 
+                  % argument and strictly less than the third argument.
+
+DELAY      StandardiseFormula(x,y,_,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  Derive : 
+
+  Formula         % Representation of the head of a resultant.
+* Formula         % Representation of the body to the left of the 
+                  % selected atom of this resultant.
+* Formula         % Representation of the selected atom in this 
+                  % resultant.
+* Formula         % Representation of the body to the right of the 
+                  % selected atom of this resultant.
+* Formula         % Representation of a statement whose head unifies 
+                  % with the selected atom in the resultant.
+* TermSubst       % Representation of a specific, unique mgu of the 
+                  % head of the selected atom and the head of this
+                  % statement. (The mgu binds a variable in the head to
+                  % a variable in the selected atom, not the other way 
+                  % around.)
+* Formula.        % Representation of the derived resultant obtained
+                  % from this resultant and this statement using this
+                  % mgu.
+
+DELAY      Derive(x,y,z,u,v,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                     GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  Resolve : 
+
+  Formula         % Representation of an atom.
+* Formula         % Representation of a statement.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* TermSubst       % Representation of a term substitution.
+* TermSubst       % Representation of the substitution obtained by 
+                  % composing the substitution in the fifth argument 
+                  % with a specific, unique mgu of the atom in the 
+                  % first argument with the substitution in the fifth 
+                  % argument applied and the head of a renamed version
+                  % of the statement in the second argument. The 
+                  % renaming is achieved by systematically replacing 
+                  % the variables of the statement by variables with 
+                  % indexes greater than or equal to the third argument 
+                  % and strictly less than the fourth argument. (The 
+                  % mgu binds a variable in the head to a variable in 
+                  % the atom in the first argument with the substitution 
+                  % applied, not the other way around.)
+* Formula.        % Representation of the formula obtained by applying
+                  % the mgu in the sixth argument to the body of the 
+                  % renamed statement.
+
+DELAY      Resolve(x,y,z,_,u,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                 GROUND(z) & GROUND(u).
+
+
+PREDICATE  ResolveAll :            
+
+  Formula         % Representation of an atom.
+* List(Formula)   % List of representations of statements.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* TermSubst       % Representation of a term substitution.
+* List(TermSubst) % List of representations of the substitutions 
+                  % obtained by composing the substitution in the 
+                  % seventh argument with a specific, unique mgu of the
+                  % atom in the first argument with the substitution in
+                  % the seventh argument applied and the head of a 
+                  % renamed version of a corresponding statement in the 
+                  % second argument. The renaming is achieved by 
+                  % systematically replacing the variables of the 
+                  % statement by variables with indexes greater than or
+                  % equal to the third argument and strictly less than 
+                  % the fourth argument, and commit labels of the 
+                  % statement by commit labels greater than or equal 
+                  % to the fifth argument and strictly less than the 
+                  % sixth argument. (Each mgu binds a variable in the 
+                  % head to a variable in the atom in the first 
+                  % argument with the substitution applied, not the 
+                  % other way around.)
+* List(Formula).  % List of representations of the formulas obtained by 
+                  % applying the corresponding mgu in the eighth 
+                  % argument to the body of the corresponding renamed 
+                  % statement.
+
+DELAY      ResolveAll(x,y,z,_,u,_,v,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                      GROUND(z) & GROUND(u) & GROUND(v).

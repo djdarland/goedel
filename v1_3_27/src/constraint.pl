@@ -1,4 +1,4 @@
-
+:- multifile(constraint).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -31,8 +31,7 @@ Date:		31 January 1992
 ================================================================================
 */
 
-'$$module'('@(#)constraint.pl 1.18 last updated 93/12/14 11:58:15 by jiwei
-').
+%% '$$module'('@(#)constraint.pl 1.18 last updated 93/12/14 11:58:15 by jiwei').
 
 
 build_constraints([], null, VarDict, VarDict).
@@ -305,7 +304,7 @@ build_set_term('MetaDefs.Term.F2'(_, [A, B]), [A|C], TailVar) :-
 
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-build_constraints_aux('"\', [Expr1, Expr2], Var, Module, Goal, VarDict,
+build_constraints_aux('"\\', [Expr1, Expr2], Var, Module, Goal, VarDict,
 	NewVarDict) :-
    replace_evaluatable(Expr1, Expr12, [], Constraints1),
    replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),

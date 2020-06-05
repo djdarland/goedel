@@ -1,0 +1,68 @@
+CLOSED     Flocks.
+
+% Module providing the abstract data type Flock and predicates for 
+% processing terms of type Flock. A term of type Flock represents
+% a flock which is an ordered collection of units.
+
+IMPORT     Units.
+
+BASE       Flock.         
+%
+% Type of a flock.
+
+
+PREDICATE  EmptyFlock :
+
+  Flock.          % An empty flock.
+
+
+PREDICATE  Extent :
+
+  Flock           % A flock.
+* Integer.        % The number of units in this flock.
+
+DELAY      Extent(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  UnitInFlock : 
+
+  Flock           % A flock.
+* Unit            % A unit in this flock.
+* Integer.        % Position of this unit in this flock.
+
+DELAY      UnitInFlock(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  UnitWithIdentifier : 
+
+  Flock           % A flock.
+* String          % String representation of an identifier.
+* Unit            % A unit in this flock whose top-level identifier is 
+                  % the identifier in the second argument.
+* Integer.        % Position of this unit in this flock.
+
+DELAY      UnitWithIdentifier(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertUnit : 
+
+  Flock           % A flock.
+* Unit            % A unit.
+* Integer         % A positive integer n.
+* Flock.          % A flock which differs from the flock in the first 
+                  % argument only in that it also contains this unit in 
+                  % the nth position.
+
+DELAY      InsertUnit(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z). 
+
+
+PREDICATE  DeleteUnit : 
+
+  Flock           % A flock.
+* Unit            % A unit in this flock.
+* Integer         % The position of this unit in this flock.
+* Flock.          % A flock which differs from the flock in the first 
+                  % argument only in that it does not contain this unit 
+                  % in this position.
+
+DELAY      DeleteUnit(x,_,_,_) UNTIL GROUND(x). 

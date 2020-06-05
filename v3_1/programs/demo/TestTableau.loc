@@ -1,0 +1,21 @@
+MODULE     TestTableau.
+
+IMPORT     FlocksIO, Tableau.
+
+
+PREDICATE  TestProve : 
+
+  String      % The name of a file (without the .flk extension) 
+              % containing the flock representation of a propositional 
+              % theory.
+* String      % The string representation of a propositional formula.
+* Indicator.  % YES, if the formula is a theorem, and NO, if it is not.
+
+TestProve(theory_string, formula_string, indicator) <-
+    FindInput(theory_string ++ ".flk", In(stream)) &
+    GetFlock(stream, theory) &
+    EndInput(stream) &
+    StringToUnit(formula_string, formula) &
+    Prove(theory, formula, indicator).
+
+DELAY      TestProve(x,y,_) UNTIL GROUND(x) & GROUND(y).

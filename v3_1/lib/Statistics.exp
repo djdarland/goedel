@@ -1,0 +1,52 @@
+% This module supports the Goedel counterpart to Prolog's statistics/2.
+% All parameter of Prolog statistics/2 are implemented (shown in CONSTANT
+% declaration below).  The implementation is hidden (in Statistics.sup).
+% Author: Jiwei Wang.		Date: 3 Apr. 92
+%
+% @(#)Statistics.exp 1.4 last updated 94/04/24 15:07:27 by jiwei
+
+
+CLOSED		Statistics.
+
+IMPORT		Lists.
+
+BASE		Key.
+
+CONSTANT	GlobalStack, LocalStack, Trail, Choice, Core,
+	        Memory, Heap, Program, RunTime, GarbageCollection,
+		StackShifts : Key.
+
+
+PREDICATE	Statistics : Key * List(Integer).
+
+% Times are in milliseconds, sizes of areas in bytes.
+%
+% Statistics(GlobalStack, [size_used, free]) refers to the global stack
+%		where compound terms are stored.
+%
+% Statistics(LocalStack, [size_used, free]) refers to the local stack where
+%		recursive predicate environments are stored.
+%
+% Statistics(Trail, [size_used, free]) refers to the trail stack where
+%		conditional variable bindings are recorded.
+%
+% Statistics(Choice, [size_used, free]) refers to the choice point stack
+%		where partial states are stored for backtracking purposes.
+%
+% Statistics(Core, [size_used, 0])
+% Statistics(Memory, [size_used, 0]) refers to the amount of memory actually
+%		allocated by the Unix process.
+%
+% Statistics(Heap, [size_used, 0])
+% Statistics(Program, [size_used, 0]) refers to the amount of memory
+%		allocated for compiled and interpreted clauses, symbol
+%		tables and the like.
+%
+% Statistics(RunTime, [since_start_of_Goedel, since_previous_Statistics])
+%		refers to the CPU time.
+%
+% Statistics(GarbageCollection, [no_of_GCs, bytes_freed, time_spent])
+%		refers to the garbage collection (GC).
+%
+% Statistics(StackShifts, [no_of_local_shifts, no_of_trail_shifts, time_spent]).
+

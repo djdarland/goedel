@@ -1,0 +1,24 @@
+MODULE      P3.
+
+IMPORT      Lists.
+
+
+PREDICATE   Perm : List(Integer) * List(Integer).
+DELAY       Perm(x,_) UNTIL NONVAR(x).
+
+Perm([],[]) <-
+            |.
+Perm([x|y],[u|v]) <-
+            |
+            Del(u,[x|y],z) &
+            Perm(z,v).
+
+
+PREDICATE   Del : Integer * List(Integer) * List(Integer).
+DELAY       Del(x,[y|_],_) UNTIL NONVAR(x) & NONVAR(y).
+
+Del(x,[x|y],y) <-
+            |.
+Del(x,[y|z],[y|w]) <-
+            x ~= y |
+            Del(x,z,w).

@@ -1,0 +1,5 @@
+EXPORT BreadthFirst.
+
+IMPORT Programs.
+
+PREDICATE BreadthFirst : Program * Formula * TermSubst.

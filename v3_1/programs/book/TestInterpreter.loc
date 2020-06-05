@@ -1,0 +1,31 @@
+MODULE   TestInterpreter.
+
+IMPORT   Interpreter, ProgramsIO, Answers.
+
+
+PREDICATE Go1 : String * String * String.
+
+Go1(prog_string, goal_string, answer_string) <-
+    FindInput(prog_string ++ ".prm", In(stream)) &
+    GetProgram(stream, program) &
+    EndInput(stream) &
+    MainModuleInProgram(program, module) &
+    StringToProgramFormula(program, module, goal_string, [goal]) &
+    NormalBody(goal) &
+    CommitFreeFormula(goal) &
+    MySucceed(program, goal, answer) &
+    RestrictSubstToFormula(goal, answer, computed_answer) &
+    AnswerString(program, module, computed_answer, answer_string).
+
+
+PREDICATE Go2 : String * String.
+
+Go2(prog_string, goal_string) <-
+    FindInput(prog_string ++ ".prm", In(stream)) &
+    GetProgram(stream, program) &
+    EndInput(stream) &
+    MainModuleInProgram(program, module) &
+    StringToProgramFormula(program, module, goal_string, [goal]) &
+    NormalBody(goal) &
+    CommitFreeFormula(goal) &
+    MyFail(program, goal).

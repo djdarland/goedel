@@ -1,0 +1,96 @@
+CLOSED       NumbersIO.
+
+% Module providing input/output for integers, rationals, and 
+% floating-point numbers.
+
+IMPORT       IO, Numbers.
+
+BASE         FileInfo.
+%
+% Type for constants indicating end of file.
+
+CONSTANT     EOF, NotEOF : FileInfo.
+%
+% Constants indicating end of file and not end of file, respectively.
+
+
+PREDICATE    ReadInteger : 
+
+  InputStream    % An open input stream. 
+* Integer        % An integer read from the stream unless the end of 
+                 % the file has already been reached.
+* FileInfo.      % EOF if already end of file; otherwise, NotEOF.
+
+DELAY        ReadInteger(x,_,_) UNTIL GROUND(x).
+
+% ReadInteger skips over layout characters to find the next token 
+% (or pair of tokens) which should be an integer. If the next token 
+% (or pair of tokens) is not an integer, ReadInteger fails. If end of
+% file has already been reached (or if there are only layout
+% characters before the end of file), ReadInteger succeeds with 0 in 
+% the second argument and EOF in the third. If end of file has not 
+% been reached and ReadInteger succeeds, then NotEOF is returned in 
+% the third argument. 
+
+
+PREDICATE    ReadRational : 
+
+  InputStream    % An open input stream. 
+* Rational       % A rational read from the stream unless the end of 
+                 % the file has already been reached.
+* FileInfo.      % EOF if already end of file; otherwise, NotEOF.
+
+DELAY        ReadRational(x,_,_) UNTIL GROUND(x).
+
+% ReadRational skips over layout characters to find the next sequence 
+% of tokens which should be a rational. If the next sequence of tokens
+% is not a rational, ReadRational fails. If end of file has already 
+% been reached (or if there are only layout characters before the end 
+% of file), ReadRational succeeds with 0 in the second argument and 
+% EOF in the third. If end of file has not been reached and 
+% ReadRational succeeds, then NotEOF is returned in the third argument. 
+
+
+PREDICATE    ReadFloat : 
+
+  InputStream    % An open input stream. 
+* Float          % A floating-point number read from the stream unless
+                 % the end of the file has already been reached.
+* FileInfo.      % EOF if already end of file; otherwise, NotEOF.
+
+DELAY        ReadFloat(x,_,_) UNTIL GROUND(x).
+
+% ReadFloat skips over layout characters to find the next token (or 
+% pair of tokens) which should be a floating-point number. If the 
+% next token (or pair of tokens) is not a floating-point number, 
+% ReadFloat fails. If end of file has already been reached (or if 
+% there are only layout characters before the end of file), 
+% ReadFloat succeeds with 0 in the second argument and EOF in the
+% third. If end of file has not been reached and ReadFloat succeeds, 
+% then NotEOF is returned in the third argument. 
+
+
+PREDICATE    WriteInteger : 
+
+  OutputStream   % An open output stream. 
+* Integer.       % An integer which is written to the stream.
+
+DELAY        WriteInteger(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE    WriteRational : 
+
+  OutputStream   % An open output stream. 
+* Rational.      % A rational which is written in its standard form
+                 % a/b to the stream.
+
+DELAY        WriteRational(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE    WriteFloat : 
+
+  OutputStream   % An open output stream. 
+* Float.         % A floating-point number which is written in its
+                 % standard form decimal representation to the stream.
+
+DELAY        WriteFloat(x,y) UNTIL GROUND(x) & GROUND(y).

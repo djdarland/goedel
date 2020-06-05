@@ -1,0 +1,26 @@
+MODULE       WiseMan3KB.
+
+% The knowledge base of the third wise man, W3.
+
+BASE         Wiseman, Colour, Fact.
+
+CONSTANT     W1, W2, W3 : Wiseman;
+             Black, White : Colour.
+
+FUNCTION     DoesntKnow : Wiseman -> Fact;
+             Hat : Wiseman * Colour -> Fact.
+
+
+PREDICATE    Knows : 
+
+  Wiseman          % A wise man.
+* Fact.            % Some knowledge which W3 knows to be known to 
+                   % this wise man.
+
+Knows(W3, DoesntKnow(W1)).
+Knows(W3, DoesntKnow(W2)).
+Knows(W3, Hat(W1,White)).
+Knows(W3, Hat(W2,White)).
+Knows(W2, DoesntKnow(W1)).
+Knows(W2, Hat(W1,White)).
+Knows(W1, Hat(W2,White)).

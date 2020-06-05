@@ -1,0 +1,35 @@
+MODULE DeliberateErrors.
+
+BASE Nat.
+
+CONSTRUCTOR List/1.
+
+CONSTANT Z : Nat;
+         Nil : List(a).
+
+FUNCTION S : Nat -> Nat;
+         Cons : a * List(a) -> List(a);
+         * : yFx(100) : Nat * Nat -> Nat;
+         + : yFx(100) : Nat * Nat -> Nat;
+         Half : Fy(110) : Nat -> Nat.
+
+PREDICATE Tato : Nat * List(Nat). 
+
+Tato(S(Z), Cons(S(Z), Nil)).
+Tato(n, Cons(n, ms)) <-
+   Hotpo(n, m) &
+   Tato(m, ms).
+
+PREDICATE Hotpo : Nat * Nat.
+
+Hotpo(n, m) <-
+   Even(n) & Eval(Half n, m).
+Hotpo(n, m) <-
+   Odd(n) & Eval(S(Z)+S(S(S(Z)))*n, m).
+
+PREDICATE Odd, Even : Nat.
+
+Odd(S(Z)).
+Odd(S(x)) <- Odd(x).
+
+PREDICATE Eval : Nat * Nat.

@@ -1,0 +1,154 @@
+CLOSED     IO.
+
+% Module providing basic input/output facilities.
+
+IMPORT     Strings.
+
+BASE       InputStream, OutputStream. 
+%
+% Stream types.
+
+BASE       ResultOfFind.
+%
+% Type of result indicating the success or failure of an attempt to open 
+% a stream. 
+
+CONSTANT   StdIn : InputStream.
+%
+% Built-in stream corresponding to standard input.
+
+CONSTANT   StdOut, StdErr : OutputStream.
+%
+% Built-in streams corresponding to standard output and standard error,
+% respectively.
+
+CONSTANT   NotFound : ResultOfFind.
+%
+% Indicates stream could not be opened. 
+
+
+FUNCTION   In : InputStream -> ResultOfFind.
+%
+% Indicates input stream was opened successfully.
+
+
+FUNCTION   Out : OutputStream -> ResultOfFind.
+%
+% Indicates output stream was opened successfully.
+
+
+PREDICATE  FindInput : 
+
+  String          % Name of file. 
+* ResultOfFind.   % In(stream), where stream is the new input stream
+                  % pointing to the beginning of the file, if the attempt
+                  % to open the file was successful;
+                  % otherwise, NotFound, if file could not be opened.
+
+DELAY      FindInput(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  FindOutput : 
+
+  String          % Name of file. 
+* ResultOfFind.   % Out(stream), where stream is the new output stream
+                  % pointing to the beginning of the file, if the attempt 
+                  % to open the file was successful;
+                  % otherwise, NotFound, if file could not be opened.
+
+% If the file already exists it is truncated, otherwise an empty file 
+% with the given name is created.
+
+DELAY      FindOutput(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  FindUpdate : 
+
+  String          % Name of file. 
+* ResultOfFind.   % Out(stream), where stream is the new output stream
+                  % pointing to the end of the file, if the attempt 
+                  % to open the file was successful;
+                  % otherwise, NotFound, if file could not be opened.
+
+% The file pointer is set to the end of the file if it already exists.
+% Otherwise, an empty file with the given name is created.
+
+DELAY      FindUpdate(x,_) UNTIL GROUND(x).
+
+% The previous three predicates are guaranteed to succeed if the file 
+% argument is instantiated and the result argument is uninstantiated. If
+% the result argument is NotFound, subsequent read, write and close 
+% operations on the stream will fail.
+
+
+PREDICATE  EndInput : 
+
+  InputStream.    % An open input stream to be closed.
+
+DELAY      EndInput(x) UNTIL GROUND(x).
+
+
+PREDICATE  EndOutput :
+
+   OutputStream.  % An open output stream to be closed.
+
+DELAY      EndOutput(x) UNTIL GROUND(x).
+
+% Closing one of the fixed streams StdIn, StdOut, or StdErr will succeed,
+% but the stream is immediately reopened.
+
+
+PREDICATE  Get : 
+
+  InputStream     % An open input stream.
+* Integer.        % The ASCII code of the next character read from the 
+                  % stream or -1 if the end of the file has been reached.
+
+DELAY      Get(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  ReadChar : 
+
+  InputStream     % An open input stream.
+* String.         % A string of length 1 containing the next character 
+                  % read from the stream or the empty string if the end 
+                  % of the file has been reached.
+
+DELAY      ReadChar(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  Put : 
+
+  OutputStream    % An open output stream.
+* Integer.        % An integer between 0 and 127. The character which 
+                  % has this ASCII code is written to the stream.
+
+DELAY      Put(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  WriteString : 
+
+  OutputStream    % An open output stream.
+* String.         % A string of characters, which are written to the 
+                  % stream.
+
+DELAY      WriteString(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  NewLine : 
+
+  OutputStream.   % An open output stream, to which a newline character
+                  % is written.
+
+DELAY      NewLine(x) UNTIL GROUND(x).
+
+
+PREDICATE  Flush : 
+
+  OutputStream.   % An open output stream. 
+
+% Calling Flush forces any characters that have been written to the 
+% stream, but are buffered internally, to be physically written to the 
+% output device.
+
+DELAY      Flush(x) UNTIL GROUND(x).

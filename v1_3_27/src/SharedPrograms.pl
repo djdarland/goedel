@@ -127,8 +127,8 @@
         user:goedel_freeze(ground([B]), (B='ProgDefs.And.F2'(_,_),true->'SharedPrograms':'~SharedPrograms.AndSeqToIntDL.P3'(B,G,D);'SharedPrograms':'~SharedPrograms.SimpleCondToIntDL.P3'(B,G,D))).
 'SharedPrograms.BinaryConnective.P3'('MetaDefs.&''.F2'(A,B), A, B).
 '~SharedPrograms.BinaryConnective.P3'('MetaDefs.&''.F2'(A,B), A, B).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.\/''.F2'(A,B), A, B).
-'~SharedPrograms.BinaryConnective.P3'('MetaDefs.\/''.F2'(A,B), A, B).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.\\/''.F2'(A,B), A, B).
+'~SharedPrograms.BinaryConnective.P3'('MetaDefs.\\/''.F2'(A,B), A, B).
 'SharedPrograms.BinaryConnective.P3'('MetaDefs.->''.F2'(A,B), A, B).
 '~SharedPrograms.BinaryConnective.P3'('MetaDefs.->''.F2'(A,B), A, B).
 'SharedPrograms.BinaryConnective.P3'('MetaDefs.<-''.F2'(A,B), A, B).
@@ -141,11 +141,11 @@
 '~SharedPrograms.BinConnectiveChars.P3'('MetaDefs.&''.F2'(_,_), A, B) :-
         'Strings':'~Strings.StringInts.P2'('" & ', C),
         'Lists':'~Lists.Append.P3'(C, B, A).
-'SharedPrograms.BinConnectiveChars.P3'('MetaDefs.\/''.F2'(_,_), A, B) :-
-        'Strings':'Strings.StringInts.P2'('" \/ ', C),
+'SharedPrograms.BinConnectiveChars.P3'('MetaDefs.\\/''.F2'(_,_), A, B) :-
+        'Strings':'Strings.StringInts.P2'('" \\/ ', C),
         'Lists':'Lists.Append.P3'(C, B, A).
-'~SharedPrograms.BinConnectiveChars.P3'('MetaDefs.\/''.F2'(_,_), A, B) :-
-        'Strings':'~Strings.StringInts.P2'('" \/ ', C),
+'~SharedPrograms.BinConnectiveChars.P3'('MetaDefs.\\/''.F2'(_,_), A, B) :-
+        'Strings':'~Strings.StringInts.P2'('" \\/ ', C),
         'Lists':'~Lists.Append.P3'(C, B, A).
 'SharedPrograms.BinConnectiveChars.P3'('MetaDefs.->''.F2'(_,_), A, B) :-
         'Strings':'Strings.StringInts.P2'('" -> ', C),
@@ -215,8 +215,8 @@
 '~SharedPrograms.CLPrec.P2'('MetaDefs.~''.F1'(_), 'SharedPrograms.Prec.F2'(120,'SharedPrograms.X.C0')).
 'SharedPrograms.CLPrec.P2'('MetaDefs.&''.F2'(_,_), 'SharedPrograms.Prec.F2'(100,'SharedPrograms.X.C0')).
 '~SharedPrograms.CLPrec.P2'('MetaDefs.&''.F2'(_,_), 'SharedPrograms.Prec.F2'(100,'SharedPrograms.X.C0')).
-'SharedPrograms.CLPrec.P2'('MetaDefs.\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.X.C0')).
-'~SharedPrograms.CLPrec.P2'('MetaDefs.\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.X.C0')).
+'SharedPrograms.CLPrec.P2'('MetaDefs.\\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.X.C0')).
+'~SharedPrograms.CLPrec.P2'('MetaDefs.\\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.X.C0')).
 'SharedPrograms.CLPrec.P2'('MetaDefs.->''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.X.C0')).
 '~SharedPrograms.CLPrec.P2'('MetaDefs.->''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.X.C0')).
 'SharedPrograms.CLPrec.P2'('MetaDefs.<-''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.X.C0')).
@@ -269,8 +269,8 @@
 '~SharedPrograms.CRPrec.P2'('MetaDefs.~''.F1'(_), 'SharedPrograms.Prec.F2'(120,'SharedPrograms.Y.C0')).
 'SharedPrograms.CRPrec.P2'('MetaDefs.&''.F2'(_,_), 'SharedPrograms.Prec.F2'(100,'SharedPrograms.Y.C0')).
 '~SharedPrograms.CRPrec.P2'('MetaDefs.&''.F2'(_,_), 'SharedPrograms.Prec.F2'(100,'SharedPrograms.Y.C0')).
-'SharedPrograms.CRPrec.P2'('MetaDefs.\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.Y.C0')).
-'~SharedPrograms.CRPrec.P2'('MetaDefs.\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.Y.C0')).
+'SharedPrograms.CRPrec.P2'('MetaDefs.\\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.Y.C0')).
+'~SharedPrograms.CRPrec.P2'('MetaDefs.\\/''.F2'(_,_), 'SharedPrograms.Prec.F2'(90,'SharedPrograms.Y.C0')).
 'SharedPrograms.CRPrec.P2'('MetaDefs.->''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.Y.C0')).
 '~SharedPrograms.CRPrec.P2'('MetaDefs.->''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.Y.C0')).
 'SharedPrograms.CRPrec.P2'('MetaDefs.<-''.F2'(_,_), 'SharedPrograms.Prec.F2'(80,'SharedPrograms.Y.C0')).
@@ -386,10 +386,10 @@
 '~SharedPrograms.ExpandStringAux.P3'([], A, B) :-
         '~SharedPrograms.CharDL.P3'('""', A, B).
 'SharedPrograms.ExpandStringAux.P3'([A|B], C, D) :-
-        user:goedel_freeze(ground([A]), (A=34,true->'SharedPrograms':'SharedPrograms.CharDL.P3'('"\',C,E),'SharedPrograms':'SharedPrograms.CharDL.P3'('""',E,F);user:goedel_freeze(ground([A]),(A=92,true->'SharedPrograms':'SharedPrograms.CharDL.P3'('"\',C,E),'SharedPrograms':'SharedPrograms.CharDL.P3'('"\',E,F);C=[A|F])))),
+        user:goedel_freeze(ground([A]), (A=34,true->'SharedPrograms':'SharedPrograms.CharDL.P3'('"\\',C,E),'SharedPrograms':'SharedPrograms.CharDL.P3'('""',E,F);user:goedel_freeze(ground([A]),(A=92,true->'SharedPrograms':'SharedPrograms.CharDL.P3'('"\\',C,E),'SharedPrograms':'SharedPrograms.CharDL.P3'('"\\',E,F);C=[A|F])))),
         'SharedPrograms.ExpandStringAux.P3'(B, F, D).
 '~SharedPrograms.ExpandStringAux.P3'([A|B], C, D) :-
-        user:goedel_freeze(ground([A]), (A=34,true->'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\',C,E),'SharedPrograms':'~SharedPrograms.CharDL.P3'('""',E,F);user:goedel_freeze(ground([A]),(A=92,true->'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\',C,E),'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\',E,F);C=[A|F])))),
+        user:goedel_freeze(ground([A]), (A=34,true->'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\\',C,E),'SharedPrograms':'~SharedPrograms.CharDL.P3'('""',E,F);user:goedel_freeze(ground([A]),(A=92,true->'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\\',C,E),'SharedPrograms':'~SharedPrograms.CharDL.P3'('"\\',E,F);C=[A|F])))),
         '~SharedPrograms.ExpandStringAux.P3'(B, F, D).
 'SharedPrograms.FixVariableTyping.P2'([], _).
 '~SharedPrograms.FixVariableTyping.P2'([], _).
@@ -443,10 +443,10 @@
         'SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.&''.F2'(A,B), C, D, E, F, G).
 '~SharedPrograms.FormulaToIntDL.P6'('MetaDefs.&''.F2'(A,B), C, D, E, F, G) :-
         '~SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.&''.F2'(A,B), C, D, E, F, G).
-'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G) :-
-        'SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G).
-'~SharedPrograms.FormulaToIntDL.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G) :-
-        '~SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G).
+'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G) :-
+        'SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G).
+'~SharedPrograms.FormulaToIntDL.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G) :-
+        '~SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G).
 'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.->''.F2'(A,B), C, D, E, F, G) :-
         'SharedPrograms.BinaryFormulaToIntDL.P6'('MetaDefs.->''.F2'(A,B), C, D, E, F, G).
 '~SharedPrograms.FormulaToIntDL.P6'('MetaDefs.->''.F2'(A,B), C, D, E, F, G) :-
@@ -889,10 +889,10 @@
 '~SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.&''.F2'(A,B), C, D, E, 'MetaDefs.&''.F2'(F,G), H, I, J) :-
         '~SharedPrograms.MeltedStandardTyping.P8'(A, C, D, K, F, H, L, M),
         user:goedel_freeze(ground([M]), (M=[],true->'SharedPrograms':'~SharedPrograms.MeltedStandardTyping.P8'(B,C,K,E,G,L,I,J);J=M)).
-'SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.\/''.F2'(A,B), C, D, E, 'MetaDefs.\/''.F2'(F,G), H, I, J) :-
+'SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.\\/''.F2'(A,B), C, D, E, 'MetaDefs.\\/''.F2'(F,G), H, I, J) :-
         'SharedPrograms.MeltedStandardTyping.P8'(A, C, D, K, F, H, L, M),
         user:goedel_freeze(ground([M]), (M=[],true->'SharedPrograms':'SharedPrograms.MeltedStandardTyping.P8'(B,C,K,E,G,L,I,J);J=M)).
-'~SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.\/''.F2'(A,B), C, D, E, 'MetaDefs.\/''.F2'(F,G), H, I, J) :-
+'~SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.\\/''.F2'(A,B), C, D, E, 'MetaDefs.\\/''.F2'(F,G), H, I, J) :-
         '~SharedPrograms.MeltedStandardTyping.P8'(A, C, D, K, F, H, L, M),
         user:goedel_freeze(ground([M]), (M=[],true->'SharedPrograms':'~SharedPrograms.MeltedStandardTyping.P8'(B,C,K,E,G,L,I,J);J=M)).
 'SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.->''.F2'(A,B), C, D, E, 'MetaDefs.->''.F2'(F,G), H, I, J) :-
@@ -1021,12 +1021,12 @@
         '~SharedPrograms.SymbolInLanguage.P3'(A, B, 'ProgDefs.PredicateDecl.F3'(_,C,D)).
 'SharedPrograms.OrSeqToIntDL.P3'('ProgDefs.Or.F2'(A,B), C, D) :-
         'SharedPrograms.SimpleCondToIntDL.P3'(A, C, E),
-        'Strings':'Strings.StringInts.P2'('" \/ ', F),
+        'Strings':'Strings.StringInts.P2'('" \\/ ', F),
         'Lists':'Lists.Append.P3'(F, G, E),
         user:goedel_freeze(ground([B]), (B='ProgDefs.Or.F2'(_,_),true->'SharedPrograms':'SharedPrograms.OrSeqToIntDL.P3'(B,G,D);'SharedPrograms':'SharedPrograms.SimpleCondToIntDL.P3'(B,G,D))).
 '~SharedPrograms.OrSeqToIntDL.P3'('ProgDefs.Or.F2'(A,B), C, D) :-
         '~SharedPrograms.SimpleCondToIntDL.P3'(A, C, E),
-        'Strings':'~Strings.StringInts.P2'('" \/ ', F),
+        'Strings':'~Strings.StringInts.P2'('" \\/ ', F),
         'Lists':'~Lists.Append.P3'(F, G, E),
         user:goedel_freeze(ground([B]), (B='ProgDefs.Or.F2'(_,_),true->'SharedPrograms':'~SharedPrograms.OrSeqToIntDL.P3'(B,G,D);'SharedPrograms':'~SharedPrograms.SimpleCondToIntDL.P3'(B,G,D))).
 'SharedPrograms.ProgramLanguage.P2'('ProgDefs.Program.F4'(_,_,A,_), A).

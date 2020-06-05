@@ -1,0 +1,39 @@
+LOCAL Demo.
+
+% PREDICATE Demo : Program * Formula * TermSubst.
+
+Demo(program, goal, answer) <-
+    FormulaMaxVarIndex([goal], initial_index) &
+    EmptyTermSubst(empty_subst) &
+    Demo1(program, goal, initial_index, _, empty_subst, subst) &
+    RestrictSubstToFormula(goal, subst, answer).
+
+
+PREDICATE Demo1 : 
+
+  Program     % Representation of a definite program. 
+* Formula     % Representation of the body of a definite goal whose
+              % variables have indexes smaller than the third argument. 
+* Integer     % A non-negative integer.
+* Integer     % A non-negative integer greater than or equal to the 
+              % third argument.
+* TermSubst   % Representation of a term substitution.
+* TermSubst.  % Representation of the term substitution obtained by
+              % composing the term substitution in the fifth argument 
+              % and the computed answer for the goal whose body is the 
+              % second argument with the term substitution in the fifth
+              % argument applied and this program.
+
+Demo1(_, empty_goal, index, index, subst, subst) <-
+    EmptyFormula(empty_goal).
+
+Demo1(program, atom, index, new_index, subst, new_subst) <-
+    Atom(atom) &
+    StatementMatchAtom(program, _, atom, statement) &
+    Resolve(atom, statement, index, index1, subst, subst1, new_goal) &  
+    Demo1(program, new_goal, index1, new_index, subst1, new_subst).
+
+Demo1(program, goal, index, new_index, subst, new_subst) <-
+    And(left, right, goal) &
+    Demo1(program, left, index, index1, subst, subst1) &
+    Demo1(program, right, index1, new_index, subst1, new_subst).

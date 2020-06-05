@@ -1,0 +1,25 @@
+LOCAL      DoubleTable.
+
+% PREDICATE  Double : Table(Integer) * Table(Integer).
+
+Double(table, new_table) <-
+           ListTable(table, keys, values) &
+           Double1(table, keys, values, new_table).
+
+PREDICATE  Double1 : Table(Integer) * List(String) * List(Integer) * 
+                     Table(Integer).
+
+Double1(table, [], [], table).
+Double1(table, [k|ks], [v|vs], new_table) <-
+           DoubleNode(table, k, v, next_table) &
+           Double1(next_table, ks, vs, new_table).
+
+PREDICATE  DoubleNode : Table(Integer) * String * Integer * 
+                        Table(Integer).
+
+DoubleNode(table, key, value, next_table) <-
+           IF (SOME [w] (Width(key,w) & w > 5))
+           THEN 
+             UpdateTable(table, key, 2*value, next_table, value) 
+           ELSE
+             next_table = table.

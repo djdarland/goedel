@@ -1,0 +1,17 @@
+MODULE TestUnify.
+
+IMPORT Unify, ProgramsIO, Answers.
+
+
+PREDICATE Go : String * String * String * String.
+
+Go(prog_string, term_string1, term_string2, mgu_string) <-
+   FindInput(prog_string ++ ".prm", In(stream)) &
+   GetProgram(stream, program) &
+   EndInput(stream) &
+   MainModuleInProgram(program, module) &
+   StringToProgramTerm(program, module, term_string1, [term1]) &
+   StringToProgramTerm(program, module, term_string2, [term2]) &
+   MyUnifyTerms(term1, term2, mgu) &
+   AnswerString(program, module, mgu, mgu_string).
+

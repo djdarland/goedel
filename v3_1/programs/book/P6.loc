@@ -1,0 +1,13 @@
+MODULE        P6.
+ 
+PROPOSITION   P,Q,R,S,U,B,W,Z,T,V.
+ 
+P <- {Q}_1 & R.
+P <- {S}_1 & T.
+P <- U & {V}_2.
+Q.
+S <- B.
+S.
+U <- W & Z.
+T.
+R.

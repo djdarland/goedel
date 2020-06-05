@@ -1,3 +1,5 @@
+:- multifile(checking).
+
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -30,8 +32,7 @@ Date:		18 November 1993
 ================================================================================
 */
 
-'$$module'('@(#)checking.pl 1.3 last updated 93/11/29 14:25:02 by jiwei
-').
+%% '$$module'('@(#)checking.pl 1.3 last updated 93/11/29 14:25:02 by jiwei').
 
 
 %------------------------------------------------------------------------------
@@ -89,7 +90,7 @@ collect_variables('MetaDefs.&''.F2'(Formula1, Formula2), Vars, Vars2) :-
 	collect_variables(Formula1, Vars, Vars3),
 	collect_variables(Formula2, Vars3, Vars2).
 
-collect_variables('MetaDefs.\/''.F2'(Formula1, Formula2), Vars, Vars2) :-
+collect_variables('MetaDefs.\\/''.F2'(Formula1, Formula2), Vars, Vars2) :-
 	collect_variables(Formula1, Vars, Vars3),
 	collect_variables(Formula2, Vars3, Vars2).
 
@@ -266,7 +267,7 @@ quantified_variable_checking('MetaDefs.&''.F2'(Formula1, Formula2), Ln1, Ln2) :-
    quantified_variable_checking(Formula1, Ln1, Ln2),
    quantified_variable_checking(Formula2, Ln1, Ln2).
 
-quantified_variable_checking('MetaDefs.\/''.F2'(Formula1, Formula2), Ln1, Ln2):-
+quantified_variable_checking('MetaDefs.\\/''.F2'(Formula1, Formula2), Ln1, Ln2):-
    !,
    quantified_variable_checking(Formula1, Ln1, Ln2),
    quantified_variable_checking(Formula2, Ln1, Ln2).
@@ -496,7 +497,7 @@ f_checking_aux('MetaDefs.&''.F2'(Formula1, Formula2), PVars,
    floundering_checking_aux('MetaDefs.&''.F2'(Formula1, Formula2), PVars,
 		Culprits, Culprits2).
 
-f_checking_aux('MetaDefs.\/''.F2'(Formula1, Formula2), PVars,
+f_checking_aux('MetaDefs.\\/''.F2'(Formula1, Formula2), PVars,
 		Culprits, Culprits2):-
    floundering_checking_aux(Formula1, PVars, Culprits, Culprits3),
    floundering_checking_aux(Formula2, PVars, Culprits3, Culprits2).

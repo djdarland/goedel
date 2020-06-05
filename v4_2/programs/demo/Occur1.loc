@@ -1,0 +1,20 @@
+MODULE       Occur1.
+
+IMPORT       Lists.
+
+CONSTRUCTOR  DList/1.
+
+CONSTANT     A : a.
+
+FUNCTION     \ : xFx(10) : List(a) * List(a) -> DList(a).
+
+
+PROPOSITION  Test.
+
+Test <-
+             Concat(u \ u, v \ v, [A|w] \ w).
+
+
+PREDICATE    Concat : DList(a) * DList(a) * DList(a).
+
+Concat(x \ y, y \ z, x \ z).

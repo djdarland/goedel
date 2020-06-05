@@ -1,0 +1,144 @@
+CLOSED       Tables.
+
+% Module providing the abstract data type Table(t) and predicates
+% for processing terms of type Table(t), for any type t. A term of 
+% type Table(t) represents a data structure consisting of an ordered
+% collection of nodes, each of which has two components, a key which
+% must be a string and a value which must be of type t. The ordering
+% is given by the lexical ordering of the keys.
+
+IMPORT       Strings.
+
+CONSTRUCTOR  Table/1. 
+
+
+PREDICATE    EmptyTable : 
+
+  Table(a).          % An empty table.
+
+
+PREDICATE    NodeInTable : 
+
+  Table(a)           % A table.
+* String             % The key of a node in the table.
+* a.                 % The value in this node.
+
+DELAY        NodeInTable(x,_,_) UNTIL NONVAR(x).
+
+
+PREDICATE    InsertNode : 
+
+  Table(a)           % A table.
+* String             % A key, not in this table.
+* a                  % A value.
+* Table(a).          % A table which differs from the table in the
+                     % first argument only in that it also contains a 
+                     % node with this key and value.
+
+DELAY        InsertNode(x,y,_,_) UNTIL NONVAR(x) & GROUND(y).
+
+
+PREDICATE    DeleteNode : 
+
+  Table(a)           % A table.
+* String             % A key in this table.
+* a                  % A value.
+* Table(a).          % A table which differs from the table in the 
+                     % first argument only in that it does not contain
+                     % a node with this key and value.
+
+DELAY        DeleteNode(x,_,_,_) UNTIL NONVAR(x).
+
+
+PREDICATE    UpdateTable : 
+
+  Table(a)           % A table.
+* String             % The key of a node in the table.
+* a                  % A new value to be associated with the key.
+* Table(a)           % The table with the node updated.
+* a.                 % The old value that was associated with the key.
+
+DELAY        UpdateTable(x,y,_,_,_) UNTIL NONVAR(x) & GROUND(y).
+
+
+PREDICATE    AmendTable :
+
+  Table(a)           % A table.
+* String             % A key.
+* a                  % A (new) value to be associated with the key.
+* a                  % A value (a default "old value").
+* Table(a)           % The table updated so that the new value is
+                     % associated with the key. (If the key is already
+                     % present in the table, the associated value will 
+                     % be updated; otherwise the node with this key 
+                     % and value will be inserted into the table.)
+* a.                 % The old value associated with the key if it was
+                     % already present in the table, otherwise the 
+                     % value in the fourth argument.
+
+DELAY        AmendTable(x,y,_,_,_,_) UNTIL NONVAR(x) & GROUND(y).
+
+
+PREDICATE    JoinTables : 
+
+  Table(a)           % A table.
+* Table(a)           % A table.
+* Table(a).          % The table formed from the first argument by 
+                     % adding to it all the nodes in the second 
+                     % argument whose keys are not already present in 
+                     % the first argument.
+
+DELAY        JoinTables(x,y,_) UNTIL NONVAR(x) & NONVAR(y).
+
+
+PREDICATE    ListTable : 
+
+  Table(a)           % A table.
+* List(String)       % The lexically ordered list of keys of nodes in
+                     % the table.
+* List(a).           % The corresponding list of values. 
+
+DELAY        ListTable(x,y,z) UNTIL NONVAR(x) \/ 
+                                               (NONVAR(y) & NONVAR(z)).
+
+
+PREDICATE    FirstNode :
+
+  Table(a)           % A table.
+* String             % The key of the node which is lexically first 
+                     % amongst all keys in the table.
+* a.                 % The value in this node. 
+
+DELAY        FirstNode(x,_,_) UNTIL NONVAR(x).
+
+
+PREDICATE    LastNode :
+
+  Table(a)           % A table.
+* String             % The key of the node which is lexically last 
+                     % amongst all keys in the table.
+* a.                 % The value in this node. 
+
+DELAY        LastNode(x,_,_) UNTIL NONVAR(x).
+
+
+PREDICATE    NextNode :
+
+  Table(a)           % A table.
+* String             % The key of a node in the table.
+* String             % The key of the node which is the lexical 
+                     % successor of the key in the second argument.
+* a.                 % The value in this node. 
+
+DELAY        NextNode(x,y,_,_) UNTIL NONVAR(x) & NONVAR(y).
+
+
+PREDICATE    PreviousNode :
+
+  Table(a)           % A table.
+* String             % The key of a node in the table.
+* String             % The key of the node which is the lexical 
+                     % predecessor of the key in the second argument.
+* a.                 % The value in this node. 
+
+DELAY        PreviousNode(x,y,_,_) UNTIL NONVAR(x) & NONVAR(y).

@@ -1,0 +1,157 @@
+CLOSED       Lists.
+
+% Module providing a collection of standard list processing predicates.
+
+IMPORT       Integers.
+
+CONSTRUCTOR  List/1.
+%
+% List constructor.
+
+CONSTANT     Nil : List(a).
+%
+% Empty list.
+
+
+FUNCTION     Cons : a * List(a) -> List(a).
+%
+% Cons function.
+
+
+PREDICATE    Member : 
+
+  a                % An element.
+* List(a).         % A list containing this element.
+
+DELAY        Member(_,y) UNTIL NONVAR(y).
+
+
+PREDICATE    MemberCheck :
+
+  a                % An element.
+* List(a).         % A list containing this element.
+                   %
+                   % MemberCheck is a version of Member which 
+                   % efficiently checks whether a given element is a 
+                   % member of a given list. It prunes the search 
+                   % space so that MemberCheck succeeds at most once. 
+                   %
+                   % If a call to Member with the same arguments has
+                   % at most one answer, then the call to MemberCheck
+                   % has a declarative reading.  (In particular, if 
+                   % the call to MemberCheck is ground, this 
+                   % condition is automatically satisfied.)
+
+DELAY        MemberCheck(_, []) UNTIL TRUE;
+             MemberCheck(x, [y|_]) UNTIL NONVAR(x) & NONVAR(y).
+
+
+PREDICATE    Append : 
+
+  List(a)          % A list. 
+* List(a)          % A list.
+* List(a).         % The list obtained by appending the list in the 
+                   % second argument to the end of the list in the 
+                   % first argument.
+
+DELAY        Append(x,_,z) UNTIL NONVAR(x) \/ NONVAR(z).
+
+
+PREDICATE    Permutation : 
+
+  List(a)          % A list.
+* List(a).         % A list which is a permutation of the list in the 
+                   % first argument.
+  
+DELAY        Permutation(x,y) UNTIL NONVAR(x) \/ NONVAR(y).
+
+
+PREDICATE    Delete : 
+
+  a                % An element.
+* List(a)          % A list containing this element.
+* List(a).         % A list which differs from the list in the second
+                   % argument only in that exactly one occurrence of 
+                   % the element in the first argument is missing.
+
+DELAY        Delete(_,y,z) UNTIL NONVAR(y) \/ NONVAR(z).
+
+
+PREDICATE    DeleteFirst : 
+
+  a                % An element.
+* List(a)          % A list containing this element.
+* List(a).         % A list which differs from the list in the second 
+                   % argument only in that the first occurrence of the 
+                   % element in the first argument is missing.
+
+DELAY        DeleteFirst(x,y,z) UNTIL NONVAR(x) & 
+                                             (NONVAR(y) \/ NONVAR(z)).
+
+
+PREDICATE    Reverse : 
+
+  List(a)          % A list.
+* List(a).         % The list consisting of the elements of the list 
+                   % in the first argument in reverse order.
+ 
+DELAY        Reverse(x,y) UNTIL NONVAR(x) \/ NONVAR(y).
+
+
+PREDICATE    Prefix : 
+
+  List(a)          % A list.
+* Integer          % A non-negative integer less than or equal to the 
+                   % length of the list in the first argument.
+* List(a).         % The prefix of the list in the first argument 
+                   % having length equal to the integer in the second
+                   % argument.
+
+DELAY        Prefix(x,y,z) UNTIL NONVAR(x) & (NONVAR(y) \/ NONVAR(z)).
+
+
+PREDICATE    Suffix : 
+
+  List(a)          % A list.
+* Integer          % A non-negative integer less than or equal to the 
+                   % length of the list in the first argument.
+* List(a).         % The suffix of the list in the first argument 
+                   % having length equal to the integer in the second 
+                   % argument.
+
+DELAY        Suffix(x,y,z) UNTIL NONVAR(x) & (NONVAR(y) \/ NONVAR(z)).
+
+
+PREDICATE    Length : 
+
+  List(a)          % A list.
+* Integer.         % The length of the list in the first argument.
+ 
+DELAY        Length(x,y) UNTIL NONVAR(x) \/ NONVAR(y).
+
+
+PREDICATE    Sorted : 
+
+  List(Integer).   % A list of integers in non-decreasing order.
+
+DELAY        Sorted([]) UNTIL TRUE;
+             Sorted([_|x]) UNTIL NONVAR(x).
+
+
+PREDICATE    Sort :
+
+  List(Integer)    % A list of integers.
+* List(Integer).   % The list consisting of the elements of the list 
+                   % in the first argument in non-decreasing order.
+
+DELAY        Sort(x,_) UNTIL NONVAR(x).
+
+
+PREDICATE    Merge :
+
+  List(Integer)    % A list of integers.
+* List(Integer)    % A list of integers.
+* List(Integer).   % The list which is the result of merging the lists 
+                   % in the first and second arguments.
+
+DELAY        Merge(x,y,z) UNTIL (NONVAR(x) & NONVAR(y)) \/ NONVAR(z).

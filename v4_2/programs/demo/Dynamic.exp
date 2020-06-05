@@ -1,0 +1,28 @@
+EXPORT      Dynamic.
+
+IMPORT      Programs.
+
+PREDICATE   RemoveAll : 
+
+  Program       % The representation of a program P.
+* String        % The name of an open module in P. 
+* Formula       % The representation of an atom in the flat language of 
+                % this module wrt P.
+* Program.      % The representation of the program obtained from P by 
+                % deleting all statements in this module whose heads
+                % unify with this atom (after standardization apart).
+
+DELAY       RemoveAll(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).
+
+
+PREDICATE   Remove : 
+
+  Program       % The representation of a program P.
+* String        % The name of an open module in P. 
+* Formula       % The representation of an atom in the flat language of 
+                % this module wrt P.
+* Program.      % The representation of the program obtained from P by 
+                % deleting a statement in this module whose head unifies 
+                % with this atom (after standardization apart).
+
+DELAY       Remove(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & GROUND(z).

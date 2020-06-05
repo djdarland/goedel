@@ -1,0 +1,17 @@
+MODULE TestDynamic.
+
+IMPORT Dynamic, ProgramsIO.
+
+
+PREDICATE Go: String * String * String.
+
+Go(prog_string, module_string, atom_string) <-
+   FindInput(prog_string ++ ".prm", In(instream)) &
+   GetProgram(instream, program) &
+   EndInput(instream) &
+   OpenModule(program,module_string) &
+   StringToProgramFormula(program, module_string, atom_string, [atom]) &
+   RemoveAll(program, module_string, atom, newprogram) &
+   FindOutput(prog_string ++ "_new.prm", Out(outstream)) &
+   PutProgram(outstream, newprogram) &
+   EndOutput(outstream).

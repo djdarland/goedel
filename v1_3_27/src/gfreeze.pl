@@ -1,4 +1,4 @@
-
+:- multifile(gfreeze).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -31,8 +31,7 @@
  *----------------------------------------------------------------------------
  */
 
-'$$module'('@(#)gfreeze.pl 1.13 last updated 93/06/15 16:18:20 by bowers
-').
+%% '$$module'('@(#)gfreeze.pl 1.13 last updated 93/06/15 16:18:20 by bowers').
 
 
 :- op(500, yfx, and).
@@ -153,8 +152,7 @@ evaluate_delay_aux(Delay, X):-
  *------------------------------------------------------------------------------
  */
 
-'$$module'('@(#)freeze.pl 1.21 jiwei 91/08/11 15:10:45
-').
+%% '$$module'('@(#)freeze.pl 1.21 jiwei 91/08/11 15:10:45').
 
 :- op(500, yfx, and).
 :- op(400, yfx, or).

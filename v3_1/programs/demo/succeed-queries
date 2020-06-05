@@ -1,0 +1,21 @@
+% You need to program-compile Integers and Programs
+
+% Queries for Succeed
+
+% Q1: Meta^1 
+
+Run("Integers", "x^2 + y^2 = z^2 & 1 < x < 50 & 1 < y < 50 & 0 < z", s).
+
+% Q2: Meta^2 (slow)
+
+Run("Programs", "NewProgram(\"Integers\",i)", s).
+
+% Q3: Meta^3 (very, very slow, never been seen to terminate)
+
+Run("Programs",
+    "NewProgram(\"Program\",p) & 
+     StringToProgramFormula(p, \"Program\", 
+        \"NewProgram(i, \\\"Integers\\\")\", [w]) &
+     Succeed(p, w, s)
+    ", a).
+

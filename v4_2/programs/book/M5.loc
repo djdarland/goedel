@@ -1,0 +1,5 @@
+LOCAL        M5.
+
+Append3(x,y,z,u) <-
+             Append(x,y,w) &
+             Append(w,z,u).

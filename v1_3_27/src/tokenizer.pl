@@ -1,4 +1,4 @@
-
+:- multifile(tokenizer).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -40,24 +40,31 @@ done with one look-ahead char.
 */
 
 
-'$$module'('@(#)tokenizer.pl 1.19 last updated 93/11/24 17:33:49 by jiwei
-').
+%% '$$module'('@(#)tokenizer.pl 1.19 last updated 93/11/24 17:33:49 by jiwei').
 
 /*------------------------------------------------------------------------------
  * Note: the line number for the first item is always not right.
  * But it doesn't matter.
  */
 
-get_one_module(Stream, Module):-
-   get_one_module_aux(Stream, Module, 1, []).
+ get_one_module(Stream, Module):-
+	 write(djd_get_one_module_1),
+	 get_one_module_aux(Stream, Module, 1, []),
+	 	 write(djd_get_one_module_2).
+
 
 get_one_module_aux(Stream, Module, StartLine, LeftChars) :-
+	write(djd_get_one_module_aux_1),
    get_one_item(Stream, Item, StartLine, EndLine, LeftChars, AheadChars),
+	write(djd_get_one_module_aux_2),
    ( Item = end_of_file
      -> Module = []
      ;  StartLine2 is StartLine + 1,
+	write(djd_get_one_module_aux_3),
 	Module = [item(Item, StartLine2, EndLine)|Module2],
-        get_one_module_aux(Stream, Module2, EndLine, AheadChars)
+	write(djd_get_one_module_aux_4),
+        get_one_module_aux(Stream, Module2, EndLine, AheadChars),
+	write(djd_get_one_module_aux_5)
    ).
 
 	
@@ -79,7 +86,9 @@ get_one_module_aux(Stream, Module, StartLine, LeftChars) :-
  */
 
 get_one_item(Stream, Item, Start, End, Left, Ahead) :-
-   get_one_token(Stream, Token, Start, Ln, Left, Temp),
+	write(djd_get_one_item_1),
+	get_one_token(Stream, Token, Start, Ln, Left, Temp),
+	write(djd_get_one_item_2),
    ( Token == end_of_file
      -> Item = end_of_file,
 	Ahead = Temp,
@@ -98,6 +107,7 @@ get_one_item(Stream, Item, Start, End, Left, Ahead) :-
 	
 
 get_one_item_aux(Stream, Item, Start, End, Left, Ahead, EndOfFile):-
+	write(djd_get_one_item_aux_1),
    get_one_token(Stream, Token, Start, Ln, Left, Temp),
    ( Token == terminator
      -> Item = [],
@@ -118,15 +128,20 @@ get_one_item_aux(Stream, Item, Start, End, Left, Ahead, EndOfFile):-
 /*------------------------------------------------------------------------------
  */
 
-get_one_token(Stream, Token, Start, End, Left, Ahead):-
+ get_one_token(Stream, Token, Start, End, Left, Ahead):-
+	 write(djd_get_one_token_1),
    ( Left = [0'., A]	% a case in handling decimals
      -> Token = terminator,
+	 write(djd_get_one_token_2),
 	Ahead =  [A],
+	 write(djd_get_one_token_3),
 	End = Start
      ;  ( Left = []
-	  -> get0(Stream, C)
+	  -> get_byte(Stream, C)
 	  ;  Left = [C]
 	),
+	 write(djd_get_one_token_4),
+       
 	token(C, Stream, Token, Start, End, Ahead)
    ).
 
@@ -134,23 +149,29 @@ get_one_token(Stream, Token, Start, End, Left, Ahead):-
 /*------------------------------------------------------------------------------
  */
 
-token(-1, _, end_of_file, Ln, Ln, []):- !.
+token(-1, _, end_of_file, Ln, Ln, []):- write(djd_token_1), !.
 
 % Comments
-token(0'%, Stream, Token, Start, End, Ahead) :- !,
-   comment(Stream, EndOfFile),
+token(0'%, Stream, Token, Start, End, Ahead) :-
+	write(djd_token_2),
+	!,
+	comment(Stream, EndOfFile),'
+	write(djd_token_3),
    ( nonvar(EndOfFile)
      -> Token = end_of_file,
 	End = Start
      ;  Ln is Start + 1,
-	get_one_token(Stream, Token, Ln, End, [], Ahead)
+ 	write(djd_token_4),
+      get_one_token(Stream, Token, Ln, End, [], Ahead),
+	write(djd_token_5)
+       
    ).
 
 /*------------------------------------------------------------------------------
  */
 
 comment(Stream, EndOfFile):-
-   get0(Stream, C),
+   get_byte(Stream, C),
    ( C = 10
      -> true
      ;  ( C = -1
@@ -165,20 +186,28 @@ comment(Stream, EndOfFile):-
 
 % Layout-char
 
-token(32, Stream, Token, Start, End, Ahead) :- !,
+token(32, Stream, Token, Start, End, Ahead) :-
+%	 write(djd_token_32),
+	 !,
    get_one_token(Stream, Token, Start, End, [], Ahead).
 
-token(9, Stream, Token, Start, End, Ahead) :- !,
+token(9, Stream, Token, Start, End, Ahead) :-
+%	 write(djd_token_9),
+	!,
    get_one_token(Stream, Token, Start, End, [], Ahead).
 
-token(10, Stream, Token, Start, End, Ahead) :- !,
+token(10, Stream, Token, Start, End, Ahead) :-
+%	 write(djd_token_10),
+	!,
    Ln is Start + 1,
    get_one_token(Stream, Token, Ln, End, [], Ahead).
 
 
 % String with error recovery
 
-token(0'", Stream, string(String), Start, End, Ahead) :- !,
+token(0'", Stream, string(String), Start, End, Ahead) :-
+%	 write(djd_token_XXX),
+	!,
    string_chars(Cs, Stream, Start, Start, End, Ahead),
    name(String, Cs).
 
@@ -188,13 +217,13 @@ token(0'", Stream, string(String), Start, End, Ahead) :- !,
  */
 
 string_chars(Cs, Stream, Very_first, Start, End, Ahead) :-
-   get0(Stream, C),
+   get_byte(Stream, C),
    string_chars_aux(C, Cs, Stream, Very_first, Start, End, Ahead).
 
 string_chars_aux(0'", [], _, _, Start, Start, []) :- !.
 
-string_chars_aux(0'\, Cs, Stream, Very_first, Start, End, Ahead) :- !,
-   get0(Stream, C),
+string_chars_aux(0'\\, Cs, Stream, Very_first, Start, End, Ahead) :- !,
+   get_byte(Stream, C),
    ( C = -1
      -> format(user_error, '~nError: incomplete string in lines: ~d-~d.~n',
 			     [Very_first, Start]),
@@ -227,14 +256,18 @@ string_chars_aux(C, [C|Cs], Stream, Very_first, Start, End, Ahead) :-
  */
 
 % left curly
-token(0'{, _, '{', Ln, Ln, []) :- !.
+token(0'{, _, '{', Ln, Ln, []) :-
+%	 write(djd_token_left_curly),
+	 !.
 
 % right curly (Label)
-token(0'}, Stream, '}'(N), Ln, Ln, Ahead) :- !,
+token(0'}, Stream, '}'(N), Ln, Ln, Ahead) :-
+%	 write(djd_token_right_curly),
+	!,
    commit_label(N, Stream, Ahead).
 
 commit_label(N, Stream, Ahead) :-
-   get0(Stream, C),
+   get_byte(Stream, C),
    ( C == 0'_
      -> number_chars(Cs, Stream, Ahead),
 	name(N, Cs)
@@ -243,25 +276,37 @@ commit_label(N, Stream, Ahead) :-
 
 
 % left round
-token(0'(, _, '(', Ln, Ln, []) :- !.
+token(0'(, _, '(', Ln, Ln, []) :-
+%	 write(djd_token_left_round),
+	!.
 
 % right round
-token(0'), _, ')', Ln, Ln, []) :- !.
+token(0'), _, ')', Ln, Ln, []) :-
+%	 write(djd_token_right_round),
+	!.
 
 % left square
-token(0'[, _, '[', Ln, Ln, []) :- !.
+token(0'[, _, '[', Ln, Ln, []) :-
+%	 write(djd_token_left_square),
+	!.
 
 % right square
-token(0'], _, ']', Ln, Ln, []) :- !.
+token(0'], _, ']', Ln, Ln, []) :-
+%	 write(djd_token_right_square),
+	!.
 
 
 % Comma
-token(0',, _, ',', Ln, Ln, []) :- !.
+token(0',, _, ',', Ln, Ln, []) :-
+%	 write(djd_token_left_comma),
+	!.
 
 
 % Underscore, the name is "_littlename"
-token(0'_, Stream, '_'(N), Ln, Ln, Ahead) :- !,
-   get0(Stream, C),
+token(0'_, Stream, '_'(N), Ln, Ln, Ahead) :-
+%	 write(djd_token_underscore),
+	!,
+   get_byte(Stream, C),
    ( little_letter(C) 
      -> name_chars(Cs, Stream, Ahead),
         name(N, [0'_, C|Cs])
@@ -270,25 +315,43 @@ token(0'_, Stream, '_'(N), Ln, Ln, Ahead) :- !,
    ).
 
 % SemiColon
-token(0';, _, ';', Ln, Ln, []) :- !.
+token(0';, _, ';', Ln, Ln, []) :-
+%	 write(djd_token_left_semicolon),
+	!.
 
 % Terminator
-token(0'., _, terminator, Ln, Ln, []) :- !.
+token(0'., _, terminator, Ln, Ln, []) :-
+%	 write(djd_token_terminator),
+	!.
 
 
 % Big-name
-token(C, Stream, big_name(N), Ln, Ln, Ahead) :- 
-   0'A =< C, C =< 0'Z,
+token(C, Stream, NB, Ln, Ln, Ahead) :-
+%token(C, Stream, big_name(N), Ln, Ln, Ahead) :-
+%	 write(djd_token_big_name),
+	
+				%   0'A =< C, C =< 0'Z,
+	write(big_letter),
+	write(C),
+	big_letter(C),
    !,
    name_chars(Cs, Stream, Ahead),
-   name(N, [C|Cs]).
+   name(NB, [C|Cs])
+%	write(djd_token_big_name_ZZ)
+       ).
 
 % Little-name
-token(C, Stream, little_name(N), Ln, Ln, Ahead) :- 
-   0'a =< C, C =< 0'z,
-   !,
+% token(C, Stream, little_name(N), Ln, Ln, Ahead) :-
+token(C, Stream, NC, Ln, Ln, Ahead) :-
+%		 write(djd_token_little_name),
+
+%   0'a =< C, C =< 0'z,
+	write(little_letter),
+	write(C),
+	little_letter(C),
+	!,
    name_chars(Cs, Stream, Ahead),
-   name(N, [C|Cs]).
+   name(NC, [C|Cs]).
 
 /*------------------------------------------------------------------------------
  */
@@ -296,7 +359,7 @@ token(C, Stream, little_name(N), Ln, Ln, Ahead) :-
 % name_chars is written in this clumsy form in order to remove choice points
 % hence improve efficiency
 name_chars(Cs, Stream, Ahead) :-
-   get0(Stream, C),
+   get_byte(Stream, C),
    ( ( little_letter(C);
        number_char(C);
        big_letter(C);
@@ -325,7 +388,11 @@ number_char(C) :-
 
 % Graphic-name
 
-token(C, Stream, graphic_name(N), Ln, Ln, Ahead) :- 
+%token(C, Stream, graphic_name(N), Ln, Ln, Ahead) :-
+
+ token(C, Stream, N, Ln, Ln, Ahead) :-
+%	 	 write(djd_token_graphic_name),
+
    graphic_char(C),
    !,
    graphic_chars(Cs, Stream, Ahead),
@@ -338,7 +405,7 @@ graphic_char(0'+).
 graphic_char(0'-).
 graphic_char(0'*).
 graphic_char(0'/).
-graphic_char(0'\).
+graphic_char(0'\\).
 graphic_char(0'^).
 graphic_char(0'#).
 graphic_char(0'<).
@@ -353,11 +420,11 @@ graphic_char(0'!).
 graphic_char(0'$).
 graphic_char(0':).
 graphic_char(0'|).
-graphic_char(0'').
+graphic_char(0'\').  % was 0''
 
 
 graphic_chars(Cs, Stream, Ahead) :-
-   get0(Stream, C),
+   get_byte(Stream, C),
    ( graphic_char(C)
      -> Cs = [C|Cs2],
 	graphic_chars(Cs2, Stream, Ahead)
@@ -373,15 +440,16 @@ graphic_chars(Cs, Stream, Ahead) :-
 
 % Number & Float
 token(C, Stream, Token, Ln, Ln, Ahead) :-
+%	 write(djd_token_number_float),
    0'0 =< C, C =< 0'9,
    !,
    number_chars(Cs1, Stream, Ahead1),
    ( Ahead1 = [0'.]
-     -> get0(Stream, C0),
+     -> get_byte(Stream, C0),
 	( number_char(C0)	% make sure it's not P(a) <- a = 3.
 	  -> number_chars(Cs2, Stream, Ahead2),
 	     ( Ahead2 = [0'E]
-	       -> get0(Stream, C2),
+	       -> get_byte(Stream, C2),
 		  ( signed_number(C2)
 		    -> number_chars(Cs3, Stream, Ahead),
 		       append(Cs2, [0'E, C2|Cs3], Cs4),
@@ -417,7 +485,7 @@ signed_number(C) :-
 
 
 number_chars(Cs, Stream, Ahead) :-
-   get0(Stream, C),
+   get_byte(Stream, C),
    ( number_char(C)
      -> Cs = [C|Cs2],
         number_chars(Cs2, Stream, Ahead)
@@ -429,7 +497,9 @@ number_chars(Cs, Stream, Ahead) :-
  */
 
 % Cope with illegal characters
-token(C, Stream, Token, Start, End, Ahead) :- 
+ token(C, Stream, Token, Start, End, Ahead) :-
+%	 	 write(djd_token_illegal),
+
    format(user_error, '~nError: illegal character with ASCII code "~w" in line ~d.~n',
 		[C, Start]),
    get_one_token(Stream, Token, Start, End, [], Ahead).

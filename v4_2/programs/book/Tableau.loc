@@ -1,0 +1,252 @@
+LOCAL      Tableau.
+
+
+IMPORT     Sets.
+
+
+BASE       Leaf, Node, Tableau.
+
+
+FUNCTION   Nd : 
+
+  Integer        % A pointer.
+* Unit           % The propositional formula in the node pointed to by
+                 % this pointer.
+-> Node.
+
+FUNCTION   Lf : 
+
+  Integer        % A pointer to an open leaf node. (A leaf node is open
+                 % if it is at the end of a non-closed branch in a 
+                 % tableau.)
+* Set(Integer)   % The set of pointers to the ancestors of this node 
+                 % plus the pointer to the node itself. 
+-> Leaf.
+
+FUNCTION   Tb : 
+
+  Set(Leaf)      % The set of open leaf nodes in a tableau.
+* Set(Node)      % The set of all nodes in this tableau.
+* Set(Integer)   % The set of pointers to nodes in this tableau which 
+                 % have yet to be expanded and lie on non-closed 
+                 % branches.
+* Integer        % The maximum value of pointers in this tableau. 
+-> Tableau.
+
+
+% PREDICATE  Prove : Flock * Unit * Indicator.
+
+Prove(theory, theorem, indicator) <-
+    UnitParts(neg_thm, "~", [theorem]) &
+    (IF Literal(neg_thm) THEN exp = {} ELSE exp = {1}) &
+    InitialiseTableau(theory,Tb({Lf(1,{1})},{Nd(1,neg_thm)},exp,1), 
+                                                              tableau) &
+    Unsatisfiable(tableau, indicator).
+            
+
+PREDICATE  InitialiseTableau : 
+
+  Flock          % A propositional theory.
+* Tableau        % A tableau containing only the negation of the
+                 % formula to be proved.
+* Tableau.       % The tableau containing just the axioms in this 
+                 % theory and the negation of the formula to be proved.
+
+InitialiseTableau(theory, Tb(leaves,nodes,exp,max), tableau) <-
+    IF SOME [f,n] UnitInFlock(theory, f, n)
+    THEN 
+      DeleteUnit(theory, f, n, new_theory) &
+      Lf(max,anc) In leaves &
+      (IF Closed(f,anc,nodes)
+       THEN 
+         tableau = Tb({},{},{},0)            % Tableau is closed.
+       ELSE
+         (IF Literal(f) THEN e = {} ELSE e = {max+1}) &
+         InitialiseTableau(new_theory, 
+          Tb({Lf(max+1,anc+{max+1})},nodes+{Nd(max+1,f)},exp+e,max+1),
+          tableau)
+      )
+    ELSE 
+      tableau = Tb(leaves,nodes,exp,max).
+
+
+PREDICATE  Unsatisfiable : 
+
+  Tableau        % A tableau.
+* Indicator.     % YES, if the tableau can be expanded to an 
+                 % unsatisfiable one, and NO, otherwise.
+
+Unsatisfiable(Tb({},_,_,_), YES).
+
+Unsatisfiable(Tb(leaves,nodes,exp,max), indicator) <-
+    leaves ~= {} &
+    IF  SOME [n] n In exp
+    THEN
+      new_exp = exp\{n} &
+      Nd(n,f) In nodes &
+      leaf_ptrs = {m : SOME [anc] ((Lf(m,anc) In leaves) & (n In anc))} &
+      (IF leaf_ptrs = {} 
+       THEN
+         tableau = Tb(leaves,nodes,new_exp,max)
+       ELSE
+         Apply(f, leaf_ptrs, Tb(leaves,nodes,new_exp,max), tableau)
+      ) &
+      Unsatisfiable(tableau, indicator)
+    ELSE
+      indicator = NO.
+
+
+PREDICATE  Closed : 
+
+  Unit           % A formula closed wrt to the formulas in the nodes 
+                 % in the third argument.
+* Set(Integer)   % A set of pointers to nodes.
+* Set(Node).     % A set of nodes.
+
+Closed(f, ptrs, nodes) <- 
+    m In ptrs &
+    Nd(m,f1) In nodes &
+    (UnitParts(f, "~", [f1]) \/ UnitParts(f1, "~", [f])).
+
+
+PREDICATE  Literal : 
+
+  Unit.          % A propositional formula which is a literal.
+
+Literal(f) <-
+    UnitParts(f, _, []).
+           
+Literal(f) <-
+    UnitParts(f, "~", [f1]) &
+    UnitParts(f1, _, []).
+
+
+PREDICATE  Apply : 
+
+  Unit           % A propositional formula which is not a literal. 
+* Set(Integer)   % A set of pointers to open leaf nodes.
+* Tableau        % A tableau containing these open leaf nodes. 
+* Tableau.       % The tableau obtained by extending this tableau 
+                 % at each of these open leaf nodes according to this 
+                 % formula.
+
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "\\/", [f1, f2]) &             % f = f1 \/ f2
+    ExpandOr(f1,f2,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "->", [f1, f2]) &              % f = f1 -> f2
+    UnitParts(notf1, "~", [f1]) &
+    ExpandOr(notf1,f2,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "&", [f1, f2]) &               % f = f1 & f2
+    ExpandAnd(f1,f2,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+        
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "~", [f1]) & 
+    UnitParts(f1, "&", [f2, f3]) &              % f = ~(f2 & f3)
+    UnitParts(notf2, "~", [f2]) &
+    UnitParts(notf3, "~", [f3]) &
+    ExpandOr(notf2,notf3,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "~", [f1]) & 
+    UnitParts(f1, "\\/", [f2, f3]) &            % f = ~(f2 \/ f3)
+    UnitParts(notf2, "~", [f2]) &
+    UnitParts(notf3, "~", [f3]) &
+    ExpandAnd(notf2,notf3,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "~", [f1]) & 
+    UnitParts(f1, "->", [f2, f3]) &             % f = ~(f2 -> f3)
+    UnitParts(notf3, "~", [f3]) &
+    ExpandAnd(f2,notf3,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+Apply(f, leaf_ptrs, Tb(leaves,nodes,exp,max), tableau) <-
+    UnitParts(f, "~", [f1]) & 
+    UnitParts(f1, "~", [f2]) &                  % f = ~~f2
+    ExpandNegNeg(f2,leaf_ptrs,Tb(leaves,nodes,exp,max),tableau).
+           
+
+PREDICATE  ExpandOr : 
+
+  Unit           % A propositional formula.
+* Unit           % A propositional formula.
+* Set(Integer)   % A set of pointers to open leaf nodes. 
+* Tableau        % A tableau containing these open leaf nodes.
+* Tableau.       % The tableau obtained by extending this tableau at
+                 % each of these open leaf nodes with two "or" 
+                 % children corresponding to each of these formulas.
+
+ExpandOr(f1,f2,leaf_ptrs,Tb(leaves,nodes,exp,max),new_tableau) <-
+    IF SOME [n]  n In leaf_ptrs
+    THEN
+      Lf(n,anc) In leaves &
+      max1 = max + 1 &
+      max2 = max + 2 &
+      (IF Literal(f1) THEN e1 = {} ELSE e1 = {max1}) &
+      (IF Literal(f2) THEN e2 = {} ELSE e2 = {max2}) &
+      (IF Closed(f1,anc,nodes) THEN lf1 = {} ELSE 
+                                        lf1 = {Lf(max1,anc+{max1})}) &
+      (IF Closed(f2,anc,nodes) THEN lf2 = {} ELSE 
+                                        lf2 = {Lf(max2,anc+{max2})}) &
+      ExpandOr(f1, f2, leaf_ptrs\{n}, 
+         Tb((leaves\{Lf(n,anc)})+lf1+lf2, 
+            nodes+{Nd(max1,f1),Nd(max2,f2)}, exp+e1+e2,max2),
+         new_tableau)
+    ELSE
+      new_tableau = Tb(leaves,nodes,exp,max).
+
+
+PREDICATE  ExpandAnd : 
+
+  Unit           % A propositional formula. 
+* Unit           % A propositional formula.
+* Set(Integer)   % A set of pointers to open leaf nodes. 
+* Tableau        % A tableau containing these open leaf nodes.
+* Tableau.       % The tableau obtained by extending this tableau at 
+                 % each of these open leaf nodes with two "and" 
+                 % children corresponding to each of these formulas.
+
+ExpandAnd(f1,f2,leaf_ptrs,Tb(leaves,nodes,exp,max),new_tableau) <-
+    IF SOME [n]  n In leaf_ptrs 
+    THEN
+      Lf(n,anc) In leaves &
+      max1 = max + 1 &
+      max2 = max + 2 &
+      (IF Literal(f1) THEN e1 = {} ELSE e1 = {max1}) &
+      (IF Literal(f2) THEN e2 = {} ELSE e2 = {max2}) &
+      (IF (Closed(f1,anc,nodes) \/ 
+                           Closed(f2,anc+{max1},nodes+{Nd(max1,f1)})) 
+       THEN lf2 = {} ELSE lf2 = {Lf(max2,anc+{max1,max2})}) &
+      ExpandAnd(f1, f2, leaf_ptrs\{n}, 
+         Tb((leaves\{Lf(n,anc)})+lf2, 
+            nodes+{Nd(max1,f1),Nd(max2,f2)}, exp+e1+e2,max2),
+         new_tableau)
+    ELSE
+      new_tableau = Tb(leaves,nodes,exp,max).
+
+
+PREDICATE  ExpandNegNeg : 
+
+  Unit           % A propositional formula.
+* Set(Integer)   % A set of pointers to open leaf nodes. 
+* Tableau        % A tableau containing these open leaf nodes.
+* Tableau.       % The tableau obtained by extending this tableau at
+                 % each of these open leaf nodes with a node
+                 % containing this formula.
+
+ExpandNegNeg(f1,leaf_ptrs,Tb(leaves,nodes,exp,max),new_tableau) <-
+    IF SOME [n]  n In leaf_ptrs
+    THEN
+      Lf(n,anc) In leaves &
+      max1 = max + 1 &
+      (IF Literal(f1) THEN e1 = {} ELSE e1 = {max1}) &
+      (IF Closed(f1,anc,nodes) THEN lf1 = {} ELSE 
+                                          lf1 = {Lf(max1,anc+{max1})}) &
+      ExpandNegNeg(f1, leaf_ptrs\{n}, 
+         Tb((leaves\{Lf(n,anc)})+lf1, nodes+{Nd(max1,f1)}, exp+e1, max1),
+         new_tableau)
+    ELSE
+      new_tableau = Tb(leaves,nodes,exp,max).

@@ -1,0 +1,21 @@
+LOCAL       Dynamic.
+
+% PREDICATE   RemoveAll : Program * String * Formula * Program.
+
+RemoveAll(program,module,atom,new_program) <-
+            IF SOME [program1] Remove(program,module,atom,program1) 
+            THEN 
+              RemoveAll(program1,module,atom,new_program)
+            ELSE 
+              new_program = program. 
+
+
+% PREDICATE   Remove : Program * String * Formula * Program.
+
+Remove(program,module,atom,new_program) <-
+            StatementMatchAtom(program,module,atom,statement) &
+            IsImpliedBy(head,_,statement) &
+            RenameFormulas([head],[atom],[renamed_atom]) &
+            EmptyTermSubst(empty_subst) &
+            UnifyAtoms(head,renamed_atom,empty_subst,_) &
+            DeleteStatement(program,module,statement,new_program).

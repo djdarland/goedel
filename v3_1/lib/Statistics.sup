@@ -1,0 +1,48 @@
+/* 
+File:		Statistics.sup
+Subject:	Supports a Prolog-like statistics predicate
+Author: 	Jiwei Wang
+Date:		20 May 1992
+
+================================================================================
+*/
+
+'$$module'('@(#)Statistics.sup 1.2 last updated 94/04/26 00:22:29 by jiwei
+').
+
+
+'Statistics.Statistics.P2'('Statistics.GlobalStack.C0', Value) :-
+	statistics(global_stack, Value).
+
+'Statistics.Statistics.P2'('Statistics.LocalStack.C0', Value) :-
+	statistics(local_stack, Value).
+
+'Statistics.Statistics.P2'('Statistics.Trail.C0', Value) :-
+	statistics(trail, Value).
+
+'Statistics.Statistics.P2'('Statistics.Choice.C0', Value) :-
+	statistics(choice, Value).
+
+'Statistics.Statistics.P2'('Statistics.Core.C0', Value) :-
+	statistics(core, Value).
+
+'Statistics.Statistics.P2'('Statistics.Memory.C0', Value) :-
+	statistics(memory, Value).
+
+'Statistics.Statistics.P2'('Statistics.Heap.C0', Value) :-
+	statistics(heap, Value).
+
+'Statistics.Statistics.P2'('Statistics.Program.C0', Value) :-
+	statistics(program, Value).
+
+'Statistics.Statistics.P2'('Statistics.RunTime.C0', Value) :-
+	statistics(runtime, Value).
+
+'Statistics.Statistics.P2'('Statistics.GarbageCollection.C0', Value) :-
+	statistics(garbage_collection, Value).
+
+'Statistics.Statistics.P2'('Statistics.StackShifts.C0', Value) :-
+	statistics(stack_shifts, Value).
+
+'~Statistics.Statistics.P2'(Key, Value) :-
+	'Statistics.Statistics.P2'(Key, Value).

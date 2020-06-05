@@ -1,0 +1,84 @@
+CLOSED       Sets.
+
+% Module providing finite sets and a collection of standard set
+% processing functions and predicates.
+%
+% Also provided by this module are intensional set terms which have the 
+% form
+% 
+% {T : W}
+%
+% where T is a term with free variables y1,...,yn, say, and W is a 
+% formula (not involving commits) which has y1,...,yn amongst its free
+% variables. The variables y1,...,yn must be local to {T : W}. The free
+% variables of {T : W} are the free variables of W other than y1,...,yn. 
+% (Note that T may itself be an intensional set term and that it is 
+% possible for n to be 0.)
+%
+% Informally, {T : W} means "the set of all instances of T 
+% corresponding to the instances of W which are true". 
+
+IMPORT       Integers.
+
+CONSTRUCTOR  Set/1.
+%
+% Set constructor.
+
+CONSTANT     Null : Set(a).    
+%
+% Empty set.
+
+
+FUNCTION     Inc : a * Set(a) -> Set(a).
+%
+% The function Inc used to form sets. The intended meaning of Inc is
+% the mapping Include such that Include(d,S) = {d} union S, where d is
+% an element from the domain of type a and S is a set of elements of 
+% type a.
+
+
+FUNCTION     *  : yFx(120) : Set(a) * Set(a) -> Set(a).
+%
+% Set-theoretic intersection.
+
+
+FUNCTION     +  : yFx(110) : Set(a) * Set(a) -> Set(a).
+%
+% Set-theoretic union.
+
+
+FUNCTION     \ : yFx(100) : Set(a) * Set(a) -> Set(a).
+%
+% Set-theoretic difference.
+
+
+PREDICATE    In : zPz : 
+
+  a             % An element.
+* Set(a).       % A set containing this element.
+
+DELAY        _ In y UNTIL GROUND(y).
+
+
+PREDICATE    Subset : zPz : 
+  
+  Set(a)        % A subset of the set in the second argument.
+* Set(a).       % A set.
+
+DELAY        _ Subset y UNTIL GROUND(y).
+
+
+PREDICATE    StrictSubset : zPz : 
+
+  Set(a)        % A strict subset of the set in the second argument.
+* Set(a).       % A set.
+
+DELAY        _ StrictSubset y UNTIL GROUND(y).
+
+
+PREDICATE    Size : 
+
+  Set(a)        % A set. 
+* Integer.      % The number of elements in the set.
+
+DELAY        Size(x,_) UNTIL GROUND(x).

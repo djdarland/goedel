@@ -1,0 +1,115 @@
+MODULE TestTables.
+
+IMPORT Tables, DoubleTable.
+
+CONSTRUCTOR Pair/1.
+
+FUNCTION P : String * alpha -> Pair(alpha).
+
+
+PREDICATE TestInsert : List(String) * List(Integer);
+          TestDelete : List(String) * List(Integer);
+	  TestUpdate : String * Integer * Integer;
+          TestMember : String * Integer; 
+          TestFirst : String * Integer; 
+          TestLast : String * Integer; 
+          TestNext : String * String * Integer; 
+          TestPrevious : String * String * Integer; 
+	  BuildTable : Integer * Table(Integer);
+          InsertList : Table(alpha) * List(Pair(alpha)) * Table(alpha); 
+          DeleteList : Table(alpha) * List(String) * Table(alpha);
+	  ListOfPairs : Integer * List(Pair(Integer)).
+
+
+ListOfPairs(1, [P("D", 4), P("E", 5), P("G", 7), P("B", 2), 
+                P("A", 1), P("C", 3), P("F", 6)]).
+
+ListOfPairs(2, [P("E", 5), P("C", 3), P("H", 8), P("B", 2), P("D", 4),
+                P("G", 7), P("J", 10), P("A", 1), P("F", 6), P("I", 9), 
+                P("K", 11)]).
+
+ListOfPairs(3, [P("D", 4), P("E", 5), P("G", 7), P("BXXXXX", 2), 
+                P("A", 1), P("C", 3), P("F", 6)]).
+
+ListOfPairs(4, [P("E", 5), P("CYYYYYY", 3), P("H", 8), P("B", 2), P("D", 4),
+                P("G", 7), P("J", 10), P("AZZZZZZ", 1), P("F", 6), P("I", 9), 
+                P("K", 11)]).
+
+BuildTable(n, table) <-
+   EmptyTable(empty_table) &
+   ListOfPairs(n, list) &
+   InsertList(empty_table, list, table).
+
+
+% This sequence of insertions exercises all four rebalancing operations.
+
+TestInsert(keys, values) <- 
+   BuildTable(1, table) &
+   ListTable(table, keys, values).
+
+
+% This sequence of insertions constructs a table such that the following 
+% sequence of deletions exercises all four rebalancing operations.
+
+TestDelete(keys, values) <-
+   BuildTable(2, table) &
+   DeleteList(table, ["D", "H", "F", "E", "B", "A", "G"], table1) &
+   ListTable(table1, keys, values).
+
+
+% The value of the specified key is doubled and checked by search
+
+TestUpdate(key, x, y) <-
+   BuildTable(2, table) &
+   UpdateTable(table, key, x * 2, table1, x) &
+   NodeInTable(table1, key, y).
+
+
+% This tests the NodeInTable predicate.
+
+TestMember(key, value) <- 
+   BuildTable(1, table) &
+   NodeInTable(table, key, value).
+
+
+% This tests the FirstNode predicate.
+
+TestFirst(key, value) <- 
+   BuildTable(1, table) &
+   FirstNode(table, key, value).
+
+
+% This tests the LastNode predicate.
+
+TestLast(key, value) <- 
+   BuildTable(1, table) &
+   LastNode(table, key, value).
+
+
+% This tests the NextNode predicate.
+
+TestNext(search_key, key, value) <- 
+   BuildTable(1, table) &
+   NextNode(table, search_key, key, value).
+
+
+% This tests the PreviousNode predicate.
+
+TestPrevious(search_key, key, value) <- 
+   BuildTable(1, table) &
+   PreviousNode(table, search_key, key, value).
+
+
+InsertList(table, [], table).
+
+InsertList(table, [P(key, item)|pairs], new_table) <-
+   InsertNode(table, key, item, table1) &
+   InsertList(table1, pairs, new_table).
+
+
+DeleteList(table, [], table).
+
+DeleteList(table, [key|keys], new_table) <-
+   DeleteNode(table, key, _, table1) &
+   DeleteList(table1, keys, new_table).
+

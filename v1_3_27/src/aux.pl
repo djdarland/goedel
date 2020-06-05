@@ -1,4 +1,4 @@
-
+:- multifile(aux).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -31,8 +31,7 @@ Date:		30 June 1992
 ================================================================================
 */
 
-'$$module'('@(#)aux.pl 1.3 last updated 93/02/10 17:24:36 by jiwei
-').
+%%'$$module'('@(#)aux.pl 1.3 last updated 93/02/10 17:24:36 by jiwei').
 
 
 % a signal for the runtime system 
@@ -41,7 +40,7 @@ is_runtime_system.
 
 my_load(File):-
    sappend(File, '.pl', File2),
-   open(File2, read, Stream),
+   open(File2, read, Stream, [type(binary)]),
    read(Stream, module(ModuleName)),
    abolish_module(ModuleName),
    ( read(Stream, Clause)

@@ -1,0 +1,14 @@
+MODULE TestDemo.
+
+IMPORT Demo, ProgramsIO, Answers.
+
+PREDICATE Go: String * String * String.
+
+Go(prog_string, goal_string, answer_string) <-
+   ProgramCompile(prog_string, program) &
+   MainModuleInProgram(program, module) &
+   StringToProgramFormula(program, module, goal_string, [goal]) &
+   Demo(program, goal, answer) &
+   RestrictSubstToFormula(goal, answer, computed_answer) &
+   AnswerString(program, module, computed_answer, answer_string).
+

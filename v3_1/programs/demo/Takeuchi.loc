@@ -1,0 +1,21 @@
+% Another example of a recursive functions, along the lines of the 91 function:
+% t(x, y, z) = if x =< y then y else t(t(x-1, y, z), t(y-1, z, x), t(z-1, x, y)).
+%
+% It is equivalent to: 
+% t(x, y, z) = if x =< y then y else if y=<z then z else x.
+
+
+MODULE		Takeuchi.
+
+IMPORT		Integers.
+
+PREDICATE	T : Integer * Integer * Integer * Integer.
+
+
+T(x, y, z, w) <-
+	IF x =< y
+	THEN w = y
+	ELSE 	T(x-1, y, z, a) &
+		T(y-1, z, x, b) &
+		T(z-1, x, y, c) &
+		T(a, b, c, w).

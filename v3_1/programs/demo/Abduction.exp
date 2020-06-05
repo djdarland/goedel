@@ -1,0 +1,6 @@
+EXPORT	Abduction.
+
+IMPORT	Programs.
+
+PREDICATE
+	Abduction : Program * Formula * TermSubst * List(Formula).

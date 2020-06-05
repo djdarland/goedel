@@ -1,0 +1,37 @@
+MODULE      P1.
+
+IMPORT      Lists. 
+
+
+PREDICATE   Quicksort : List(Integer) * List(Integer).
+DELAY       Quicksort(x,_) UNTIL NONVAR(x).
+
+Quicksort(x,y) <-
+            Quicksort3(x,y,[]).
+
+
+PREDICATE   Quicksort3 : List(Integer) * List(Integer) * List(Integer).
+DELAY       Quicksort3(x,_,_) UNTIL NONVAR(x).
+
+Quicksort3([],xs,xs) <-
+            |.
+Quicksort3([x|xs],ys,zs) <-
+            |
+            Partition(xs,x,l,b) &
+            Quicksort3(l,ys,[x|ys1]) &
+            Quicksort3(b,ys1,zs).
+
+
+PREDICATE   Partition : List(Integer) * Integer * List(Integer) * 
+                        List(Integer).
+DELAY       Partition([],_,_,_) UNTIL TRUE;
+            Partition([x|_],y,_,_) UNTIL NONVAR(x) & NONVAR(y).
+
+Partition([],_,[],[]) <-
+            |.
+Partition([x|xs],y,[x|ls],bs) <-
+            x =< y |
+            Partition(xs,y,ls,bs).
+Partition([x|xs],y,ls,[x|bs]) <-
+            x > y |
+            Partition(xs,y,ls,bs).

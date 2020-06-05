@@ -1,0 +1,1032 @@
+CLOSED     Programs.
+
+% Module providing the abstract data type Program for representing 
+% Goedel programs (using a ground representation) and predicates for 
+% processing terms of type Program.
+
+IMPORT     Syntax.
+
+BASE       Program,         % Type of a term representing (the flat form 
+                            % of) a program.
+           ModulePart,      % Type of constants representing the keywords 
+                            % EXPORT, LOCAL, CLOSED, and MODULE.
+           Condition.       % Type of a term representing a condition 
+                            % in a DELAY declaration.
+
+CONSTANT   Export, Local, Closed, Module : ModulePart.
+%
+% Constants representing the keywords EXPORT, LOCAL, CLOSED, and MODULE 
+% (resp.).
+
+
+PREDICATE  TypeInProgram : 
+
+  Program         % Representation of a program.
+* Type.           % Representation of a type in the flat language of 
+                  % this program.
+
+DELAY      TypeInProgram(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TermInProgram : 
+
+  Program         % Representation of a program.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this program.
+* Term            % Representation of a term in the flat language of 
+                  % this program.
+* Type            % Representation of the type of this term with respect 
+                  % to this variable typing.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the second argument 
+                  % with the types of all free variables occurring in the 
+                  % term.
+
+DELAY      TermInProgram(x,y,z,_,_) UNTIL GROUND(x) & GROUND(y) &
+                                                              GROUND(z).
+
+
+PREDICATE  FormulaInProgram : 
+
+  Program         % Representation of a program.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this program.
+* Formula         % Representation of a formula, which is a standard 
+                  % body or standard resultant, in the flat language of
+                  % this program.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the second argument 
+                  % with the types of all free variables occurring in
+                  % the formula.
+
+DELAY      FormulaInProgram(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                             GROUND(z).
+
+
+PREDICATE  TypeInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module.
+* Type.           % Representation of a type in the flat language of
+                  % this module, if the keyword is LOCAL or MODULE, or 
+                  % the flat export language of this module, if the 
+                  % keyword is EXPORT or CLOSED.
+
+DELAY      TypeInModule(x,y,z,u) UNTIL GROUND(x) & GROUND(y) & 
+                                                GROUND(z) & GROUND(u).
+
+
+PREDICATE  TermInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this module, if the keyword is LOCAL or
+                  % MODULE, or the flat export language of this module,
+                  % if the keyword is EXPORT or CLOSED.
+* Term            % Representation of a term in the flat language of 
+                  % this module, if the keyword is LOCAL or MODULE, or
+                  % the flat export language of this module, if the 
+                  % keyword is EXPORT or CLOSED.
+* Type            % Representation of the type of this term with 
+                  % respect to this variable typing.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the fifth argument
+                  % with the types of all variables occurring in the 
+                  % term.
+
+DELAY      TermInModule(x,y,z,u,v,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                    GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  FormulaInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this module, if the keyword is LOCAL 
+                  % or MODULE, or the flat export language of this 
+                  % module, if the keyword is EXPORT or CLOSED.
+* Formula         % Representation of a formula, which is a standard body
+                  % or standard resultant, in the flat language of this
+                  % module, if the keyword is LOCAL or MODULE, or the
+                  % flat export language of this module, if the keyword 
+                  % is EXPORT or CLOSED.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the fourth argument 
+                  % with the types of all free variables occurring in 
+                  % the formula.
+
+DELAY      FormulaInModule(x,y,z,u,v,_) UNTIL GROUND(x) & GROUND(y) & 
+                                     GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  StringToProgramType : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % A string.
+* List(Type).     % List (in a definite order) of representations of 
+                  % types in the flat language of this module wrt this
+                  % program whose string representation is the third 
+                  % argument.
+
+DELAY      StringToProgramType(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                            GROUND(z).
+
+
+PREDICATE  StringToProgramTerm : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % A string.
+* List(Term).     % List (in a definite order) of representations of 
+                  % terms in the flat language of this module wrt this
+                  % program whose string representation is the third
+                  % argument.
+
+DELAY      StringToProgramTerm(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                            GROUND(z).
+
+
+PREDICATE  StringToProgramFormula : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % A string.
+* List(Formula).  % List (in a definite order) of representations of 
+                  % formulas, which are standard bodies or standard 
+                  % resultants, in the flat language of this module wrt
+                  % this program whose string representation is the 
+                  % third argument.
+
+DELAY      StringToProgramFormula(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z).
+
+
+PREDICATE  ProgramTypeToString : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* Type            % Representation of a type.
+* String.         % The string representation of this type. (Subtypes 
+                  % of the type not in the flat language of the module 
+                  % do not appear.) 
+
+DELAY      ProgramTypeToString(x,y,z,_) UNTIL GROUND(x) & GROUND(y) &
+                                                            GROUND(z).
+
+
+PREDICATE  ProgramTermToString : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* Term            % Representation of a term.
+* String.         % The string representation of this term. (Subterms 
+                  % of the term not in the flat language of the module
+                  % do not appear.)
+
+DELAY      ProgramTermToString(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                            GROUND(z).
+
+
+PREDICATE  ProgramFormulaToString : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* Formula         % Representation of a formula, which is a standard 
+                  % body or standard resultant.
+* String.         % The string representation of this formula. (Terms 
+                  % of the formula not in the flat language of the 
+                  % module do not appear.)
+
+DELAY      ProgramFormulaToString(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z). 
+
+
+PREDICATE  ProgramBaseName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a base.
+* Name.           % Representation of the corresponding flat name of 
+                  % this base.
+
+DELAY      ProgramBaseName(x,y,z,u) UNTIL GROUND(x) & 
+                                ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  ProgramConstructorName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a constructor.
+* Integer         % Arity of this constructor.
+* Name.           % Representation of the corresponding flat name of 
+                  % this constructor.
+
+DELAY      ProgramConstructorName(x,y,z,u,v) UNTIL GROUND(x) & 
+                    ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  ProgramConstantName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a constant.
+* Name.           % Representation of the corresponding flat name of 
+                  % this constant.
+
+DELAY      ProgramConstantName(x,y,z,u) UNTIL GROUND(x) & 
+                               ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  ProgramFunctionName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a function.
+* Integer         % Arity of this function.
+* Name.           % Representation of the corresponding flat name of
+                  % this function.
+
+DELAY      ProgramFunctionName(x,y,z,u,v) UNTIL GROUND(x) & 
+                   ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  ProgramPropositionName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a proposition.
+* Name.           % Representation of the corresponding flat name of 
+                  % this proposition.
+
+DELAY      ProgramPropositionName(x,y,z,u) UNTIL GROUND(x) & 
+                               ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  ProgramPredicateName : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program.
+* String          % Name of a predicate.
+* Integer         % Arity of this predicate.
+* Name.           % Representation of the corresponding flat name of 
+                  % this predicate.
+
+DELAY      ProgramPredicateName(x,y,z,u,v) UNTIL GROUND(x) & 
+                   ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  MainModuleInProgram : 
+
+  Program         % Representation of a program.
+* String.         % Name of the main module in this program.
+
+DELAY      MainModuleInProgram(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  ModuleInProgram : 
+
+  Program         % Representation of a program.
+* String.         % Name of a module in this program.
+
+DELAY      ModuleInProgram(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  OpenModule : 
+
+  Program         % Representation of a program.
+* String.         % Name of an open module in this program.
+
+DELAY      OpenModule(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  DeclaredInOpenModule : 
+
+  Program         % Representation of a program.
+* String          % Name of an open module in this program.
+* Formula.        % Representation of an atom in the flat language 
+                  % of this program whose proposition or predicate is 
+                  % declared in this module. 
+
+DELAY      DeclaredInOpenModule(x,_,z) UNTIL GROUND(x) & GROUND(z).
+
+
+PREDICATE  DeclaredInClosedModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a closed module in this program.
+* Formula.        % Representation of an atom in the flat language of
+                  % this program whose proposition or predicate is 
+                  % declared in the export part of this module. 
+
+DELAY      DeclaredInClosedModule(x,_,z) UNTIL GROUND(x) & GROUND(z).
+
+
+PREDICATE  StatementInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of an open module in this program. 
+* Formula.        % Representation of a statement in this module.
+
+DELAY      StatementInModule(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  StatementMatchAtom : 
+
+  Program         % Representation of a program.
+* String          % Name of an open module in this program. 
+* Formula         % Representation of an atom in the flat language of
+                  % this program.
+* Formula.        % Representation of a statement in this module whose 
+                  % proposition or predicate in the head is the same 
+                  % as the proposition or predicate in this atom.
+
+DELAY      StatementMatchAtom(x,_,z,_) UNTIL GROUND(x) & GROUND(z).
+
+
+PREDICATE  DefinitionInProgram : 
+
+  Program         % Representation of a program.
+* String          % Name of an open module in this program. 
+* Name            % Representation of the flat name of a proposition 
+                  % or predicate declared in this module.
+* List(Formula).  % List (in a definite order) of representations of 
+                  % statements in the definition of this proposition 
+                  % or predicate.
+
+DELAY      DefinitionInProgram(x,_,_,_) UNTIL GROUND(x).
+
+                               
+PREDICATE  ControlInProgram :  
+                               
+  Program         % Representation of a program.
+* String          % Name of an open module in this program. 
+* Name            % Representation of the flat name of a predicate 
+                  % declared in this module.
+* List(Formula)   % List (in a definite order) of representations of 
+                  % the heads of all DELAY declarations for this
+                  % predicate.
+* List(Condition).% List of representations of the DELAY conditions 
+                  % corresponding to each head in the fourth argument.
+                               
+DELAY      ControlInProgram(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  AndCondition :
+
+  Condition       % Representation of a DELAY declaration condition,
+                  % Cond1.
+* Condition       % Representation of a DELAY declaration condition, 
+                  % Cond2.
+* Condition.      % Representation of the condition Cond1 & Cond2.
+
+
+PREDICATE  OrCondition :
+
+  Condition       % Representation of a DELAY declaration condition, 
+                  % Cond1.
+* Condition       % Representation of a DELAY declaration condition,
+                  % Cond2.
+* Condition.      % Representation of the condition Cond1 \/ Cond2.
+
+
+PREDICATE  TrueCondition :
+
+  Condition.      % Representation of the DELAY condition TRUE.
+
+
+PREDICATE  NonVarCondition :
+
+  Term            % Representation of a variable, var.
+* Condition.      % Representation of the DELAY condition NONVAR(var).
+
+
+PREDICATE  GroundCondition :
+
+  Term            % Representation of a variable, var.
+* Condition.      % Representation of the DELAY condition GROUND(var).
+
+
+PREDICATE  StringToCondition :    
+
+  String          % The string representation of a DELAY condition.
+* Condition.      % Representation of this condition.
+                               
+DELAY      StringToCondition(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConditionToString :    
+
+  Condition       % Representation of a DELAY condition.
+* String.         % The string representation of this condition (in
+                  % a canonical form).
+                               
+DELAY      ConditionToString(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  BaseInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a base 
+                  % accessible to this part of this module.
+* String.         % Name of module in which this base is declared.
+
+DELAY      BaseInModule(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstructorInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a constructor
+                  % accessible to this part of this module.
+* Integer         % Arity of this constructor.
+* String.         % Name of module in which this constructor is
+                  % declared.
+
+DELAY      ConstructorInModule(x,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstantInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a constant 
+                  % accessible to this part of this module.
+* Type            % Representation of the type of this constant.
+* String.         % Name of module in which this constant is declared.
+
+DELAY      ConstantInModule(x,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  FunctionInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a function 
+                  % accessible to this part of this module.
+* FunctionInd     % Representation of the indicator for this function.
+* List(Type)      % List of the representations of the domain types of
+                  % this function.
+* Type            % Representation of the range type of this function.
+* String.         % Name of module in which this function is declared.
+
+DELAY      FunctionInModule(x,_,_,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  PropositionInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a proposition
+                  % accessible to this part of this module.
+* String.         % Name of module in which this proposition is
+                  % declared.
+
+DELAY      PropositionInModule(x,_,_,_,_) UNTIL GROUND(x). 
+
+
+PREDICATE  PredicateInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Name            % Representation of the flat name of a predicate 
+                  % accessible to this part of this module.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type)      % List of the representations of the types for this
+                  % predicate.
+* String.         % Name of module in which this predicate is declared.
+
+DELAY      PredicateInModule(x,_,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  DelayInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* Formula         % Representation of the Atom part of a DELAY 
+                  % declaration appearing in this part of this module. 
+* Condition.      % Representation of the Cond part of this DELAY 
+                  % declaration.
+
+DELAY      DelayInModule(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ImportInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of a module in this program. 
+* ModulePart      % Representation of a part keyword of this module 
+                  % which cannot be LOCAL if this module is closed.
+* String.         % Name of a module appearing in an IMPORT declaration
+                  % in this part of this module.
+
+DELAY      ImportInModule(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  LiftInModule : 
+
+  Program         % Representation of a program.
+* String          % Name of an open module in this program. 
+* String.         % Name of a module appearing in a LIFT declaration 
+                  % in the local part of this module.
+
+DELAY      LiftInModule(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  NewProgram :
+
+  String          % A string.
+* Program.        % Representation of a program with this string as 
+                  % the name of the main module. If the name of the 
+                  % module is that of one of the system modules, then
+                  % the program consists of that module and all the
+                  % ones upon which it depends. Otherwise, the program 
+                  % is an empty one and the main module has both a 
+                  % local and an export part.
+
+DELAY      NewProgram(x,_) UNTIL GROUND(x).            
+
+
+PREDICATE  InsertProgramBase : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a base not
+                  % declared in this part of this module.
+* Program.        % Representation of a program which differs from 
+                  % the program in the first argument only in that it
+                  % also contains the declaration of this base in this
+                  % part of this module.
+
+DELAY      InsertProgramBase(x,y,z,u,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                 GROUND(z) & GROUND(u).
+
+
+PREDICATE  DeleteProgramBase : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a base declared 
+                  % in this part of this module.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does
+                  % not contain the declaration of this base in this 
+                  % part of this module.
+
+DELAY      DeleteProgramBase(x,y,z,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                             GROUND(z).
+
+
+PREDICATE  InsertProgramConstructor : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a constructor 
+                  % not declared in this part of this module. 
+* Integer         % Arity of this constructor.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it also
+                  % contains the declaration of this constructor in 
+                  % this part of this module.
+
+DELAY      InsertProgramConstructor(x,y,z,u,v,_) UNTIL GROUND(x) & 
+                        GROUND(y) & GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  DeleteProgramConstructor : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a constructor 
+                  % declared in this part of this module. 
+* Integer         % Arity of this constructor.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does
+                  % not contain the declaration of this constructor in 
+                  % this part of this module.
+
+DELAY      DeleteProgramConstructor(x,y,z,_,_,_) UNTIL GROUND(x) & 
+                                                GROUND(y) & GROUND(z).
+
+
+PREDICATE  InsertProgramConstant : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a constant not 
+                  % declared in this part of this module.
+* Type            % Representation of the type of this constant.
+* Program.        % Representation of a program which differs from the 
+                  % program in the first argument only in that it also
+                  % contains the declaration of this constant in this 
+                  % part of this module.
+
+DELAY      InsertProgramConstant(x,y,z,u,v,_) UNTIL GROUND(x) & 
+                         GROUND(y) & GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  DeleteProgramConstant : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a constant 
+                  % declared in this part of this module. 
+* Type            % Representation of the type of this constant.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does 
+                  % not contain the declaration of this constant in this 
+                  % part of this module.
+
+DELAY      DeleteProgramConstant(x,y,z,_,_,_) UNTIL GROUND(x) &
+                                                 GROUND(y) & GROUND(z).
+
+
+PREDICATE  InsertProgramFunction : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a function not
+                  % declared in this part of this module.
+* FunctionInd     % Representation of the indicator for this function.
+* List(Type)      % List of the representations of the domain types of 
+                  % this function. 
+* Type            % Representation of the range type of this function.
+* Program.        % Representation of a program which differs from the 
+                  % program in the first argument only in that it also 
+                  % contains the declaration of this function in this
+                  % part of this module.
+
+DELAY      InsertProgramFunction(x,y,z,u,v,w,r,_) UNTIL GROUND(x) & 
+                                  GROUND(y) & GROUND(z) & GROUND(u) & 
+                                    GROUND(v) & GROUND(w) & GROUND(r).
+
+
+PREDICATE  DeleteProgramFunction : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a function 
+                  % declared in this part of this module.
+* FunctionInd     % Representation of the indicator for this function.
+* List(Type)      % List of the representations of the domain types of
+                  % this function. 
+* Type            % Representation of the range type of this function.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does
+                  % not contain the declaration of this function in
+                  % this part of this module.
+
+DELAY      DeleteProgramFunction(x,y,z,_,_,_,_,_) UNTIL GROUND(x) & 
+                                                 GROUND(y) & GROUND(z).
+
+
+PREDICATE  InsertProgramProposition : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a proposition 
+                  % not declared in this part of this module.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it also 
+                  % contains the declaration of this proposition in 
+                  % this part of this module.
+
+DELAY      InsertProgramProposition(x,y,z,u,_) UNTIL GROUND(x) & 
+                                     GROUND(y) & GROUND(z) & GROUND(u).
+
+
+PREDICATE  DeleteProgramProposition : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a proposition 
+                  % declared in this part of this module.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does 
+                  % not contain the declaration of this proposition in 
+                  % this part of this module.
+
+DELAY      DeleteProgramProposition(x,y,z,_,_) UNTIL GROUND(x) & 
+                                                 GROUND(y) & GROUND(z).
+
+
+PREDICATE  InsertProgramPredicate : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a predicate 
+                  % not declared in this part of this module.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type)      % List of the representations of the types of this
+                  % predicate. 
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it also
+                  % contains the declaration of this predicate in this 
+                  % part of this module.
+
+DELAY      InsertProgramPredicate(x,y,z,u,v,w,_) UNTIL GROUND(x) & 
+            GROUND(y) & GROUND(z) & GROUND(u) & GROUND(v) & GROUND(w).
+
+
+PREDICATE  DeleteProgramPredicate : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Name            % Representation of the flat name of a predicate 
+                  % declared in this part of this module.
+* PredicateInd    % Representation of the indicator for this predicate.
+* List(Type)      % List of the representations of the types of this 
+                  % predicate. 
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does 
+                  % not contain the declaration of this predicate in 
+                  % this part of this module.
+
+DELAY      DeleteProgramPredicate(x,y,z,_,_,_,_) UNTIL GROUND(x) & 
+                                                GROUND(y) & GROUND(z).
+
+
+PREDICATE  InsertDelay : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Formula         % Representation of a DELAY Atom part.
+* Condition       % Representation of a DELAY Cond part. 
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it also
+                  % contains in this part of this module the DELAY 
+                  % declaration consisting of the Atom part in the
+                  % fourth argument and the Cond part in the fifth 
+                  % argument.
+
+DELAY      InsertDelay(x,y,z,u,v,_) UNTIL GROUND(x) & GROUND(y) & 
+                                    GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  DeleteDelay : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* Formula         % Representation of the Atom part of DELAY
+                  % declaration in this part of this module. 
+* Condition       % Representation of the Cond part of this DELAY
+                  % declaration. 
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it does
+                  % not contain this DELAY declaration in this part of 
+                  % this module.
+
+DELAY      DeleteDelay(x,y,z,_,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                            GROUND(z).
+
+
+PREDICATE  InsertStatement : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* Formula         % Representation of a statement in the flat language
+                  % of this module wrt this program.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument only in that it also
+                  % contains this statement in this module. 
+
+DELAY      InsertStatement(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                            GROUND(z).
+
+
+PREDICATE  DeleteStatement : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* Formula         % Representation of a statement in the flat language 
+                  % of this module wrt this program appearing in this 
+                  % module.
+* Program.        % Representation of a program which differs from the 
+                  % program in the first argument only in that it does 
+                  % not contain this statement in this module. 
+
+DELAY      DeleteStatement(x,y,_,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  InsertProgramImport : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* String          % Name of a module.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument in that it also 
+                  % contains in this part of this module the IMPORT 
+                  % declaration importing the module in the fourth 
+                  % argument. 
+                  %
+                  % If the module named in the IMPORT declaration is not
+                  % already in the program and it is not a system module,
+                  % then an empty module with that name is added to the
+                  % program; if the module named in the IMPORT 
+                  % declaration is a system module not already in the
+                  % program, then the system module is added to the
+                  % program.  
+
+DELAY      InsertProgramImport(x,y,z,u,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                  GROUND(z) & GROUND(u).
+
+
+PREDICATE  DeleteProgramImport : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* ModulePart      % Representation of a part keyword of this module. 
+* String          % Name of a module.
+* Program.        % Representation of a program which differs from the
+                  % program in the first argument in that it contains
+                  % one less IMPORT declaration importing the module in
+                  % the fourth argument in this part of this module.
+                  %
+                  % If the IMPORT declaration deleted is the last import
+                  % declaration in the program containing the name of a 
+                  % particular module, then this module is deleted from
+                  % the program.
+
+DELAY      DeleteProgramImport(x,y,z,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                             GROUND(z).
+
+
+PREDICATE  InsertProgramLift : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* String          % Name of a module.
+* Program.        % Representation of a program which differs from the 
+                  % program in the first argument in that it also 
+                  % contains in the local part of this module the LIFT
+                  % declaration importing the module in the third 
+                  % argument.  
+                  %
+                  % If the module named in the LIFT declaration is not
+                  % already in the program and it is not a system module,
+                  % then an empty module with that name is added to the 
+                  % program; if the module named in the LIFT declaration 
+                  % is a system module not already in the program, then 
+                  % the system module is added to the program.  
+
+DELAY      InsertProgramLift(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z).
+
+
+PREDICATE  DeleteProgramLift : 
+
+  Program         % Representation of a program.
+* String          % Name of an open user module in this program. 
+* String          % Name of a module.
+* Program.        % Representation of a program which differs from the 
+                  % program in the first argument in that it contains 
+                  % one less LIFT declaration importing the module in 
+                  % the third argument in the local part of this module.
+                  %
+                  % If the LIFT declaration deleted is the last import
+                  % declaration in the program containing the name of a 
+                  % particular module, then this module is deleted from
+                  % the program.
+
+DELAY      DeleteProgramLift(x,y,_,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  RunnableAtom :
+
+  Program         % Representation of a program.
+* Formula.        % Representation of an atom in the flat language of
+                  % this program which has a user-defined predicate and 
+                  % is not delayed (according to any DELAY declarations
+                  % for the predicate).
+
+DELAY      RunnableAtom(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  Succeed : 
+
+  Program         % Representation of a program.
+* Formula         % Representation of the body of a goal in the flat 
+                  % language of this program.
+* TermSubst.      % Representation of a computed answer for this goal
+                  % and the flat form of this program.
+
+DELAY      Succeed(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  Compute :
+
+  Program         % Representation of a program.
+* Formula         % Representation of the body of a goal in the flat
+                  % language of this program.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* TermSubst       % Representation of a term substitution.
+* TermSubst       % Representation of the term substitution obtained by
+                  % composing the term substitution in the fifth 
+                  % argument with a computed answer for the goal whose 
+                  % body is obtained by applying the term substitution 
+                  % in the fifth argument to the body in the second 
+                  % argument and the flat form of this program or, if 
+                  % the computation flounders, the representation of the
+                  % answer computed up to the step at which the
+                  % computation floundered. Indexes of any new variables
+                  % in the terms to which variables in the goal are bound 
+                  % in the computed answer are greater than or equal to 
+                  % the third argument and strictly less than the fourth
+                  % argument.
+* Formula.        % Representation of the body of the last goal in the
+                  % derivation (which is empty if the derivation 
+                  % succeeded and is non-empty if the derivation 
+                  % floundered).
+
+DELAY      Compute(x,y,z,_,w,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                  GROUND(z) & GROUND(w).
+
+
+PREDICATE  SucceedAll : 
+
+  Program         % Representation of a program.
+* Formula         % Representation of the body of a goal in the flat 
+                  % language of this program.
+* List(TermSubst).% List of representations of computed answers for 
+                  % this goal and the flat form of this program.
+
+DELAY      SucceedAll(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  ComputeAll :
+
+  Program         % Representation of a program.
+* Formula         % Representation of the body of a goal in the flat
+                  % language of this program.
+* Integer         % A non-negative integer.
+* Integer         % A non-negative integer.
+* TermSubst       % Representation of a term substitution.
+* List(TermSubst) % List of representations of all term substitutions 
+                  % obtained by composing the term substitution in the 
+                  % fifth argument with a computed answer for the goal
+                  % whose body is obtained by applying the term 
+                  % substitution in the fifth argument to the body in the
+                  % second argument and the flat form of this program or,
+                  % for computations which end in a flounder, the
+                  % representation of the answer computed up to the step 
+                  % at which the computation floundered. Indexes of any
+                  % new variables in the terms to which variables in the
+                  % goal are bound in the computed answers are greater 
+                  % than or equal to the third argument and strictly less 
+                  % than the fourth argument.
+* List(Formula).  % List of representations of the bodies of the last
+                  % goals in each of the corresponding derivations (which
+                  % are empty if the derivation succeeded and are
+                  % non-empty if the derivation floundered).
+
+DELAY      ComputeAll(x,y,z,_,w,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                   GROUND(z) & GROUND(w).
+
+
+PREDICATE  Fail : 
+
+  Program         % Representation of a program.
+* Formula.        % Representation of the body of a goal in the flat 
+                  % language of this program such that this goal and the 
+                  % flat form of this program have a finitely failed 
+                  % search tree.
+
+DELAY      Fail(x,y) UNTIL GROUND(x) & GROUND(y).

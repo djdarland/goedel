@@ -1,0 +1,26 @@
+MODULE     EightQueens.
+
+IMPORT     Lists.
+
+
+PREDICATE  Queen : List(Integer).
+
+Queen(x) <-
+           Safe(x) &
+           Permutation([1,2,3,4,5,6,7,8], x).
+
+PREDICATE  Safe : List(Integer).
+DELAY      Safe(x) UNTIL NONVAR(x).
+
+Safe([]).
+Safe([x|y]) <-
+           NoDiagonal(x,1,y) &
+           Safe(y).
+
+PREDICATE  NoDiagonal : Integer * Integer * List(Integer).
+DELAY      NoDiagonal(_,_,z) UNTIL NONVAR(z).
+
+NoDiagonal(_,_,[]).
+NoDiagonal(x,y,[z|w]) <-
+           y ~= Abs(z - x) &
+           NoDiagonal(x,y+1,w).

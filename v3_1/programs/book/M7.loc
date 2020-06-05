@@ -1,0 +1,7 @@
+MODULE       M7.       
+
+IMPORT       M8, M9.
+
+PROPOSITION  P.
+
+P <- Q(x).

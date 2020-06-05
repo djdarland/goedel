@@ -1,0 +1,110 @@
+LOCAL        Reasoner.
+
+IMPORT       Sets.
+
+
+% PREDICATE    Solve : Wiseman * Program * Colour.              
+
+Solve(wiseman, kb, White) <-
+      {Enumerate(wiseman, next_wiseman, last_wiseman)} &
+      FormBodyString1(wiseman, next_wiseman, Black, body2_string) &
+      FormBodyString1(wiseman, last_wiseman, Black, body3_string) &
+      Prove(kb, body2_string) &
+      Prove(kb, body3_string).
+
+Solve(wiseman, kb, colour) <-
+      Enumerate(wiseman, next_wiseman, last_wiseman) &
+      FormBodyString2(wiseman, next_wiseman, body_string) &
+      Prove(kb, body_string)  &
+      AssumeHatColour(wiseman, next_wiseman, Black, kb, kb2) &
+      AssumeHatColour(wiseman, last_wiseman, Black, kb2, new_kb) &
+      IF Solve(next_wiseman, new_kb, _)
+      THEN colour = White
+      ELSE
+         AssumeHatColour(wiseman, next_wiseman, White, kb, kb3) &
+         AssumeHatColour(wiseman, last_wiseman, White, kb3, newer_kb) &
+         Solve(next_wiseman, newer_kb, _) &
+         colour = Black.
+
+
+PREDICATE    Enumerate :
+
+  Wiseman          % A wise man.
+* Wiseman          % A wise man different from the previous one.
+* Wiseman.         % The remaining wise man.
+
+Enumerate(x, y, z) <-
+      x In {W1, W2, W3} &
+      y In {W1, W2, W3}\{x} &
+      z In {W1, W2, W3}\{x,y}.
+
+
+PREDICATE    AssumeHatColour :
+
+  Wiseman          % A wise man.
+* Wiseman          % Another wise man.
+* Colour           % A colour.
+* Program          % A knowledge base.
+* Program.         % The knowledge base obtained from this knowledge 
+                   % base by adding the fact that the second wise man 
+                   % knows that this colour is the colour of the first 
+                   % wise man's hat.
+
+AssumeHatColour(wiseman, other_wiseman, colour, kb, new_kb) <-
+      MainModuleInProgram(kb,module) &
+      FormBodyString1(other_wiseman, wiseman, colour, string) &
+      StringToProgramFormula(kb, module, string, [atom]) &
+      EmptyFormula(empty_formula) &
+      IsImpliedBy(atom, empty_formula, fact) &
+      InsertStatement(kb, module, fact, new_kb).
+
+
+PREDICATE    Prove :
+
+  Program          % A knowledge base.
+* String.          % The string representation of the body of a goal 
+                   % which succeeds for this knowledge base.
+
+Prove(kb,body_string) <-
+      MainModuleInProgram(kb,module) &
+      StringToProgramFormula(kb, module, body_string, [body]) &
+      Succeed(kb,body,_).
+
+
+PREDICATE    FormBodyString1 :
+
+  Wiseman          % A wise man. 
+* Wiseman          % Another wise man.
+* Colour           % A colour.
+* String.          % The string representation of the body of the fact
+                   % that the first wise man knows that this is the 
+                   % colour of the hat of the second wise man.
+
+FormBodyString1(W1, W2, White, "Knows(W1, Hat(W2, White))").
+FormBodyString1(W1, W3, White, "Knows(W1, Hat(W3, White))").
+FormBodyString1(W2, W1, White, "Knows(W2, Hat(W1, White))").
+FormBodyString1(W2, W3, White, "Knows(W2, Hat(W3, White))").
+FormBodyString1(W3, W1, White, "Knows(W3, Hat(W1, White))").
+FormBodyString1(W3, W2, White, "Knows(W3, Hat(W2, White))").
+FormBodyString1(W1, W2, Black, "Knows(W1, Hat(W2, Black))").
+FormBodyString1(W1, W3, Black, "Knows(W1, Hat(W3, Black))").
+FormBodyString1(W2, W1, Black, "Knows(W2, Hat(W1, Black))").
+FormBodyString1(W2, W3, Black, "Knows(W2, Hat(W3, Black))").
+FormBodyString1(W3, W1, Black, "Knows(W3, Hat(W1, Black))").
+FormBodyString1(W3, W2, Black, "Knows(W3, Hat(W2, Black))").
+
+
+PREDICATE    FormBodyString2 :
+
+  Wiseman          % A wise man. 
+* Wiseman          % Another wise man.
+* String.          % The string representation of the body of the fact
+                   % that the first wise man knows that the second 
+                   % wise man doesn't know the colour of his own hat.
+
+FormBodyString2(W1, W2, "Knows(W1, DoesntKnow(W2))").
+FormBodyString2(W1, W3, "Knows(W1, DoesntKnow(W3))").
+FormBodyString2(W2, W1, "Knows(W2, DoesntKnow(W1))").
+FormBodyString2(W2, W3, "Knows(W2, DoesntKnow(W3))").
+FormBodyString2(W3, W1, "Knows(W3, DoesntKnow(W1))").
+FormBodyString2(W3, W2, "Knows(W3, DoesntKnow(W2))").

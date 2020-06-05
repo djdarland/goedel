@@ -1,0 +1,11 @@
+LOCAL 		Statistics.
+
+FUNCTION	TS : Integer * Integer * Integer -> TimeStruct.
+
+Sampling(TS(time, gtime, stime)) <-
+   Statistics(RunTime, [_, time]) &
+   Statistics(GarbageCollection, [_, _, gtime]) &
+   Statistics(StackShifts, [_, _, stime]).
+
+CPUTime(TS(_, gtime1, stime1), TS(time, gtime2, stime2), cputime) <-
+   cputime = time - (gtime2 - gtime1) - (stime2 - stime1).

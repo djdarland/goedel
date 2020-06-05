@@ -1,4 +1,5 @@
-
+:- multifile(toplev).
+:- module(toplev,[top_loop/3,get_one_char/4]).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -36,10 +37,9 @@
  * Predicates for version control.
  */
 
-'$$module'('@(#)toplev.pl 1.108 last updated 93/12/16 12:09:30 by jiwei
-').
+%% '$$module'('@(#)toplev.pl 1.108 last updated 93/12/16 12:09:30 by jiwei').
 
-'$$module'(S) :- '$$init'(S).    % Special for init, which is not compiled.
+%% '$$module'(S) :- '$$init'(S).    % Special for init, which is not compiled.
 
 goedel_info :-	\+ ('$$module'(S), write(S), fail).
 
@@ -59,7 +59,7 @@ goedel_info :-	\+ ('$$module'(S), write(S), fail).
 :- op(700, xfx, [=, '~=', <, >, =<, >=, 'In', 'Subset', 'StrictSubset']).
 :- op(705, fx,  ['~ ']).
 :- op(710, xfy, [' & ']).
-:- op(720, xfy, [' \/ ']).
+:- op(720, xfy, [' \\/ ']).
 :- op(750, xf,  ['THEN ... ELSE ...']).
 :- op(760, fx,  ['IF']).
 
@@ -463,8 +463,8 @@ rep(N, X, [X|Xs]) :-
 %------------------------------------------------------------------------------
  
 ask_to_terminator(Prompt1, Prompt2, Result) :-
-   write(user_output, Prompt1), ttyflush,
-   ttyget0(C0),
+   write(user_output, Prompt1), % ttyflush,
+   get_code(C0),
    find_first_non_blank(C0, Prompt1, C1),
    ( C1 = 0'"
      -> get_one_char(C1, Prompt2, C2, in_string)
@@ -481,7 +481,7 @@ read_to_terminator(0'%, C2, _, [0'.], not_in_string) :-
    !,
    myttyskip(C2, 10).
 
-read_to_terminator(0'\, C2, Prompt, [0'\, C2|Cs], in_string) :-  !,
+read_to_terminator(0'\\, C2, Prompt, [0'\\, C2|Cs], in_string) :-  !,
    get_one_char(C2, Prompt, C3, in_string),
    get_one_char(C3, Prompt, C4, in_string),
    read_to_terminator(C3, C4, Prompt, Cs, in_string).
@@ -504,23 +504,23 @@ read_to_terminator(C1, C2, Prompt, [C1|Cs], Switch) :-
 myttyskip(FirstChar, C) :-
    ( FirstChar = C
      -> true
-     ;  ttyget0(C2),
+     ;  get_code(C2),
 	myttyskip(C2, C)
    ).
 
 %------------------------------------------------------------------------------
 
 find_first_non_blank(10, Prompt, C) :- !,
-   write(user_output, Prompt), ttyflush,
-   ttyget0(C1),
+   write(user_output, Prompt), % ttyflush,
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(32, Prompt, C) :- !,
-   ttyget0(C1),
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(9, Prompt, C) :- !,
-   ttyget0(C1),
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(C, _, C).
@@ -528,19 +528,19 @@ find_first_non_blank(C, _, C).
 %------------------------------------------------------------------------------
 
 get_one_char(0'., Prompt, C, Switch) :- !,
-   ttyget0(C),
+   get_code(C),
    ( blank_char(C), Switch = not_in_string
      -> true
      ;  ( C = 10
-	  -> write(user_output, Prompt), ttyflush
+	  -> write(user_output, Prompt), % ttyflush
 	  ;  true
 	)
    ).
 
 get_one_char(_, Prompt, C, _) :-
-   ttyget0(C),
+   get_code(C),
    ( C = 10
-     -> write(user_output, Prompt), ttyflush
+     -> write(user_output, Prompt), % ttyflush
      ;  true
    ).
 
@@ -898,7 +898,7 @@ flock_compile_cmd_aux(Tokens, Flock) :-
    ).
 
 read_file(Stream, Chars) :-
-   get0(Stream, Char),
+   get_code(Stream, Char),
    ( Char = -1
      -> Chars = []
      ;  Chars = [Char|Chars2],
@@ -1283,9 +1283,9 @@ remove_true(true ' & ' Goal, GGoal) :- !,
    remove_true(Goal, GGoal).
 remove_true(Goal ' & ' true, GGoal) :- !,
    remove_true(Goal, GGoal).
-remove_true(Goal ' \/ ' true, GGoal) :- !,
+remove_true(Goal ' \\/ ' true, GGoal) :- !,
    remove_true(Goal, GGoal).
-remove_true(true ' \/ ' Goal, GGoal) :- !,
+remove_true(true ' \\/ ' Goal, GGoal) :- !,
    remove_true(Goal, GGoal).
 remove_true('~ ' Goal, '~ ' GGoal) :- !,
    remove_true(Goal, GGoal).
@@ -1312,7 +1312,7 @@ convert_to_goedel_formula((Formula1; Formula2), GFormula) :-
    ( Formula1 = (Cond -> _Then)
      -> GFormula = ('IF' GCond 'THEN ... ELSE ...'),
         convert_to_goedel_formula(Cond, GCond)
-     ;  GFormula = (GFormula1 ' \/ ' GFormula2),
+     ;  GFormula = (GFormula1 ' \\/ ' GFormula2),
         convert_to_goedel_formula(Formula1, GFormula1)
    ).
 
@@ -1372,7 +1372,7 @@ convert_to_goedel_formula(union(Term1, Term2, Term3),
 
 % for Sets
 convert_to_goedel_formula(difference(Term1, Term2, Term3),
-				'='(GTerm3, '\'(GTerm1, GTerm2))) :-
+				'='(GTerm3, '\\'(GTerm1, GTerm2))) :-
    convert_set_terms([Term1, Term2, Term3], [GTerm1, GTerm2, GTerm3]). 
 
 % for Sets
@@ -1456,7 +1456,7 @@ constraint_goal_conversion('Rationals', eval, =, 2):- !.
 
 constraint_goal_conversion('Sets', normalise, 'Inc', 2):- !. % Wrong!
 constraint_goal_conversion('Sets', union, '+', 2):- !.          
-constraint_goal_conversion('Sets', difference, '\', 2):- !.          
+constraint_goal_conversion('Sets', difference, '\\', 2):- !.          
 constraint_goal_conversion('Sets', intersection, '*', 2):- !.          
 constraint_goal_conversion('Sets', set_of_aux, 'SuchThat', 3):- !.
 
@@ -1502,7 +1502,7 @@ write_codes([C|Cs]) :-
 
 user_satisfied:-
    format(user_output, ' ? ', []), ttyflush,
-   ttyget0(C),
+   get_code(C),
    ( C = 0';
      -> ttyskip(10), fail
      ;  ( C = 10

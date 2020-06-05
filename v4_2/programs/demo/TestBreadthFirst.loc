@@ -1,0 +1,14 @@
+MODULE TestBreadthFirst.
+
+IMPORT BreadthFirst, Answers, ProgramsIO.
+
+PREDICATE Go: String * String * String.
+
+Go(prog_string, goal_string, answer_string) <-
+   FindInput(prog_string ++ ".prm", In(stream)) &
+   GetProgram(stream, program) &
+   EndInput(stream) &
+   MainModuleInProgram(program, module) &
+   StringToProgramFormula(program, module, goal_string, [goal]) &
+   BreadthFirst(program, goal, computed_answer) &
+   AnswerString(program, module, computed_answer, answer_string).

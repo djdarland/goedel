@@ -1,3 +1,4 @@
+:- multifile(compiler).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -28,8 +29,7 @@
  *------------------------------------------------------------------------------
  */
 
-'$$module'('@(#)compiler.pl 1.56 last updated 93/11/24 17:29:38 by jiwei
-').
+%% '$$module'('@(#)compiler.pl 1.56 last updated 93/11/24 17:29:38 by jiwei').
 
 
 /* Methods of transformation:
@@ -173,7 +173,7 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	     unix(system(UnixComm))
 	        % DOS/PC version should have these two lines replaced by "true"
 	  ;  sappend(ModuleName, '.sup', SupFile),
-	     ( open(SupFile, read, SupStream)
+	     ( open(SupFile, read, SupStream, [type(binary)])
 	       -> close(SupStream),
 		  sappend(' >> ', FileName, CommString1),
 		  sappend(SupFile, CommString1, CommString2),
@@ -623,7 +623,7 @@ compile_formula('MetaDefs.&''.F2'(Formula1, Formula2),
    compile_formula(Formula1, BuiltFormula1, VarDict, VarDict1, Prefix),
    compile_formula(Formula2, BuiltFormula2, VarDict1, NewVarDict, Prefix).
 
-compile_formula('MetaDefs.\/''.F2'(Formula1, Formula2),
+compile_formula('MetaDefs.\\/''.F2'(Formula1, Formula2),
 	(BuiltFormula1; BuiltFormula2), VarDict, NewVarDict, Prefix) :-
    compile_formula(Formula1, BuiltFormula1, VarDict, VarDict1, Prefix),
    compile_formula(Formula2, BuiltFormula2, VarDict1, NewVarDict, Prefix).

@@ -1,0 +1,36 @@
+% This solve the Send-More-Money puzzle with linear finite domain constraints.
+%         SEND
+%       + MORE
+%       ------
+%        MONEY
+% And all the digits assigned to the variables are different.
+%
+% Goal: <- Go(send, more, money).
+
+
+MODULE	SendMoreMoney.
+
+IMPORT	Lists.
+
+PREDICATE	Go : List(Integer) * List(Integer) * List(Integer).
+
+Go([s,e,n,d], [m,o,r,e], [m,o,n,e,y]) <-
+	y = (d+e) Mod 10 &
+	sum1 = n + r + (d+e) Div 10 &
+	e = sum1 Mod 10 &
+	sum2 = e + o + sum1 Div 10 &
+	n = sum2 Mod 10 &
+	sum3 = s + m + sum2 Div 10 &
+	o = sum3 Mod 10 &
+	m = sum3 Div 10 &
+	AllDifferent([s, n, r, y, d, e, o, m]) &
+	1=<m=<9 & 0=<d=<9 & 0=<e=<9 & 0=<r=<9 & 0=<n=<9 &
+	1=<s=<9 & 0=<o=<9 & 0=<y=<9.
+
+
+PREDICATE 	AllDifferent : List(Integer).
+
+AllDifferent([]).
+AllDifferent([head|tail]) <-
+	~ Member(head, tail) &
+	AllDifferent(tail).

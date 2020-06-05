@@ -1,0 +1,519 @@
+CLOSED     Theories.
+
+% Module providing the abstract data type Theory for representing 
+% polymorphic many-sorted theories (using a ground representation)
+% and predicates for processing terms of type Theory.
+
+IMPORT     Syntax.
+
+BASE       Theory.          % Type of a term representing a theory.
+
+
+PREDICATE  TypeInTheory : 
+
+  Theory          % Representation of a theory.
+* Type.           % Representation of a type in the flat language of
+                  % this theory.
+
+DELAY      TypeInTheory(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TermInTheory : 
+
+  Theory          % Representation of a theory.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this theory.
+* Term            % Representation of a term in the flat language of 
+                  % this theory.
+* Type            % Representation of the type of this term with respect
+                  % to this variable typing.
+* VarTyping.      % Representation of the variable typing obtained by 
+                  % combining the variable typing in the second argument
+                  % with the types of all variables occurring in the 
+                  % term.
+
+DELAY      TermInTheory(x,y,z,_,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z).
+
+
+PREDICATE  FormulaInTheory : 
+
+  Theory          % Representation of a theory.
+* VarTyping       % Representation of a variable typing in the flat 
+                  % language of this theory.
+* Formula         % Representation of a formula in the flat language of
+                  % this theory.
+* VarTyping.      % Representation of the variable typing obtained by
+                  % combining the variable typing in the second argument
+                  % with the types of all free variables occurring in the
+                  % formula.
+
+DELAY      FormulaInTheory(x,y,z,_) UNTIL GROUND(x) & GROUND(y) & 
+                                                              GROUND(z).
+
+
+PREDICATE  StringToTheoryType : 
+
+  Theory          % Representation of a theory.
+* String          % A string.
+* List(Type).     % List (in a definite order) of representations of 
+                  % types in the flat language of this theory whose 
+                  % string representation is the second argument.
+
+DELAY      StringToTheoryType(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  StringToTheoryTerm : 
+
+  Theory          % Representation of a theory.
+* String          % A string.
+* List(Term).     % List (in a definite order) of representations of 
+                  % terms in the flat language of this theory whose 
+                  % string representation is the second argument.
+
+DELAY      StringToTheoryTerm(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  StringToTheoryFormula : 
+
+  Theory          % Representation of a theory.
+* String          % A string.
+* List(Formula).  % List (in a definite order) of representations of
+                  % formulas in the flat language of this theory whose 
+                  % string representation is the second argument.
+
+DELAY      StringToTheoryFormula(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TheoryTypeToString : 
+
+  Theory          % Representation of a theory.
+* Type            % Representation of a type.
+* String.         % The string representation of this type. (Subtypes of
+                  % the type not in the flat language of this theory do 
+                  % not appear.)
+
+DELAY      TheoryTypeToString(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TheoryTermToString : 
+
+  Theory          % Representation of a theory.
+* Term            % Representation of a term.
+* String.         % The string representation of this term. (Subterms of 
+                  % the term not in the flat language of this theory do 
+                  % not appear.)
+
+DELAY      TheoryTermToString(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TheoryFormulaToString : 
+
+  Theory          % Representation of a theory.
+* Formula         % Representation of a formula.
+* String.         % The string representation of this formula. (Terms
+                  % of the formula not in the flat language of this 
+                  % theory do not appear.)
+
+DELAY      TheoryFormulaToString(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  TheoryBaseName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a base.
+* Name.           % Representation of the corresponding flat name of 
+                  % this base.
+
+DELAY      TheoryBaseName(x,y,z,u) UNTIL GROUND(x) & 
+                                ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  TheoryConstructorName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a constructor.
+* Integer         % Arity of this constructor.
+* Name.           % Representation of the corresponding flat name of 
+                  % this constructor.
+
+DELAY      TheoryConstructorName(x,y,z,u,v) UNTIL GROUND(x) & 
+                    ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  TheoryConstantName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a constant.
+* Name.           % Representation of the corresponding flat name of 
+                  % this constant.
+
+DELAY      TheoryConstantName(x,y,z,u) UNTIL GROUND(x) & 
+                                ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  TheoryFunctionName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a function.
+* Integer         % Arity of this function.
+* Name.           % Representation of the corresponding flat name of
+                  % this function.
+
+DELAY      TheoryFunctionName(x,y,z,u,v) UNTIL GROUND(x) & 
+                     ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  TheoryPropositionName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a proposition.
+* Name.           % Representation of the corresponding flat name of
+                  % this proposition.
+
+DELAY      TheoryPropositionName(x,y,z,u) UNTIL GROUND(x) & 
+                                 ((GROUND(y) & GROUND(z)) \/ GROUND(u)).
+
+
+PREDICATE  TheoryPredicateName : 
+
+  Theory          % Representation of a theory.
+* String          % Name of this theory.
+* String          % Name of a predicate.
+* Integer         % Arity of this predicate.
+* Name.           % Representation of the corresponding flat name of 
+                  % this predicate.
+
+DELAY      TheoryPredicateName(x,y,z,u,v) UNTIL GROUND(x) & 
+                     ((GROUND(y) & GROUND(z) & GROUND(u)) \/ GROUND(v)).
+
+
+PREDICATE  AxiomInTheory : 
+
+  Theory          % Representation of a theory.
+* Formula.        % Representation of an axiom in this theory.
+
+DELAY      AxiomInTheory(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  BaseInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a base accessible
+                  % to this theory.
+* String.         % Name of theory or system module in which this base 
+                  % is declared.
+
+DELAY      BaseInTheory(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstructorInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constructor
+                  % accessible to this theory.
+* Integer         % Arity of this constructor.
+* String.         % Name of theory or system module in which this 
+                  % constructor is declared.
+
+DELAY      ConstructorInTheory(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ConstantInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constant 
+                  % accessible to this theory.
+* Type            % Representation of the type of this constant.
+* String.         % Name of theory or system module in which this 
+                  % constant is declared.
+
+DELAY      ConstantInTheory(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  FunctionInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a function 
+                  % accessible to this theory.
+* Integer         % Arity of this function.
+* FunctionInd     % Indicator for this function.
+* List(Type)      % List of the representations of the domain types of
+                  % this function.
+* Type            % Representation of the range type of this function.
+* String.         % Name of theory or system module in which this 
+                  % function is declared.
+
+DELAY      FunctionInTheory(x,_,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  PropositionInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a proposition
+                  % accessible to this theory.
+* String.         % Name of theory or system module in which this 
+                  % proposition is declared.
+
+DELAY      PropositionInTheory(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  PredicateInTheory : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a predicate 
+                  % accessible to this theory.
+* Integer         % Arity of this predicate.
+* PredicateInd    % Indicator for this predicate.
+* List(Type)      % List of the representations of the types for this
+                  % predicate.
+* String.         % Name of theory or system module in which this 
+                  % predicate is declared.
+
+DELAY      PredicateInTheory(x,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  ImportInTheory : 
+
+  Theory          % Representation of a theory.
+* String.         % Name of a module appearing in an IMPORT declaration 
+                  % in this theory.
+
+DELAY      ImportInTheory(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  NewTheory :
+
+  String          % A string.
+* Theory.         % Representation of an empty theory with this string 
+                  % as the name of the theory.
+
+DELAY      NewTheory(x,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryBase : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a base not 
+                  % declared in this theory. 
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also
+                  % contains the declaration of this base.
+
+DELAY      InsertTheoryBase(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  DeleteTheoryBase : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a base declared 
+                  % in this theory. 
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it does
+                  % not contain the declaration of this base.
+
+DELAY      DeleteTheoryBase(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryConstructor : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constructor not
+                  % declared in this theory.  
+* Integer         % Arity of this constructor.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also 
+                  % contains the declaration of this constructor.
+
+DELAY      InsertTheoryConstructor(x,y,z,_) UNTIL GROUND(x) & 
+                                                  GROUND(y) & GROUND(z).
+
+
+PREDICATE  DeleteTheoryConstructor : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constructor 
+                  % declared in this theory. 
+* Integer         % Arity of this constructor.
+* Theory.         % Representation of a theory which differs from the
+                  % theory in the first argument only in that it does 
+                  % not contain the declaration of this constructor.
+
+DELAY      DeleteTheoryConstructor(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryConstant : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constant not 
+                  % declared in this theory. 
+* Type            % Representation of the type of this constant.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also 
+                  % contains the declaration of this constant.
+
+DELAY      InsertTheoryConstant(x,y,z,_) UNTIL GROUND(x) & GROUND(y) &
+                                                             GROUND(z).
+
+
+PREDICATE  DeleteTheoryConstant : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a constant 
+                  % declared in this theory. 
+* Type            % Representation of the type of this constant.
+* Theory.         % Representation of a theory which differs from the
+                  % theory in the first argument only in that it does 
+                  % not contain the declaration of this constant.
+
+DELAY      DeleteTheoryConstant(x,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryFunction : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a function not 
+                  % declared in this theory. 
+* FunctionInd     % Indicator for this function.
+* List(Type)      % List of the representations of the domain types of
+                  % this function. 
+* Type            % Representation of the range type of this function.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also 
+                  % contains the declaration of this function.
+
+DELAY      InsertTheoryFunction(x,y,z,u,v,_) UNTIL GROUND(x) & 
+                         GROUND(y) & GROUND(z) & GROUND(u) & GROUND(v).
+
+
+PREDICATE  DeleteTheoryFunction : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a function 
+                  % declared in this theory. 
+* FunctionInd     % Indicator for this function.
+* List(Type)      % List of the representations of the domain types of 
+                  % this function. 
+* Type            % Representation of the range type of this function.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it does 
+                  % not contain the declaration of this function.
+
+DELAY      DeleteTheoryFunction(x,_,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryProposition : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a proposition not
+                  % declared in this theory.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also
+                  % contains the declaration of this proposition.
+
+DELAY      InsertTheoryProposition(x,y,_) UNTIL GROUND(x) & GROUND(y). 
+
+
+PREDICATE  DeleteTheoryProposition : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a proposition 
+                  % declared in this theory. 
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it does 
+                  % not contain the declaration of this proposition.
+
+DELAY      DeleteTheoryProposition(x,_,_) UNTIL GROUND(x). 
+
+
+PREDICATE  InsertTheoryPredicate : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a predicate not
+                  % declared in this theory. 
+* PredicateInd    % Indicator for this predicate.
+* List(Type)      % List of the representations of the types of this 
+                  % predicate. 
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also
+                  % contains the declaration of this predicate.
+
+DELAY      InsertTheoryPredicate(x,y,z,u,_) UNTIL GROUND(x) & 
+                                     GROUND(y) & GROUND(z) & GROUND(u).
+
+
+PREDICATE  DeleteTheoryPredicate : 
+
+  Theory          % Representation of a theory.
+* Name            % Representation of the flat name of a predicate 
+                  % declared in this theory. 
+* PredicateInd    % Indicator for this predicate.
+* List(Type)      % List of the representations of the types of this 
+                  % predicate. 
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it does
+                  % not contain the declaration of this predicate.
+
+DELAY      DeleteTheoryPredicate(x,_,_,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertTheoryImport : 
+
+  Theory          % Representation of a theory.
+* String          % Name of a system module not imported into the
+                  % theory.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also 
+                  % contains the IMPORT declaration importing the module
+                  % in the second argument. 
+
+DELAY      InsertTheoryImport(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  DeleteTheoryImport : 
+
+  Theory          % Representation of a theory.
+* String          % Name of a system module imported into the theory.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it does 
+                  % not contain the IMPORT declaration importing the 
+                  % module in the second argument. 
+
+DELAY      DeleteTheoryImport(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  InsertAxiom : 
+
+  Theory          % Representation of a theory.
+* Formula         % Representation of a formula in the flat language of
+                  % this theory.
+* Theory.         % Representation of a theory which differs from the 
+                  % theory in the first argument only in that it also 
+                  % contains this formula as an axiom.
+
+DELAY      InsertAxiom(x,y,_) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE  DeleteAxiom : 
+
+  Theory          % Representation of a theory.
+* Formula         % Representation of a formula in the flat language of
+                  % this theory which is an axiom in this theory.
+* Theory.         % Representation of a theory which differs from the
+                  % theory in the first argument only in that it does 
+                  % not contain this formula as an axiom.
+
+DELAY      DeleteAxiom(x,_,_) UNTIL GROUND(x).
+
+
+PREDICATE  Prove : 
+
+  Theory          % Representation of a theory.
+* Formula.        % Representation of a theorem of this theory.
+
+DELAY      Prove(x,y) UNTIL GROUND(x) & GROUND(y).

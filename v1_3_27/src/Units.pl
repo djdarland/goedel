@@ -1,3 +1,4 @@
+:- multifile(Units).
 :- module('Units', []).
 
 :- op(500, yfx, and).
@@ -12,8 +13,7 @@ Date:		30 Nov. 1992
 -----------------------------------------------------------------------------*/
 
 
-'$$module'('@(#)Units.sup 1.5 last updated 93/10/14 14:25:15 by jiwei
-').
+%% '$$module'('@(#)Units.sup 1.5 last updated 93/10/14 14:25:15 by jiwei').
 
 %------------------------------------------------------------------------------
 
@@ -199,9 +199,9 @@ token_id(10, Chars, Remains, Token) :- !,
 %------------------------------------------------------------------------------
 % QuotedId 
 
-token_id(0'', Chars, Remains, String) :- !,
+token_id(0'\', Chars, Remains, String) :- !,   % was 0''
    single_quoted_id(Chars, Remains, SChars),
-   name(String, [0''|SChars]).
+   name(String, [0'\'|SChars]).   % was 0''
 
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % One ' terminates string, two ' escapes this, anything else just adds
@@ -211,11 +211,11 @@ single_quoted_id([], [], []) :-
    format(user_error, '~nError: incomplete single quoted string.~n', []).
 		% does error recovery
 single_quoted_id([C|Chars], Remains, SChars) :-
-   ( C == 0''
-     -> ( Chars = [0''|Chars2]
+   ( C == 0'\'   % was 0''
+     -> ( Chars = [0'\'|Chars2]   % was 0''
 	  -> SChars = [C, C|SChars2],
 	     single_quoted_id(Chars2, Remains, SChars2)
-	  ;  SChars = [0''],
+	  ;  SChars = [0'\'],    % was 0''
 	     Remains = Chars
 	)
      ;  SChars = [C|SChars2],
@@ -300,14 +300,14 @@ identifier([C|Chars], Remains, IdChars) :-
 non_id_char(0',).
 non_id_char(0'().
 non_id_char(0')).
-non_id_char(0'').
+non_id_char(0'\').  % was 0''
 non_id_char(0'").
 
 % This specifies those chars that a full stop should be taken as a terminator
 start_of_new_id(32).
 start_of_new_id(10).
 start_of_new_id(9).
-start_of_new_id(0'').
+start_of_new_id(0'\').   % was 0''
 start_of_new_id(0'").
 
 %------------------------------------------------------------------------------

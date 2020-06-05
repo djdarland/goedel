@@ -1,0 +1,9 @@
+
+This directory contains the documentation for the Goedel system. Each document
+is in both dvi and ps format. The documents are:
+
+1. book -- "The Goedel Programming Language".
+
+2. manual -- "Goedel Users' Manual".
+
+3. ground -- "Representing Goedel Object Programs in Goedel".

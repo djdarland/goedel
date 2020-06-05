@@ -1,0 +1,12 @@
+MODULE    NaiveReverse.
+
+IMPORT    Lists.
+
+PREDICATE NReverse : List(alpha) * List(alpha).
+DELAY     NReverse(x,y) UNTIL NONVAR(x) \/ NONVAR(y).
+
+NReverse([],[]).
+
+NReverse([x|xs],zs) <-
+          NReverse(xs,ys) &
+          Append(ys,[x],zs).

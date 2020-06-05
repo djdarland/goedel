@@ -1,0 +1,45 @@
+CLOSED       ProgramsIO.
+
+% Module providing input/output for the ground representation of 
+% Goedel programs.
+
+IMPORT       IO, Programs.
+
+
+PREDICATE    GetProgram : 
+
+  InputStream    % An open input stream corresponding to a file with a
+                 % .prm extension.
+* Program.       % The ground representation of the program in the file 
+                 % corresponding to the input stream in the first
+                 % argument is read into this argument.
+
+DELAY        GetProgram(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    PutProgram : 
+
+  OutputStream   % An open output stream corresponding to a file with a
+                 % .prm extension.
+* Program.       % The ground representation of the program in this 
+                 % argument is written to the output stream in the first
+                 % argument.
+
+DELAY        PutProgram(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE    ProgramCompile : 
+
+  String         % The name of the main module of a program.
+* Program.       % The ground representation of this program.
+
+DELAY        ProgramCompile(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    ProgramDecompile : 
+
+  Program.       % The ground representation of a program which is 
+                 % written to files containing the modules of this 
+                 % program.
+
+DELAY        ProgramDecompile(x) UNTIL GROUND(x).
