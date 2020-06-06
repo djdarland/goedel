@@ -1,0 +1,6 @@
+LOCAL        Hidden2.
+
+CONSTANT     Fred : Name.
+
+Father(Individual(Bill)).
+Father(Individual(Fred)).

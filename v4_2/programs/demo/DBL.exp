@@ -1,0 +1,9 @@
+EXPORT      DBL.
+
+BASE        Person.
+
+CONSTANT    Fred, Mary, George, James, John : Person.
+
+PREDICATE   Ancestor, Parent, Father, Mother : Person * Person.   
+
+

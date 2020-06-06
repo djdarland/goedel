@@ -1,0 +1,17 @@
+MODULE      AssocList.
+
+IMPORT      Strings. 
+
+BASE        PairType.
+
+FUNCTION    Pair : Integer * String -> PairType.
+ 
+PREDICATE   Lookup : Integer * String * List(PairType) * List(PairType).
+ 
+Lookup(key, value, assoc_list, new_assoc_list) <-
+            IF SOME [v] Member(Pair(key,v), assoc_list) 
+            THEN
+                value = v &
+                new_assoc_list = assoc_list
+            ELSE
+                new_assoc_list = [Pair(key,value) | assoc_list].

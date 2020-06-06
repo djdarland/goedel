@@ -1,0 +1,26 @@
+procedure main()
+   local level, count
+   
+   count := 0
+   level := 1
+   
+   while line := read() do {
+      if not (line ? find("%% djd")) then {
+         count +:= 2
+         every line ? find("(") do level +:= 1
+         every line ? find(")") do level -:= 1
+         if level < 0 then {
+            write("%% djd level < 0 -- line ", count, "level = ", level)
+            exit(0)
+            }
+         if level >= 1 then {
+            pre := repl(" ", level) 
+            write(pre, line)
+            }
+         }
+      l2 := right(level, 5, 0)
+      l3 := right(count, 8, " ")
+      write("%% djd ", l3, "  ", l2)
+      }
+end
+

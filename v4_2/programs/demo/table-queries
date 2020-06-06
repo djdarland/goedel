@@ -1,0 +1,109 @@
+
+% Compile and load TestTables.
+
+Table 1:  [P("D", 4), P("E", 5), P("G", 7), P("B", 2), P("A", 1), P("C", 3), 
+           P("F", 6)]).
+
+Table 2:  [P("E", 5), P("C", 3), P("H", 8), P("B", 2), P("D", 4), P("G", 7), 
+           P("J", 10), P("A", 1), P("F", 6), P("I", 9), P("K", 11)]).
+
+Table 3:  [P("D", 4), P("E", 5), P("G", 7), P("BXXXXX", 2), P("A", 1), 
+           P("C", 3), P("F", 6)]).
+
+Table 4:  [P("E", 5), P("CYYYYYY", 3), P("H", 8), P("B", 2), P("D", 4), 
+           P("G", 7), P("J", 10), P("AZZZZZZ", 1), P("F", 6), P("I", 9), 
+           P("K", 11)]).
+
+
+
+This sequence of insertions exercises all four AVL-tree rebalancing operations.
+Uses table 1.
+
+<- TestInsert(keys, items).
+
+
+This tests the InsertNode predicate. Uses table 1.
+
+<- keys, values : BuildTable(1, table) & 
+   InsertNode(table, "D", 4, new_table) &
+   ListTable(new_table, keys, values).
+
+<- BuildTable(1, table) & 
+   InsertNode(table, "D", 5, new_table) &
+   ListTable(new_table, keys, values).         (no)
+
+<- BuildTable(1, table) & 
+   InsertNode(table, "X", 15, new_table) &
+   ListTable(new_table, keys, values).
+
+
+This sequence of insertions constructs a table such that the following
+sequence of deletions exercises all four AVL-tree rebalancing operations.
+Deletes "D", "H", "F", "E", "B", "A", "G" from table 2.
+
+<- TestDelete(keys, items).
+
+
+The value of the specified key is doubled and checked by search.  Uses table 2.
+
+<- TestUpdate("H", x, y).
+
+
+This tests the AmendTable predicate. Uses table 1.
+
+<- keys, values, old_val : BuildTable(1, table) & 
+   AmendTable(table, "D", 4, -99, new_table, old_val) &
+   ListTable(new_table, keys, values).
+
+<- keys, values, old_val : BuildTable(1, table) & 
+   AmendTable(table, "D", 5, -99, new_table, old_val) &
+   ListTable(new_table, keys, values).
+
+<- keys, values, old_val : BuildTable(1, table) & 
+   AmendTable(table, "X", 15, -99, new_table, old_val) &
+   ListTable(new_table, keys, values).
+
+
+This tests the NodeInTable predicate. Uses table 1.
+
+<- TestMember(x, y).
+
+
+This tests the FirstNode predicate. Uses table 1.
+
+<- TestFirst(x, y).
+
+
+This tests the LastNode predicate. Uses table 1.
+
+<- TestLast(x, y).
+
+
+This tests the NextNode predicate. Uses table 1.
+
+<- TestNext("A", x, y).
+<- TestNext("D", x, y).
+<- TestNext("G", x, y).
+
+
+This tests the PreviousNode predicate. Uses table 1.
+
+<- TestPrevious("A", x, y).
+<- TestPrevious("D", x, y).
+<- TestPrevious("G", x, y).
+
+
+The following test DoubleTable.
+
+<- keys, values : BuildTable(3, table) & 
+   Double(table, new_table) &
+   ListTable(new_table, keys, values).
+
+<- keys, values : BuildTable(4, table) & 
+   Double(table, new_table) &
+   ListTable(new_table, keys, values).
+
+
+The term table is not displayed as it is hidden.
+
+<- table : EmptyTable(x) & InsertNode(x, "dozen", 12, table).

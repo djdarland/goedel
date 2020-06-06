@@ -1,0 +1,25 @@
+
+
+% Need to program-compile M4 first.
+
+
+Go("M4", "[Monday, Tuesday]", "x", answer).
+
+
+Go("M4", "[Monday, y]", "[x, Tuesday]", answer).
+
+
+Go("M4", "[Monday, Wednesday]", "[x, Tuesday]", answer).      % Fails
+
+
+Go("M4", "x", "y", answer).            % Several answers
+
+
+Go("M4", "x", "y", "{x/y}").           
+
+
+Go("M4", "x", "y", "{y/x}").           
+
+
+Go("M4", "x", "[x]", answer).          % Occur check
+

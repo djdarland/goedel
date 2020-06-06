@@ -1,3 +1,4 @@
+:- multifile(FlocksIO).
 :- module('FlocksIO', []).
 
 :- op(500, yfx, and).
@@ -27,8 +28,7 @@ Date:		2 Dec. 1992
 -----------------------------------------------------------------------------*/
 
 
-'$$module'('@(#)FlocksIO.sup 1.3 last updated 93/09/02 16:47:07 by jiwei
-').
+%% '$$module'('@(#)FlocksIO.sup 1.3 last updated 93/09/02 16:47:07 by jiwei').
 
 %------------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ Date:		2 Dec. 1992
 'FlocksIO.FlockCompile.P2'(GString, 'Flocks.Flock.F1'(FlockList)) :-
    nonvar(GString), !,
    user:gstring2string(GString, String),
-   ( open(String, read, Stream)
+   ( open(String, read, Stream, [type(binary)])
      -> user:read_file(Stream, Chars),
         'Units':token_identifiers(Chars, Tokens, []),
         user:flock_compile_cmd_aux(Tokens, FlockList), !,
@@ -77,7 +77,7 @@ Date:		2 Dec. 1992
    nonvar(GString), !,
    user:gstring2string(GString, String),
    Flock = 'Flocks.Flock.F1'(List),
-   ( open(String, write, Stream)
+   ( open(String, write, Stream, [type(binary)])
      -> user:flock_decompile_cmd_aux(List, Stream), !,
         close(Stream)
      ;  format(user_error, '~nError: cannot open file "~a".~n', [String])

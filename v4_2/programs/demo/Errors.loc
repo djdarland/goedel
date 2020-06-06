@@ -1,0 +1,35 @@
+MODULE DeliberateErrors.
+
+BASE Nat.
+
+CONSTRUCTOR List/1.
+
+CONSTANT Z : Nat;
+         Nil : List(a).
+
+FUNCTION S : Nat -> Nat;
+         Cons : a * List(a) -> List(a);
+         + : xFy(100) : Nat * Nat -> Nat;
+         * : yFx(100) : Nat * Nat -> Nat.
+
+PREDICATE Tato : Nat * List(Nat). 
+
+Tato(Cons(S(Z), Nil), S(Z)).		% type error, arguments swapped.
+Tato(n, Cons(n, ms)) <-
+   Hotpo(n, m) &
+   Tato(m1, ms).
+
+PREDICATE Hotpo : Nat * Nat.
+
+Hotpo(n, m) <-
+   Even(n) & Eval(Half n, m).		% Even not declared
+Hotpo(n, m) <-
+   Odd(n) & Eval(S(Z)+S(S(S(Z)))*n, m). % + and * cause an ambiguity case.
+
+
+PREDICATE Odd : Nat.
+
+Odd(S(Z)).
+Odd(S(x)) <- Odd(x).
+
+PREDICATE Eval : Nat * Nat.

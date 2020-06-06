@@ -1,0 +1,8 @@
+MODULE Factorial.
+
+IMPORT Integers.
+
+PREDICATE Fac : Integer * Integer.
+
+Fac(0, 1).
+Fac(n+1, (n+1)*m) <- n >= 0 & Fac(n, m).

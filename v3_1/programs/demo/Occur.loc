@@ -1,0 +1,12 @@
+MODULE       Occur.
+
+FUNCTION     F : alpha -> alpha.
+
+PROPOSITION  Test.
+
+PREDICATE    P : alpha * alpha.
+
+Test <-
+             P(x,x).
+
+P(x,F(x)).

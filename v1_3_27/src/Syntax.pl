@@ -35,10 +35,10 @@
 '~Syntax.CommitFreeFormula.P1.0'('MetaDefs.&''.F2'(A,B)) :-
         '~Syntax.CommitFreeFormula.P1'(A),
         '~Syntax.CommitFreeFormula.P1'(B).
-'Syntax.CommitFreeFormula.P1.0'('MetaDefs.\/''.F2'(A,B)) :-
+'Syntax.CommitFreeFormula.P1.0'('MetaDefs.\\/''.F2'(A,B)) :-
         'Syntax.CommitFreeFormula.P1'(A),
         'Syntax.CommitFreeFormula.P1'(B).
-'~Syntax.CommitFreeFormula.P1.0'('MetaDefs.\/''.F2'(A,B)) :-
+'~Syntax.CommitFreeFormula.P1.0'('MetaDefs.\\/''.F2'(A,B)) :-
         '~Syntax.CommitFreeFormula.P1'(A),
         '~Syntax.CommitFreeFormula.P1'(B).
 'Syntax.CommitFreeFormula.P1.0'('MetaDefs.->''.F2'(A,B)) :-
@@ -231,10 +231,10 @@
 '~Syntax.ApplySubstToFormula.P9'('MetaDefs.PAtom.F1'(A), B, B, _, _, C, C, _, 'MetaDefs.PAtom.F1'(A)).
 'Syntax.ApplySubstToFormula.P9'('MetaDefs.XPAtom.F1'(A), B, B, _, _, C, C, _, 'MetaDefs.XPAtom.F1'(A)).
 '~Syntax.ApplySubstToFormula.P9'('MetaDefs.XPAtom.F1'(A), B, B, _, _, C, C, _, 'MetaDefs.XPAtom.F1'(A)).
-'Syntax.ApplySubstToFormula.P9'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G, H, I, 'MetaDefs.\/''.F2'(J,K)) :-
+'Syntax.ApplySubstToFormula.P9'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G, H, I, 'MetaDefs.\\/''.F2'(J,K)) :-
         'Syntax.ApplySubstToFormula.P9'(A, C, L, E, F, G, M, I, J),
         'Syntax.ApplySubstToFormula.P9'(B, L, D, E, F, M, H, I, K).
-'~Syntax.ApplySubstToFormula.P9'('MetaDefs.\/''.F2'(A,B), C, D, E, F, G, H, I, 'MetaDefs.\/''.F2'(J,K)) :-
+'~Syntax.ApplySubstToFormula.P9'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, G, H, I, 'MetaDefs.\\/''.F2'(J,K)) :-
         '~Syntax.ApplySubstToFormula.P9'(A, C, L, E, F, G, M, I, J),
         '~Syntax.ApplySubstToFormula.P9'(B, L, D, E, F, M, H, I, K).
 'Syntax.ApplySubstToFormula.P9'('MetaDefs.ITE.F3'(A,B,C), D, E, F, G, H, I, J, 'MetaDefs.ITE.F3'(K,L,M)) :-
@@ -311,10 +311,10 @@
 '~Syntax.ApplySubstToFormula.P3.0'('MetaDefs.&''.F2'(A,B), C, 'MetaDefs.&''.F2'(D,E)) :-
         '~Syntax.ApplySubstToFormula.P3'(A, C, D),
         '~Syntax.ApplySubstToFormula.P3'(B, C, E).
-'Syntax.ApplySubstToFormula.P3.0'('MetaDefs.\/''.F2'(A,B), C, 'MetaDefs.\/''.F2'(D,E)) :-
+'Syntax.ApplySubstToFormula.P3.0'('MetaDefs.\\/''.F2'(A,B), C, 'MetaDefs.\\/''.F2'(D,E)) :-
         'Syntax.ApplySubstToFormula.P3'(A, C, D),
         'Syntax.ApplySubstToFormula.P3'(B, C, E).
-'~Syntax.ApplySubstToFormula.P3.0'('MetaDefs.\/''.F2'(A,B), C, 'MetaDefs.\/''.F2'(D,E)) :-
+'~Syntax.ApplySubstToFormula.P3.0'('MetaDefs.\\/''.F2'(A,B), C, 'MetaDefs.\\/''.F2'(D,E)) :-
         '~Syntax.ApplySubstToFormula.P3'(A, C, D),
         '~Syntax.ApplySubstToFormula.P3'(B, C, E).
 'Syntax.ApplySubstToFormula.P3.0'('MetaDefs.~''.F1'(A), B, 'MetaDefs.~''.F1'(C)) :-
@@ -515,10 +515,10 @@
 '~Syntax.CheckVariantFormulas1.P4'('MetaDefs.&''.F2'(A,B), 'MetaDefs.&''.F2'(C,D), E, F) :-
         '~Syntax.CheckVariantFormulas1.P4'(A, C, E, G),
         '~Syntax.CheckVariantFormulas1.P4'(B, D, G, F).
-'Syntax.CheckVariantFormulas1.P4'('MetaDefs.\/''.F2'(A,B), 'MetaDefs.\/''.F2'(C,D), E, F) :-
+'Syntax.CheckVariantFormulas1.P4'('MetaDefs.\\/''.F2'(A,B), 'MetaDefs.\\/''.F2'(C,D), E, F) :-
         'Syntax.CheckVariantFormulas1.P4'(A, C, E, G),
         'Syntax.CheckVariantFormulas1.P4'(B, D, G, F).
-'~Syntax.CheckVariantFormulas1.P4'('MetaDefs.\/''.F2'(A,B), 'MetaDefs.\/''.F2'(C,D), E, F) :-
+'~Syntax.CheckVariantFormulas1.P4'('MetaDefs.\\/''.F2'(A,B), 'MetaDefs.\\/''.F2'(C,D), E, F) :-
         '~Syntax.CheckVariantFormulas1.P4'(A, C, E, G),
         '~Syntax.CheckVariantFormulas1.P4'(B, D, G, F).
 'Syntax.CheckVariantFormulas1.P4'('MetaDefs.~''.F1'(A), 'MetaDefs.~''.F1'(B), C, D) :-
@@ -747,10 +747,10 @@
 '~Syntax.ConditionalFreeFormula.P1'('MetaDefs.&''.F2'(A,B)) :-
         '~Syntax.ConditionalFreeFormula.P1'(A),
         '~Syntax.ConditionalFreeFormula.P1'(B).
-'Syntax.ConditionalFreeFormula.P1'('MetaDefs.\/''.F2'(A,B)) :-
+'Syntax.ConditionalFreeFormula.P1'('MetaDefs.\\/''.F2'(A,B)) :-
         'Syntax.ConditionalFreeFormula.P1'(A),
         'Syntax.ConditionalFreeFormula.P1'(B).
-'~Syntax.ConditionalFreeFormula.P1'('MetaDefs.\/''.F2'(A,B)) :-
+'~Syntax.ConditionalFreeFormula.P1'('MetaDefs.\\/''.F2'(A,B)) :-
         '~Syntax.ConditionalFreeFormula.P1'(A),
         '~Syntax.ConditionalFreeFormula.P1'(B).
 'Syntax.ConditionalFreeFormula.P1'('MetaDefs.->''.F2'(A,B)) :-
@@ -1307,8 +1307,8 @@
 '~Syntax.OpaqueType.P1.0'('MetaDefs.XBType.F1'(_)).
 'Syntax.OpaqueType.P1.0'('MetaDefs.XType.F2'(_,_)).
 '~Syntax.OpaqueType.P1.0'('MetaDefs.XType.F2'(_,_)).
-'Syntax.Or.P3'(A, B, 'MetaDefs.\/''.F2'(A,B)).
-'~Syntax.Or.P3'(A, B, 'MetaDefs.\/''.F2'(A,B)).
+'Syntax.Or.P3'(A, B, 'MetaDefs.\\/''.F2'(A,B)).
+'~Syntax.Or.P3'(A, B, 'MetaDefs.\\/''.F2'(A,B)).
 'Syntax.RenameTypes.P3'(A, B, C) :-
         user:goedel_freeze(ground([A,B]), 'Syntax':'Syntax.RenameTypes.P3.0'(A,B,C)).
 '~Syntax.RenameTypes.P3'(A, B, C) :-
@@ -1393,10 +1393,10 @@
 '~Syntax.RenameAllFormula3.P6'('MetaDefs.&''.F2'(A,B), C, D, E, F, 'MetaDefs.&''.F2'(G,H)) :-
         '~Syntax.RenameAllFormula3.P6'(A, C, I, E, J, G),
         '~Syntax.RenameAllFormula3.P6'(B, I, D, J, F, H).
-'Syntax.RenameAllFormula3.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, 'MetaDefs.\/''.F2'(G,H)) :-
+'Syntax.RenameAllFormula3.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, 'MetaDefs.\\/''.F2'(G,H)) :-
         'Syntax.RenameAllFormula3.P6'(A, C, I, E, J, G),
         'Syntax.RenameAllFormula3.P6'(B, I, D, J, F, H).
-'~Syntax.RenameAllFormula3.P6'('MetaDefs.\/''.F2'(A,B), C, D, E, F, 'MetaDefs.\/''.F2'(G,H)) :-
+'~Syntax.RenameAllFormula3.P6'('MetaDefs.\\/''.F2'(A,B), C, D, E, F, 'MetaDefs.\\/''.F2'(G,H)) :-
         '~Syntax.RenameAllFormula3.P6'(A, C, I, E, J, G),
         '~Syntax.RenameAllFormula3.P6'(B, I, D, J, F, H).
 'Syntax.RenameAllFormula3.P6'('MetaDefs.~''.F1'(A), B, C, D, E, 'MetaDefs.~''.F1'(F)) :-
@@ -1709,8 +1709,8 @@
         '~Syntax.StandardiseCommits.P5'(B, G, D, H, F).
 'Syntax.StandardiseCommits.P5'('MetaDefs.Empty.C0', A, A, B, B).
 '~Syntax.StandardiseCommits.P5'('MetaDefs.Empty.C0', A, A, B, B).
-'Syntax.StandardiseCommits.P5'('MetaDefs.\/''.F2'(_,_), A, A, B, B).
-'~Syntax.StandardiseCommits.P5'('MetaDefs.\/''.F2'(_,_), A, A, B, B).
+'Syntax.StandardiseCommits.P5'('MetaDefs.\\/''.F2'(_,_), A, A, B, B).
+'~Syntax.StandardiseCommits.P5'('MetaDefs.\\/''.F2'(_,_), A, A, B, B).
 'Syntax.StandardiseCommits.P5'('MetaDefs.~''.F1'(_), A, A, B, B).
 '~Syntax.StandardiseCommits.P5'('MetaDefs.~''.F1'(_), A, A, B, B).
 'Syntax.StandardiseCommits.P5'('MetaDefs.->''.F2'(_,_), A, A, B, B).

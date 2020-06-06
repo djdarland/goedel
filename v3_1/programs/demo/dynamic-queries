@@ -1,0 +1,12 @@
+% queries to TestDynamic.
+%
+% Need to program-compile Qsort first.
+
+
+Go("Qsort", "Qsort", "Partition([x|y],z,w,u)").
+
+
+Go("Qsort", "Qsort", "Partition([x|y],z,w,[])").
+
+
+Go("Qsort", "Qsort", "Partition(x,y,z,w)").

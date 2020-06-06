@@ -1,0 +1,14 @@
+MODULE      M4.
+
+IMPORT      Lists.
+
+BASE        Day, Person.
+ 
+CONSTANT    Monday, Tuesday, Wednesday, Thursday, Friday, Saturday,
+            Sunday : Day;
+            Fred, Bill, Mary : Person.
+PREDICATE   Append3 : List(a) * List(a) * List(a) * List(a).
+ 
+Append3(x,y,z,u) <-
+            Append(x,y,w) &
+            Append(w,z,u).

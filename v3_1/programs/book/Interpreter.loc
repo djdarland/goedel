@@ -1,0 +1,185 @@
+LOCAL      Interpreter.
+
+BASE       SignedFormula.
+
+FUNCTION   Pos, Neg : Formula  -> SignedFormula.
+
+
+% PREDICATE   MySucceed : Program  * Formula * TermSubst.
+ 
+MySucceed(program, body, computed_answer) <-
+    EmptyTermSubst(empty_subst) &
+    IF EmptyFormula(body) 
+    THEN 
+      computed_answer = empty_subst
+    ELSE 
+      Select(body, left, selected, right) &
+      MySucceed1(program, body, left, selected, right, empty_subst, 
+                                                               answer) &
+      RestrictSubstToFormula(body, answer, computed_answer).
+
+
+
+PREDICATE  MySucceed1 : 
+
+  Program         % Representation of a normal program.
+* Formula         % Representation of the head of a resultant. 
+* Formula         % Representation of the body of the resultant to the 
+                  % left of the selected literal.
+* SignedFormula   % Representation of the selected literal in the body.
+* Formula         % Representation of the body of the resultant to the 
+                  % right of the selected literal.
+* TermSubst       % Representation of a term substitution.
+* TermSubst.      % Representation of the term substitution obtained 
+                  % by composing the term substitution in the sixth 
+                  % argument with the computed answer obtained for this 
+                  % program and resultant.
+
+  
+MySucceed1(program, head, left, Pos(selected), right, answer_so_far, 
+                                                              answer) <-
+    (IF SOME [module] DeclaredInOpenModule(program, module, selected) 
+     THEN
+       StatementMatchAtom(program, module, selected, stat) &
+       RenameFormulas([head,left,selected,right], [stat], [new_stat]) &
+       Derive(head, left, selected, right, new_stat, mgu, 
+                                                        new_resultant) &
+       ComposeTermSubsts(answer_so_far, mgu, new_answer) &
+       IsImpliedBy(new_head, new_body, new_resultant)
+     ELSE
+       FormulaMaxVarIndex([head,left,selected,right],varindex) &
+       EmptyTermSubst(empty) &
+       Compute(program, selected, varindex, _, empty, subst, 
+                                                            last_goal) &
+       EmptyFormula(last_goal) &
+       ApplySubstToFormula(head, subst, new_head) &
+       AndWithEmpty(left, right, body1) &
+       ApplySubstToFormula(body1, subst, new_body) &
+       ComposeTermSubsts(answer_so_far, subst, new_answer)
+    ) &
+    IF EmptyFormula(new_body) 
+    THEN 
+      answer = new_answer
+    ELSE
+      Select(new_body, new_left, new_selected, new_right) &
+      MySucceed1(program, new_head, new_left, new_selected, new_right, 
+                                                     new_answer, answer).
+ 
+MySucceed1(program, head, left, Neg(selected), right, answer_so_far, 
+                                                              answer) <-
+    (IF DeclaredInOpenModule(program, _, selected)
+     THEN
+       EmptyFormula(empty_formula) &
+       MyFail1(program, empty_formula, Pos(selected), empty_formula)
+     ELSE
+       Fail(program, selected)
+    ) &
+    AndWithEmpty(left, right, new_body) &
+    IF EmptyFormula(new_body) 
+    THEN
+      answer = answer_so_far
+    ELSE
+      Select(new_body, new_left, new_selected, new_right) &
+      MySucceed1(program, head, new_left, new_selected, new_right, 
+                                                 answer_so_far, answer).
+
+
+% PREDICATE   MyFail : Program  * Formula.
+ 
+MyFail(program, body) <-
+    Select(body, left, selected, right) &
+    MyFail1(program, left, selected, right).
+
+
+PREDICATE  MyFail1 : 
+
+  Program         % Representation of a normal program for which there 
+                  % exists a finitely failed SLDNF-tree for a goal, 
+                  % using the safe "leftmost literal" computation rule.
+* Formula         % Representation of the body of the goal to the left 
+                  % of the selected literal. 
+* SignedFormula   % Representation of the selected literal in the body 
+                  % of the goal.
+* Formula.        % Representation of the body of the goal to the right
+                  % of the selected literal.
+
+MyFail1(program, left, Pos(selected), right) <-
+    EmptyFormula(empty_formula) &
+    IF SOME [module] DeclaredInOpenModule(program, module, selected)
+    THEN
+      ALL [new_body]
+        (SOME [l, s, r] (Select(new_body, l, s, r) & 
+                                             MyFail1(program, l, s, r)) 
+         <-
+            SOME [stat, new_stat, new_goal]
+            (StatementMatchAtom(program, module, selected, stat) &
+             RenameFormulas([left,selected,right], [stat], [new_stat]) &
+             Derive(empty_formula, left, selected, right, new_stat, _, 
+                                                             new_goal) &
+             IsImpliedBy(empty_formula, new_body, new_goal)
+            )
+        )
+    ELSE
+      IF Fail(program, selected) 
+      THEN 
+        True
+      ELSE
+        FormulaMaxVarIndex([left,selected,right],varindex) &
+        EmptyTermSubst(empty) &
+        Compute(program, selected, varindex, _, empty, subst, 
+                                                           last_goal) &
+        EmptyFormula(last_goal) &
+        AndWithEmpty(left, right, body1) &
+        ApplySubstToFormula(body1, subst, new_body) &
+        Select(new_body, new_left, new_selected, new_right) &
+        MyFail1(program, new_left, new_selected, new_right).
+
+
+MyFail1(program, _, Neg(selected), _) <-
+    EmptyFormula(empty_formula) &
+    EmptyTermSubst(empty_subst) &
+    MySucceed1(program, selected, empty_formula, Pos(selected), 
+                                       empty_formula, empty_subst, _) |.
+
+MyFail1(program, left, Neg(selected), right) <-
+    EmptyFormula(empty_formula) &
+    MyFail1(program, empty_formula, Pos(selected), empty_formula) |
+    AndWithEmpty(left, right, new_body) &
+    Select(new_body, new_left, new_selected, new_right) &
+    MyFail1(program, new_left, new_selected, new_right).
+
+
+PREDICATE  Select : 
+
+  Formula         % Representation of a (non-empty) conjunction of 
+                  % literals. 
+* Formula         % Representation of the conjunction of literals to 
+                  % the left of the selected literal.  
+* SignedFormula   % Term with function Pos or Neg at the top-level 
+                  % and containing the representation of the atom in 
+                  % the selected literal (according to the safe 
+                  % "leftmost literal" computation rule and where Pos 
+                  % is used if the selected literal is an atom and
+                  % Neg otherwise).
+* Formula.        % Representation of the conjunction of literals to 
+                  % the right of the selected literal.
+
+Select(atom, empty_formula, Pos(atom), empty_formula) <-
+    Atom(atom) &
+    EmptyFormula(empty_formula).
+
+Select(negative_literal, empty_formula, Neg(atom), empty_formula) <-
+    Not(atom, negative_literal) &
+    GroundAtom(atom) &
+    EmptyFormula(empty_formula).
+
+Select(body, left, selected, right) <-
+    And(l, r, body) &
+    IF SOME [l1, s1, r1] Select(l, l1, s1, r1) 
+    THEN
+      left = l1 &
+      selected = s1 &
+      AndWithEmpty(r1, r, right)
+    ELSE
+      Select(r, l1, selected, right) &
+      AndWithEmpty(l, l1, left).

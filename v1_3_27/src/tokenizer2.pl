@@ -1,4 +1,4 @@
-
+:- multifile(tokenizer2).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -37,8 +37,7 @@ The good thing about new Goedel language definition is that tokenizing can be
 done with one look-ahead char.
 */
 
-'$$module'('@(#)tokenizer2.pl 1.12 last updated 93/11/24 17:34:36 by jiwei
-').
+%% '$$module'('@(#)tokenizer2.pl 1.12 last updated 93/11/24 17:34:36 by jiwei').
 
 
 /*------------------------------------------------------------------------------
@@ -61,14 +60,14 @@ get_one_module_aux(Chars, Module) :-
 
 
 stream2chars(Str,Cs):-
-   get0(Str, C),
+   get_byte(Str, C),
    stream2chars_aux(Str, C, Cs).
 
 stream2chars_aux(Str, C, Cs):-
    ( C = -1
      -> Cs = []
      ;  Cs = [C|Cs1],
-	get0(Str, C1),
+	get_byte(Str, C1),
 	stream2chars_aux(Str, C1, Cs1)
    ).
 
@@ -169,7 +168,7 @@ string_chars_2nd([C|Chars], Remains, SChars) :-
    ( C = 0'"
      -> SChars = [],
 	Remains = Chars
-     ;  ( C = 0'\
+     ;  ( C = 0'\\
 	  -> ( Chars = [C2|Remains2]
 	       -> ( C2 = 0'n               % \n
         	    -> SChars = [10|SChars2]

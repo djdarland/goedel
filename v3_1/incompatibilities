@@ -1,0 +1,159 @@
+
+
+There are some incompatibilities between versions 1.2 and 1.3. Most of the 
+changes are in the meta-modules Syntax and Programs. If you have programs 
+in version 1.2 of the system using these modules, you will need to do some 
+minor editing to get them running in version 1.3. Here are the changes: 
+
+
+Syntax and Programs
+===================
+
+The symbol names 
+
+OName
+OType
+OTerm
+OFormula
+OTypeSubst
+OTermSubst
+OFunctionInd
+OPredicateInd
+OVarTyping
+OProgram
+OModulePart
+OCondition
+
+have all had the leading O removed.
+
+
+Each of the predicates
+
+InsDelAxiom
+InsDelDelay
+InsDelProgramBase
+InsDelProgramConstant
+InsDelProgramConstructor
+InsDelProgramFunction
+InsDelProgramPredicate
+InsDelProgramProposition
+InsDelStatement
+
+now has a separate Insert and Delete form. 
+
+
+The predicates in Syntax
+
+ConvBindingToTypeSubst
+ConvBindingToTermSubst
+ConvBindingToVarTyping
+
+are renamed to
+
+BindingToTypeSubst
+BindingToTermSubst
+BindingToVarTyping
+
+
+The predicates in Syntax
+
+RenameAllFormulas
+RenameAllTerms
+RenameAllTypes
+
+have been deleted.  Instead of these, use the predicates
+
+VariantFormulas
+VariantTerms
+VariantTypes
+
+
+The predicates in Syntax
+
+OpaqueBaseType
+OpaqueConstructorType
+OpaqueConstantTerm
+OpaqueFunctionTerm
+OpaquePropositionAtom
+OpaquePredicateAtom
+SymbolName
+
+have been deleted.
+
+
+The predicates in Programs
+
+NonFlounder
+EmptyProgram 
+
+have been deleted.
+
+
+The predicates in Programs
+
+ProgramTypeToString
+ProgramTermToString
+ProgramFormulaToString
+
+have had the third and fourth arguments reversed. 
+
+
+The predicate in Programs 
+
+NewProgram
+
+has had its arguments reversed. 
+
+
+In Programs
+
+TermInProgram has had its 2nd and 3rd arguments reversed.
+TermInModule has had its 4th and 5th arguments reversed.
+
+
+
+Strings
+=======
+
+The predicate
+
+ListIntAsString
+
+is now called 
+
+StringInts 
+
+and its arguments are reversed. 
+
+
+
+Theories
+========
+
+Each of the predicates
+
+InsDelTheoryBase
+InsDelTheoryConstant
+InsDelTheoryConstructor
+InsDelTheoryFunction
+InsDelTheoryImport
+InsDelTheoryPredicate
+InsDelTheoryProposition
+
+now has a separate Insert and Delete form
+
+
+The predicate
+
+NewTheory
+
+has had its arguments reversed. 
+
+
+The predicates
+
+TheoryTypeToString
+TheoryTermToString
+TheoryFormulaToString
+
+have had their second and third arguments reversed.

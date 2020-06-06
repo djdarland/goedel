@@ -1,0 +1,8 @@
+MODULE        Inclusion.
+
+IMPORT        Lists.
+ 
+PREDICATE     IncludedIn : List(a) * List(a).
+ 
+IncludedIn(x,y) <-
+              ALL [z] (Member(z,y) <- Member(z,x)).

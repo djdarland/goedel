@@ -1,0 +1,187 @@
+CLOSED       Integers.
+
+% Module providing the integers and some standard functions and 
+% predicates with integer arguments.
+%
+% This module conforms to the standard for the data type Integer in 
+% Version 4.0 (August 1992) of the Language Independent Arithmetic 
+% Standard (LIAS) ISO/IEC CD 10967-1:1992 (JTC1/SC22/WG11 N318, ANSI
+% X3T2 92-064).
+%
+% The intended interpretation of the symbols in this module is as 
+% follows.
+%
+% The domain of the intended interpretation is the integers Z. The 
+% constant 0 is interpreted as the integer 0, the constant 1 is 
+% interpreted as the integer 1, and so on. The various functions, such 
+% as +, -, etc., have their usual interpetation as mappings from  Z x Z 
+% (or Z, as appropriate) into Z. Similarly, the various predicates, such 
+% as >, <, etc., have their usual interpretation on Z x Z. The details 
+% are given below. 
+%
+% The LIAS boolean bounded is false. Thus infinite precision integer 
+% arithmetic is provided.
+
+BASE         Integer.    
+%
+% Type of the integers.
+
+% CONSTANT     0, 1, 2, ... : Integer.
+
+
+FUNCTION    ^ : yFx(540) : Integer * Integer -> Integer.
+%
+% Exponentiation.
+%
+% ^ is defined by 
+%          x^y  = x raised to the power y,      if y >= 0
+%               = 0,                            if y < 0.
+%
+% The function ^ is defined to be 0 when y < 0 to make it a total 
+% function. This result will never be used. If exponentiation with 
+% y < 0 is attempted, the computation will halt with an error message.
+
+
+FUNCTION     - : Fy(530) : Integer -> Integer.
+%
+% Unary minus.
+%
+% The function - corresponds to the LIAS function neg.
+
+
+FUNCTION     * : yFx(520) : Integer * Integer -> Integer.
+%
+% Multiplication.
+%
+% The function * corresponds to the LIAS function mul.
+
+
+FUNCTION     Div : yFx(520) : Integer * Integer -> Integer.
+%
+% Integer division.
+%
+% Div is defined by
+%     x Div y = Rnd(x/y),   if y ~= 0
+%             = 0,          if y = 0
+% where Rnd is the LIAS rounding function "round towards zero".
+%
+% The function Div corresponds to the LIAS function div. Div is 
+% defined to be 0 when y = 0 to make it a total function. This result 
+% will never be used.  If division by 0 is attempted, the computation 
+% will halt with an error message.
+
+
+FUNCTION     Mod : yFx(520) : Integer * Integer -> Integer.
+%
+% Modulus.
+%
+% Mod is defined by 
+%     x Mod y = x - (x Div y) * y,  if y ~= 0 
+%             = 0,                  if y = 0
+%
+% The function Mod corresponds to the LIAS function rem.  Mod is 
+% defined to be 0 when y = 0 to make it a total function. This result 
+% will never be used.  If division by 0 is attempted, the computation 
+% will halt with an error message.
+
+
+FUNCTION     Rem : yFx(520) : Integer * Integer -> Integer.
+%
+% Remainder after integer division.
+%
+% Rem is defined by 
+%     x Rem y = x - [x/y] * y,  if y ~= 0 
+%             = 0,              if y = 0
+% where the rounding function [] is the floor function.
+%
+% The function Rem corresponds to the LIAS function mod^1.  Rem is 
+% defined to be 0 when y = 0 to make it a total function. This result 
+% will never be used.  If division by 0 is attempted, the computation 
+% will halt with an error message.
+
+
+FUNCTION     + : yFx(510) : Integer * Integer -> Integer.
+%
+% Addition.
+%
+% The function + corresponds to the LIAS function add.
+
+
+FUNCTION     - : yFx(510) : Integer * Integer -> Integer.
+%
+% Subtraction.
+%
+% The function - corresponds to the LIAS function sub.
+
+
+FUNCTION     Abs : Integer -> Integer.
+%
+% Absolute value.
+%
+% The function Abs corresponds to the LIAS function abs.
+
+
+FUNCTION     Sign : Integer -> Integer.
+%
+% Sign of an integer.
+%
+% Sign is defined by
+%     Sign(x) =  1,   if x > 0
+%             =  0,   if x = 0
+%             = -1,   if x < 0
+
+
+FUNCTION     Max : Integer * Integer -> Integer.
+%
+% Maximum.
+
+
+FUNCTION     Min : Integer * Integer -> Integer.
+%
+% Minimum.
+
+
+PREDICATE    > : zPz : 
+
+  Integer     % An integer greater than the integer in the second 
+              % argument. 
+* Integer.    % An integer.
+
+% The predicate > corresponds to the LIAS predicate gtr.
+
+
+PREDICATE    < : zPz :
+
+  Integer     % An integer less than the integer in the second argument. 
+* Integer.    % An integer.
+
+% The predicate < corresponds to the LIAS predicate lss.
+
+
+PREDICATE    >= : zPz :
+
+  Integer     % An integer greater than or equal to the integer in the 
+              % second argument. 
+* Integer.    % An integer.
+
+% The predicate >= corresponds to the LIAS predicate geq.
+
+
+PREDICATE    =< : zPz :
+  
+  Integer     % An integer less than or equal to the integer in the 
+              % second argument. 
+* Integer.    % An integer.
+
+% The predicate =< corresponds to the LIAS predicate leq.
+
+
+PREDICATE    Interval :
+  
+  Integer     % An integer less than or equal to the integer in the 
+              % second argument. 
+* Integer     % An integer less than or equal to the integer in the 
+              % third argument.
+* Integer.    % An integer.
+
+DELAY        Interval(x,_,z) UNTIL GROUND(x) & GROUND(z).

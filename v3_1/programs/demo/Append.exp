@@ -1,0 +1,30 @@
+EXPORT       Append.
+
+
+CONSTRUCTOR  List/1.
+%
+% List constructor.
+
+CONSTANT     Nil : List(alpha).
+%
+% Empty list.
+
+
+FUNCTION     Cons : alpha * List(alpha) -> List(alpha).
+%
+% Cons function.
+
+
+PREDICATE    Append : 
+
+  List(alpha)      % A list. 
+* List(alpha)      % A list.
+* List(alpha).     % The list obtained by appending the lists in the first
+                   % and second arguments.
+
+DELAY        Append(x,_,z) UNTIL NONVAR(x) \/ NONVAR(z).
+
+BASE Day.
+
+CONSTANT Mon, Tue, Wed, Thu, Fri, Sat, Sun : Day.
+

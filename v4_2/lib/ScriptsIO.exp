@@ -1,0 +1,28 @@
+CLOSED       ScriptsIO.
+
+% Module providing input/output for the ground representation of 
+% Goedel scripts.
+
+IMPORT       IO, Scripts.
+
+
+PREDICATE    GetScript : 
+
+  InputStream    % An open input stream corresponding to a file with a 
+                 % .scr extension.
+* Script.        % The ground representation of the script in the file 
+                 % corresponding to the input stream in the first
+                 % argument is read into this argument.
+
+DELAY        GetScript(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    PutScript : 
+
+  OutputStream   % An open output stream corresponding to a file with a
+                 % .scr extension.
+* Script.        % The ground representation of the script in this
+                 % argument is written to the output stream in the first
+                 % argument.
+
+DELAY        PutScript(x,y) UNTIL GROUND(x) & GROUND(y).

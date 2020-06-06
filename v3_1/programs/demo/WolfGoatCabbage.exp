@@ -1,0 +1,19 @@
+EXPORT     WolfGoatCabbage.
+
+% The wolf-goat-cabbage problem, as described in Sterling and Shapiro,
+% The Art of Prolog, pages 285-287.
+
+IMPORT     Lists, Sets.
+
+BASE       Object, State, Move.
+
+CONSTANT   Farmer, Wolf, Goat, Cabbage : Object.
+
+FUNCTION   St : Set(Object) * Set(Object) -> State;
+           LeftToRight : Set(Object) -> Move;
+           RightToLeft : Set(Object) -> Move.
+
+PREDICATE  Initial, Final : State;
+           Applicable : Move * State;
+           ApplyMove : Move * State * State;
+           Legal : State.

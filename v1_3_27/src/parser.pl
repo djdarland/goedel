@@ -1,4 +1,4 @@
-
+:- multifile(parser).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -39,8 +39,7 @@ The whole parser consists of files:
 ================================================================================
 */
 
-'$$module'('@(#)parser.pl 1.66 last updated 94/01/24 13:00:34 by bowers
-').
+%% '$$module'('@(#)parser.pl 1.66 last updated 94/01/24 13:00:34 by bowers').
 
 % for gfreeze
 :- op(500, yfx, and).
@@ -91,7 +90,7 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
 	NewLoaded = Loaded	% skip if the module is already parsed 
      ;  ( Switch = compile, lang_file_ok(ModuleName)
 	  -> sappend(ModuleName, '.lng', LangFile),
-	     open(LangFile, read, Stream),
+	     open(LangFile, read, Stream, [type(binary)]),
 	     my_format(user_error, 'Loading the language of module "~a" ...~n', [ModuleName]),
    	     read(Stream, version(_, ordinary)),
 	     read(Stream, ModuleDef),
@@ -141,7 +140,7 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
 
 lang_file_ok(ModuleName) :-
    sappend(ModuleName, '.lng', LangFile),
-   open(LangFile, read, Stream),
+   open(LangFile, read, Stream, [type(binary)]),
    file_version(V),
    ( read(Stream, version(V, ordinary))
      -> close(Stream)
@@ -182,11 +181,17 @@ module_as_items(ModuleName, ExpTokens, LocTokens):-
  * module_part(+ModuleName, +String, -List(item))
  */
 
-module_part(ModuleName, String, Module):-
-   sappend(ModuleName, String, FileName),
-   ( open(FileName, read, Stream)
+ module_part(ModuleName, String, Module):-
+	 write(djd_module_part_1),
+	sappend(ModuleName, String, FileName),
+	 write(djd_module_part_2),
+	
+   ( open(FileName, read, Stream, [type(binary)])
      -> my_format(user_error, 'Reading file "~w" ...~n', [FileName]),
+       write(djd_module_part_3),
+       trace,
 	get_one_module(Stream, Module),	% in tokenizer.pl
+	 write(djd_module_part_4),
 	close(Stream)
      ;  Module = []	% nonexisting file is NOT regarded as an error.
    ).
@@ -1358,7 +1363,7 @@ cond([Token|Tokens], RestTokens, Condition, WholeTokens, Error, Ln1, Ln2,
 		  and_seq(RestTokens3, RestTokens, Cond2, WholeTokens, Error,
 				Ln1, Ln2, WhichPart)
 			% error will automatically returned
-	       ;  ( Token3 = graphic_name('\/')
+	       ;  ( Token3 = graphic_name('\\/')
 	            -> Condition = 'ProgDefs.Or.F2'(Cond1, Cond2),
 		       or_seq(RestTokens3, RestTokens, Cond2, WholeTokens,
 				Error, Ln1, Ln2, WhichPart)
@@ -1451,7 +1456,7 @@ or_seq([Token|Tokens], RestTokens, Condition, WholeTokens, Error, Ln1, Ln2,
    cond1(Token, Tokens, RestTokens2, Cond1, WholeTokens, Error, Ln1, Ln2,
 		WhichPart),
    ( var(Error)
-     -> ( RestTokens2 = [graphic_name('\/')|RestTokens3]
+     -> ( RestTokens2 = [graphic_name('\\/')|RestTokens3]
 	  -> Condition = 'ProgDefs.Or.F2'(Cond1, Cond2),
 	     or_seq(RestTokens3, RestTokens, Cond2, WholeTokens, Error,
 			Ln1, Ln2, WhichPart)
@@ -1893,6 +1898,6 @@ reserved_word('->').
 reserved_word('<->').
 reserved_word('&').
 reserved_word('~').
-reserved_word('\/').
+reserved_word('\\/').
 reserved_word('|').
 

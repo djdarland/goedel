@@ -1,3 +1,4 @@
+:- multifile(utilities).
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -30,8 +31,7 @@ Date:       11 September 1991
 Commonly used predicates. 
 */
 
-'$$module'('@(#)utilities.pl 1.15 last updated 93/12/08 16:19:53 by jiwei
-').
+%% '$$module'('@(#)utilities.pl 1.15 last updated 93/12/08 16:19:53 by jiwei').
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
@@ -47,21 +47,21 @@ split_list([H|T], A, [H|R], S):-
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
-
+/*
 member(X,[X|_]).
 member(X,[_|Y]):-
    member(X,Y).
-
+*/
 % member_check doesn't allow backtracking
 member_check(X,[X|_]) :- !.
 member_check(X,[_|Y]) :- 
    member_check(X,Y).
 
-
+/*
 append([],Y,Y).
 append([U|X],Y,[U|Z]):-
    append(X,Y,Z).
-
+*/
 
 reverse(X,Y) :-
    reverse3(X,[],Y).

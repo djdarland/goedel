@@ -1,4 +1,4 @@
-
+:- multifile(tracer).
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -86,8 +86,7 @@ Specification of the Tracer:
 ================================================================================
 */
 
-'$$module'('@(#)tracer.pl 1.31 last updated 93/12/14 11:59:34 by jiwei
-').
+%% '$$module'('@(#)tracer.pl 1.31 last updated 93/12/14 11:59:34 by jiwei').
 
 :- dynamic tracer_counter/1.
 
@@ -242,8 +241,8 @@ extract_module_prefix(P, '', P).
 
 tracer_question(Predicate, Args, Entry, N, Return) :-
    format(user_error, ' ? ', []),
-   ttyflush,
-   ttyget0(C),
+%   ttyflush,
+   get_code(C),
    ( C = 10
      -> true
      ;  ttyskip(10)

@@ -1,0 +1,7 @@
+LOCAL         Append.
+
+
+Append(Nil, x, x).
+Append(Cons(x,u),v, Cons(x,w)) <-
+              Append(u,v,w).
+

@@ -1,0 +1,10 @@
+EXPORT      DisplayFile.
+
+IMPORT      Strings.
+
+PREDICATE   Display : String.
+
+DELAY       Display(x) UNTIL GROUND(x).
+
+% Display displays on standard output the file whose name appears in its
+% argument.

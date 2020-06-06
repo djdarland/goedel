@@ -1,0 +1,42 @@
+CLOSED       FlocksIO.
+
+% Module providing input/output for flocks.
+
+IMPORT       IO, Flocks.
+
+
+PREDICATE    GetFlock : 
+
+  InputStream    % An open input stream corresponding to a file with a 
+                 % .flk extension.
+* Flock.         % The representation of the flock in the file 
+                 % corresponding to the input stream in the first 
+                 % argument is read into this argument.
+
+DELAY        GetFlock(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    PutFlock : 
+
+  OutputStream   % An open output stream corresponding to a file with a
+                 % .flk extension.
+* Flock.         % The representation of the flock in this argument is
+                 % written to the output stream in the first argument.
+
+DELAY        PutFlock(x,y) UNTIL GROUND(x) & GROUND(y).
+
+
+PREDICATE    FlockCompile : 
+
+  String         % The name of a file from which a flock is read.
+* Flock.         % The representation of this flock.
+
+DELAY        FlockCompile(x,_) UNTIL GROUND(x).
+
+
+PREDICATE    FlockDecompile : 
+
+  Flock          % The representation of a flock.
+* String.        % The name of a file to which this flock is written.
+
+DELAY        FlockDecompile(x,y) UNTIL GROUND(x) & GROUND(y).

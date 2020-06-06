@@ -1,0 +1,47 @@
+% This module formulates a block world problem proposed by Robert C. Moore,
+% "The role of logic in knowledge representation and commmonsense reasoning"
+% AAAI-1982, pp 428-433.
+% The Moore problem states that: Three blocks A, B and C are arranged as shown:
+%          ____    ____    ____
+%          |   |   |   |   |   | 
+%          | A |   | B |   | C |
+%          |___|   |___|   |___|
+%
+% A is green, C is blue, and the colour of B is not stated.  In this
+% arrangement of blocks, is there a green block next to a block which is not
+% green.
+%
+% The problem can be neatly solved by the Abduction program trying to solve
+% the goal:  <- NextTo(x,y) & Green(x) & NotGreen(y).
+
+
+MODULE		Blocks.
+
+BASE		Block.
+
+CONSTANT	A, B, C : Block.
+
+PREDICATE	Beside, NextTo : Block * Block;
+		Green : Block;
+		NotGreen : Block.
+
+PROPOSITION     Inconsistent.
+
+
+Beside(A, B).
+Beside(B, C).
+
+NextTo(x, y) <- Beside(x, y).
+NextTo(x, y) <- Beside(y, x).
+
+Green(A).
+
+NotGreen(C).
+
+% Integrity constraint
+Inconsistent <- Green(x) & NotGreen(x).
+
+
+% PREDICATE	Go : Block * Block.
+
+% Go(x, y) <- Green(x) & NotGreen(y) & NextTo(x,y).

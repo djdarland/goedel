@@ -1,0 +1,158 @@
+
+% Queries to DB1.
+
+% Who is the father of Jane?
+
+ Father(x,Jane).
+
+%******************************
+
+% Who has Sue as mother and John as grandfather?
+
+ Mother(Sue,x) & Grandparent(John, x).
+
+%******************************
+
+% Who are the ancestors of Mary?
+
+ Ancestor(x, Mary).
+
+%******************************
+
+% Does every person with a mother also have a father?
+
+ ALL [x] (Mother(_,x) -> Father(_,x)).
+
+%******************************
+
+% Does every person with a mother also have a father?
+
+ ALL [x] (Father(_,x) <- Mother(_,x)).
+
+%******************************
+
+% Are all Sue's children childless?
+
+ ALL [x] (Mother(Sue,x) -> ~ SOME [y] (Mother(x,y) \/ Father(x,y))).
+
+%******************************
+
+% Find everyone who has a grandparent in common with Mary.
+
+ SOME [y] (Grandparent(y, Mary) & Grandparent(y, x)) & x ~= Mary.
+
+%******************************
+
+% Find everyone who has a grandparent in common with Mary.
+
+ x ~= Mary & SOME [y] (Grandparent(y, Mary) & Grandparent(y, x)).
+
+%******************************
+
+% Find everyone who has a grandparent in common with Mary.
+
+ x ~= Mary | SOME [y] (Grandparent(y, Mary) & Grandparent(y, x)).
+
+%******************************
+
+% Find every mother who has no father.
+
+ Mother(x,_) & ~ SOME [y] Father(y,x).
+
+%******************************
+
+% Find every mother who has no father.
+
+ Mother(x,_) & ~ Father(_,x).
+
+%******************************
+
+% Is it true that everyone who has a grandparent in common with George
+% has an ancestor in common with Mary?
+
+ ALL [x] (SOME [y] (Grandparent(y, George) & Grandparent(y,x))
+             -> SOME [z] (Ancestor(z, Mary) & Ancestor(z,x))).
+
+%******************************
+
+% Is it true that everyone who has a grandparent in common with George
+% has an ancestor in common with Mary?
+
+ ALL [x] (SOME [z] (Ancestor(z, Mary) & Ancestor(z,x))
+             <- SOME [y] (Grandparent(y, George) & Grandparent(y,x))).
+
+%******************************
+ 
+
+ x ~= Mary & x = Fred.
+
+%******************************
+
+
+ ~ SOME [x] Father(Liz, x).
+
+%******************************
+
+
+ ~ Father(Liz, _).
+
+%******************************
+
+
+ ~ Father(Fred, _).
+
+%******************************
+
+% Find every person with a mother who is not a father.
+
+ ~ Father(x,_) & Mother(_,x).
+
+%******************************
+
+% Find every person with a mother who is not a father.
+
+ ~ Father(x,_) | Mother(_,x).
+
+%******************************
+
+% Find every person with a mother who is not a father.
+
+ {~ Father(x,_) } & Mother(_,x).
+
+%******************************
+
+% Find every person with a mother who is not a father.
+
+ {Mother(_,x)} & ~ Father(x,_).
+
+%******************************
+
+% Find every person with a mother who is not a father.
+
+ ~ Father(x,_) & {Mother(_,x)}.
+
+%******************************
+
+
+  {Father(x,y) & ~ Father(x,z)} & Mother(y,z).
+
+%******************************
+
+
+  {Parent(x,y) & ~ Parent(x,z)} & Parent(y,z).
+
+%******************************
+
+ Parent(y,z) & {Parent(x,y) & ~ Parent(x,z)}.
+
+%******************************
+
+
+  {Parent(x,y) & ~ Parent(x,z)} & Ancestor(y,z).
+
+%******************************
+
+ Ancestor(y,z) & {Parent(x,y) & ~ Parent(x,z)}.
+
+%******************************
+

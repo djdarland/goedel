@@ -1,0 +1,9 @@
+EXPORT       Hidden2.
+
+BASE         Name, Person.
+
+CONSTANT     Bill : Name.
+
+FUNCTION     Individual : Name -> Person.
+
+PREDICATE    Father : Person.

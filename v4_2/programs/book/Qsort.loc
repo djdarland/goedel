@@ -1,0 +1,22 @@
+MODULE      Qsort.
+
+IMPORT      Lists. 
+ 
+PREDICATE   Quicksort : List(Integer) * List(Integer);
+            Partition : List(Integer) * Integer * List(Integer) * 
+                        List(Integer).
+ 
+Quicksort([],[]).
+Quicksort([x|xs],ys) <-
+            Partition(xs,x,l,b) &
+            Quicksort(l,ls) &
+            Quicksort(b,bs) &
+            Append(ls,[x|bs],ys).
+
+Partition([],_,[],[]).
+Partition([x|xs],y,[x|ls],bs) <-
+            x =< y &
+            Partition(xs,y,ls,bs).
+Partition([x|xs],y,ls,[x|bs]) <-
+            x > y &
+            Partition(xs,y,ls,bs).

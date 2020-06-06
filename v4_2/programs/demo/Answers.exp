@@ -1,0 +1,5 @@
+EXPORT     Answers.
+
+IMPORT     Programs.
+
+PREDICATE  AnswerString : Program * String * TermSubst * String.
