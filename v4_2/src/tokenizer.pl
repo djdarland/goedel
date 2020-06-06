@@ -193,7 +193,7 @@ string_chars(Cs, Stream, Very_first, Start, End, Ahead) :-
 
 string_chars_aux(0'", [], _, _, Start, Start, []) :- !.
 
-string_chars_aux(0'\, Cs, Stream, Very_first, Start, End, Ahead) :- !,
+string_chars_aux(0'\\, Cs, Stream, Very_first, Start, End, Ahead) :- !,
    get0(Stream, C),
    ( C = -1
      -> format(user_error, '~nError: incomplete string in lines: ~d-~d.~n',
@@ -338,7 +338,7 @@ graphic_char(0'+).
 graphic_char(0'-).
 graphic_char(0'*).
 graphic_char(0'/).
-graphic_char(0'\).
+graphic_char(0'\\).
 graphic_char(0'^).
 graphic_char(0'#).
 graphic_char(0'<).
@@ -353,7 +353,7 @@ graphic_char(0'!).
 graphic_char(0'$).
 graphic_char(0':).
 graphic_char(0'|).
-graphic_char(0'').
+graphic_char(0'\').
 
 
 graphic_chars(Cs, Stream, Ahead) :-

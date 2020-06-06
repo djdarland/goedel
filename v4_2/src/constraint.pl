@@ -305,7 +305,7 @@ build_set_term('MetaDefs.Term.F2'(_, [A, B]), [A|C], TailVar) :-
 
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-build_constraints_aux('"\', [Expr1, Expr2], Var, Module, Goal, VarDict,
+build_constraints_aux('"\\', [Expr1, Expr2], Var, Module, Goal, VarDict,
 	NewVarDict) :-
    replace_evaluatable(Expr1, Expr12, [], Constraints1),
    replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),

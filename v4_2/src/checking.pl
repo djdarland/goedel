@@ -89,7 +89,7 @@ collect_variables('MetaDefs.&''.F2'(Formula1, Formula2), Vars, Vars2) :-
 	collect_variables(Formula1, Vars, Vars3),
 	collect_variables(Formula2, Vars3, Vars2).
 
-collect_variables('MetaDefs.\/''.F2'(Formula1, Formula2), Vars, Vars2) :-
+collect_variables('MetaDefs.\\/''.F2'(Formula1, Formula2), Vars, Vars2) :-
 	collect_variables(Formula1, Vars, Vars3),
 	collect_variables(Formula2, Vars3, Vars2).
 
@@ -266,7 +266,7 @@ quantified_variable_checking('MetaDefs.&''.F2'(Formula1, Formula2), Ln1, Ln2) :-
    quantified_variable_checking(Formula1, Ln1, Ln2),
    quantified_variable_checking(Formula2, Ln1, Ln2).
 
-quantified_variable_checking('MetaDefs.\/''.F2'(Formula1, Formula2), Ln1, Ln2):-
+quantified_variable_checking('MetaDefs.\\/''.F2'(Formula1, Formula2), Ln1, Ln2):-
    !,
    quantified_variable_checking(Formula1, Ln1, Ln2),
    quantified_variable_checking(Formula2, Ln1, Ln2).
@@ -496,7 +496,7 @@ f_checking_aux('MetaDefs.&''.F2'(Formula1, Formula2), PVars,
    floundering_checking_aux('MetaDefs.&''.F2'(Formula1, Formula2), PVars,
 		Culprits, Culprits2).
 
-f_checking_aux('MetaDefs.\/''.F2'(Formula1, Formula2), PVars,
+f_checking_aux('MetaDefs.\\/''.F2'(Formula1, Formula2), PVars,
 		Culprits, Culprits2):-
    floundering_checking_aux(Formula1, PVars, Culprits, Culprits3),
    floundering_checking_aux(Formula2, PVars, Culprits3, Culprits2).

@@ -1329,11 +1329,11 @@
         (   '~Programs.SymbolInFormula.P2'(A, C)
         ;   '~Programs.SymbolInFormula.P2'(B, C)
         ).
-'Programs.SymbolInFormula.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'Programs.SymbolInFormula.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         (   'Programs.SymbolInFormula.P2'(A, C)
         ;   'Programs.SymbolInFormula.P2'(B, C)
         ).
-'~Programs.SymbolInFormula.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'~Programs.SymbolInFormula.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         (   '~Programs.SymbolInFormula.P2'(A, C)
         ;   '~Programs.SymbolInFormula.P2'(B, C)
         ).
@@ -1923,7 +1923,7 @@ constraint_goal_conversion('Rationals', absolute, '"Abs', 1):- !.
 constraint_goal_conversion('Rationals', rational, '"//', 2):- !.
 
 constraint_goal_conversion('Sets', normalise, '"Inc', 2):- !. % Wrong!
-constraint_goal_conversion('Sets', diff, '"\', 2):- !.          
+constraint_goal_conversion('Sets', diff, '"\\', 2):- !.          
 constraint_goal_conversion('Sets', set_of, '"SuchThat', 3):- !.
 
 constraint_goal_conversion('Strings', concat, '"++', 2):- !.

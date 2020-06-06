@@ -83,10 +83,10 @@
 '~SharedSyntax.MaxVarIndex1.P3'('MetaDefs.&''.F2'(A,B), C, D) :-
         '~SharedSyntax.MaxVarIndex1.P3'(A, C, E),
         '~SharedSyntax.MaxVarIndex1.P3'(B, E, D).
-'SharedSyntax.MaxVarIndex1.P3'('MetaDefs.\/''.F2'(A,B), C, D) :-
+'SharedSyntax.MaxVarIndex1.P3'('MetaDefs.\\/''.F2'(A,B), C, D) :-
         'SharedSyntax.MaxVarIndex1.P3'(A, C, E),
         'SharedSyntax.MaxVarIndex1.P3'(B, E, D).
-'~SharedSyntax.MaxVarIndex1.P3'('MetaDefs.\/''.F2'(A,B), C, D) :-
+'~SharedSyntax.MaxVarIndex1.P3'('MetaDefs.\\/''.F2'(A,B), C, D) :-
         '~SharedSyntax.MaxVarIndex1.P3'(A, C, E),
         '~SharedSyntax.MaxVarIndex1.P3'(B, E, D).
 'SharedSyntax.MaxVarIndex1.P3'('MetaDefs.->''.F2'(A,B), C, D) :-
@@ -237,11 +237,11 @@
         '~SharedSyntax.SFormulaFreeVars.P2'(A, D),
         '~SharedSyntax.SFormulaFreeVars.P2'(B, E),
         '~SharedSyntax.Union.P3'(D, E, C).
-'SharedSyntax.SFormulaFreeVars.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'SharedSyntax.SFormulaFreeVars.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         'SharedSyntax.SFormulaFreeVars.P2'(A, D),
         'SharedSyntax.SFormulaFreeVars.P2'(B, E),
         'SharedSyntax.Union.P3'(D, E, C).
-'~SharedSyntax.SFormulaFreeVars.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'~SharedSyntax.SFormulaFreeVars.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         '~SharedSyntax.SFormulaFreeVars.P2'(A, D),
         '~SharedSyntax.SFormulaFreeVars.P2'(B, E),
         '~SharedSyntax.Union.P3'(D, E, C).

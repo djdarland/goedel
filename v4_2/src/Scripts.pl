@@ -415,11 +415,11 @@
         (   '~Scripts.SymbolInFormula.P2'(A, C)
         ;   '~Scripts.SymbolInFormula.P2'(B, C)
         ).
-'Scripts.SymbolInFormula.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'Scripts.SymbolInFormula.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         (   'Scripts.SymbolInFormula.P2'(A, C)
         ;   'Scripts.SymbolInFormula.P2'(B, C)
         ).
-'~Scripts.SymbolInFormula.P2'('MetaDefs.\/''.F2'(A,B), C) :-
+'~Scripts.SymbolInFormula.P2'('MetaDefs.\\/''.F2'(A,B), C) :-
         (   '~Scripts.SymbolInFormula.P2'(A, C)
         ;   '~Scripts.SymbolInFormula.P2'(B, C)
         ).
