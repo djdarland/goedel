@@ -79,7 +79,6 @@ portray_message(informational, _).
 /*===========================================================================*/
  
 top_loop(ModuleName, Prog, SymbolTable) :-
-	trace,
    retractall(create_tracer),
    retractall(compile_script),
    retractall(no_message),
