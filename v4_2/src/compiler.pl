@@ -173,7 +173,7 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	     unix(system(UnixComm))
 	        % DOS/PC version should have these two lines replaced by "true"
 	  ;  sappend(ModuleName, '.sup', SupFile),
-	     ( open(SupFile, read, SupStream)
+	     ( open(SupFile, read, SupStream, [type(binary)])
 	       -> close(SupStream),
 		  sappend(' >> ', FileName, CommString1),
 		  sappend(SupFile, CommString1, CommString2),
@@ -187,7 +187,7 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	     ),
 	     format(user_output, 'Module "~a" compiled.~n', [ModuleName]),
              sappend(ModuleName, '.lng', LanFileName),
-             ( open(LanFileName, write, Stream)
+             ( open(LanFileName, write, Stream, [type(binary)])
                -> string2Gstring(ModuleName, GModuleName),
 		  ( system_module_name(GModuleName)
 		    -> ( open_system_module(GModuleName)

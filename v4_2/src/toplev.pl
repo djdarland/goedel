@@ -79,6 +79,7 @@ portray_message(informational, _).
 /*===========================================================================*/
  
 top_loop(ModuleName, Prog, SymbolTable) :-
+	trace,
    retractall(create_tracer),
    retractall(compile_script),
    retractall(no_message),
@@ -478,7 +479,7 @@ rep(N, X, [X|Xs]) :-
  
 ask_to_terminator(Prompt1, Prompt2, Result) :-
    write(user_output, Prompt1), %% ttyflush,
-   get_char(C0),
+   get_code(C0),
    find_first_non_blank(C0, Prompt1, C1),
    ( C1 = 0'"
      -> get_one_char(C1, Prompt2, C2, in_string)
@@ -518,7 +519,7 @@ read_to_terminator(C1, C2, Prompt, [C1|Cs], Switch) :-
 myttyskip(FirstChar, C) :-
    ( FirstChar = C
      -> true
-     ;  get_char(C2),
+     ;  get_code(C2),
 	myttyskip(C2, C)
    ).
 
@@ -526,15 +527,15 @@ myttyskip(FirstChar, C) :-
 
 find_first_non_blank(10, Prompt, C) :- !,
    write(user_output, Prompt), %% ttyflush,
-   get_char(C1),
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(32, Prompt, C) :- !,
-   get_char(C1),
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(9, Prompt, C) :- !,
-   get_char(C1),
+   get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(C, _, C).
@@ -542,7 +543,7 @@ find_first_non_blank(C, _, C).
 %------------------------------------------------------------------------------
 
 get_one_char(0'., Prompt, C, Switch) :- !,
-   get_char(C),
+   get_code(C),
    ( blank_char(C), Switch = not_in_string
      -> true
      ;  ( C = 10
@@ -552,7 +553,7 @@ get_one_char(0'., Prompt, C, Switch) :- !,
    ).
 
 get_one_char(_, Prompt, C, _) :-
-   get_char(C),
+   get_code(C),
    ( C = 10
      -> write(user_output, Prompt) %%, ttyflush
      ;  true
@@ -578,8 +579,8 @@ quit_cmd :-
 %------------------------------------------------------------------------------
 
 canonicalise_prolog_cmd(F1, F2) :-
-   ( open(F1, read, Stream1)
-     -> ( open(F2, write, Stream2)
+   ( open(F1, read, Stream1, [type(binary)])
+     -> ( open(F2, write, Stream2, [type(binary)])
           -> (  cp_aux(Stream1, Stream2),
 	        format(user_output, '~nCanonicalised "~a" is generated in "~a".~n', [F1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [F1])
@@ -602,8 +603,8 @@ cp_aux(Stream1, Stream2) :-
 %------------------------------------------------------------------------------
 
 decanonicalise_prolog_cmd(F1, F2) :-
-   ( open(F1, read, Stream1)
-     -> ( open(F2, write, Stream2)
+   ( open(F1, read, Stream1, [type(binary)])
+     -> ( open(F2, write, Stream2, [type(binary)])
 	  -> (  dcp_aux(Stream1, Stream2),
 	        format(user_output, '~nDecanonicalised "~a" is generated in "~a".~n', [F1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [F1])
@@ -641,7 +642,7 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 	     Signal = ordinary
 	  ;  gstring2string(GModuleName, ModuleName),
 	     sappend(ModuleName, '.lng', LangFile),
-	     ( open(LangFile, read, Stream)
+	     ( open(LangFile, read, Stream, [type(binary)])
                -> format(user_output, 'Loading module "~a" ...~n', [ModuleName]),
 		  ( file_version(V),
 		    read(Stream, version(V, Signal))
@@ -751,7 +752,7 @@ file_exist(Name, Postfix) :-
 % This is for the PC/DOS version of Goedel
 % file_exist(Name, Postfix) :-
 %   sappend(Name, Postfix, File),
-%   open(File, read, Stream),
+%   open(File, read, Streamx, [type(binary)]),
 %   close(Stream).
 
 %------------------------------------------------------------------------------
@@ -773,7 +774,7 @@ program_compile_cmd(ModuleName) :-
 
 create_prm_file(ModuleName, Program) :-
    sappend(ModuleName, '.prm', FileName),
-   ( open(FileName, write, Stream)
+   ( open(FileName, write, Stream, [type(binary)])
      -> file_version(V),
 	format(Stream, 'version(''~a'', prm).~n', [V]),   % inserting version number
 	create_prm_file_aux(Program, Stream),
@@ -818,7 +819,7 @@ traverse_OBT('AVLTrees.Tree.F4'(Left, ModuleName, Item, Right),
 program_decompile_cmd(GFileName) :-
    gstring2string(GFileName, File),
    postfix_handler(File, '.prm', FileName),
-   ( open(FileName, read, Stream)
+   ( open(FileName, read, Stream, [type(binary)])
      -> readin_program(Stream, Program),
 	close(Stream),
         'ParserPrograms.Decompile.P2'(Program, 'ParserPrograms.Noisy.C0')
@@ -830,7 +831,7 @@ program_decompile_cmd(GFileName) :-
 script_compile_cmd(GModuleName) :-
    gstring2string(GModuleName, ModuleName),
    sappend(ModuleName, '.scr', FileName),
-   ( open(FileName, read, Stream)
+   ( open(FileName, read, Stream, [type(binary)])
      -> 'ScriptsIO':readin_script(Stream, Script),
 	close(Stream),
 	compile_script(Script, ModuleName)
@@ -879,13 +880,13 @@ debug_compile_cmd(ModuleName) :-
 %------------------------------------------------------------------------------
 
 flock_compile_cmd(F1, F2) :-
-   ( open(F1, read, Stream)
+   ( open(F1, read, Stream, [type(binary)])
      -> read_file(Stream, Chars),
         close(Stream),
         (  'Units':token_identifiers(Chars, Tokens, []),
            flock_compile_cmd_aux(Tokens, FlockList),
            sappend(F2, '.flk', FileName),
-           ( open(FileName, write, Stream2)
+           ( open(FileName, write, Stream2, [type(binary)])
 	     -> format(Stream2, '~q.~n', ['Flocks.Flock.F1'(FlockList)]),
 	        format(user_output, '~nUnits in "~a" are compiled into flock "~a".~n', [F1, FileName]),
 	        close(Stream2)
@@ -912,7 +913,7 @@ flock_compile_cmd_aux(Tokens, Flock) :-
    ).
 
 read_file(Stream, Chars) :-
-   get0(Stream, Char),
+   get_byte(Stream, Char),
    ( Char = -1
      -> Chars = []
      ;  Chars = [Char|Chars2],
@@ -923,10 +924,10 @@ read_file(Stream, Chars) :-
 
 flock_decompile_cmd(F1, F2) :-
    postfix_handler(F1, '.flk', FF1),
-   ( open(FF1, read, Stream)
+   ( open(FF1, read, Stream, [type(binary)])
      -> read(Stream, 'Flocks.Flock.F1'(List)),
 	close(Stream),
-        ( open(F2, write, Stream2)
+        ( open(F2, write, Stream2, [type(binary)])
 	  -> (  flock_decompile_cmd_aux(List, Stream2),
 	        format(user_output, '~nThe flock in "~a" is decompiled into units in "~a".~n', [FF1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [FF1])
@@ -1516,7 +1517,7 @@ write_codes([C|Cs]) :-
 
 user_satisfied:-
    format(user_output, ' ? ', []), %% ttyflush,
-   get_char(C),
+   get_code(C),
    ( C = 0';
      -> ttyskip(10), fail
      ;  ( C = 10
