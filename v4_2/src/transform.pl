@@ -103,7 +103,7 @@ transform_body('MetaDefs.&''.F2'(Formula1, Formula2),
 
 transform_body('MetaDefs.~''.F1'('MetaDefs.&''.F2'(Formula1, Formula2)), 
                VarDict, VarNo, NewVarNo,
-               'MetaDefs.\/''.F2'(NewFormula1, NewFormula2), FreeVars
+               'MetaDefs.\\/''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
 	transform_body('MetaDefs.~''.F1'(Formula1), VarDict, VarNo, 
                        VarNo1, NewFormula1, FreeVars1),
@@ -111,9 +111,9 @@ transform_body('MetaDefs.~''.F1'('MetaDefs.&''.F2'(Formula1, Formula2)),
                        NewVarNo, NewFormula2, FreeVars2),
 	union(FreeVars1, FreeVars2, FreeVars).
 
-transform_body('MetaDefs.\/''.F2'(Formula1, Formula2), 
+transform_body('MetaDefs.\\/''.F2'(Formula1, Formula2), 
 	       VarDict, VarNo, NewVarNo,
-	       'MetaDefs.\/''.F2'(NewFormula1, NewFormula2), FreeVars
+	       'MetaDefs.\\/''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
 	transform_body(Formula1, VarDict, VarNo, 
                        VarNo1, NewFormula1, FreeVars1),
@@ -121,7 +121,7 @@ transform_body('MetaDefs.\/''.F2'(Formula1, Formula2),
                        NewVarNo, NewFormula2, FreeVars2),
 	union(FreeVars1, FreeVars2, FreeVars).
 
-transform_body('MetaDefs.~''.F1'('MetaDefs.\/''.F2'(Formula1, Formula2)), 
+transform_body('MetaDefs.~''.F1'('MetaDefs.\\/''.F2'(Formula1, Formula2)), 
 	       VarDict, VarNo, NewVarNo,
                'MetaDefs.&''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
@@ -133,7 +133,7 @@ transform_body('MetaDefs.~''.F1'('MetaDefs.\/''.F2'(Formula1, Formula2)),
 
 transform_body('MetaDefs.->''.F2'(Formula1, Formula2), 
 	       VarDict, VarNo, NewVarNo, 
-	       'MetaDefs.\/''.F2'(NewFormula1, NewFormula2), FreeVars
+	       'MetaDefs.\\/''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
 	transform_body('MetaDefs.~''.F1'(Formula1), VarDict, VarNo,
                        VarNo1, NewFormula1, FreeVars1),
@@ -143,7 +143,7 @@ transform_body('MetaDefs.->''.F2'(Formula1, Formula2),
 
 transform_body('MetaDefs.<-''.F2'(Formula1, Formula2), 
 	       VarDict, VarNo, NewVarNo, 
-	       'MetaDefs.\/''.F2'(NewFormula1, NewFormula2), FreeVars
+	       'MetaDefs.\\/''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
 	transform_body('MetaDefs.~''.F1'(Formula2), VarDict, VarNo,
                        VarNo1, NewFormula2, FreeVars1),
@@ -183,7 +183,7 @@ transform_body('MetaDefs.<->''.F2'(Formula1, Formula2),
 
 transform_body('MetaDefs.~''.F1'('MetaDefs.<->''.F2'(Formula1, Formula2)),
                VarDict, VarNo, NewVarNo, 
-               'MetaDefs.\/''.F2'(NewFormula1, NewFormula2), FreeVars
+               'MetaDefs.\\/''.F2'(NewFormula1, NewFormula2), FreeVars
               ) :-
         transform_body('MetaDefs.~''.F1'('MetaDefs.->''.F2'(Formula1, Formula2)), 
                        VarDict, VarNo, VarNo1, NewFormula1, FreeVars1),

@@ -60,7 +60,7 @@
 :- op(700, xfx, [=, '~=', <, >, =<, >=, 'In', 'Subset', 'StrictSubset']).
 :- op(705, fx,  ['~ ']).
 :- op(710, xfy, [' & ']).
-:- op(720, xfy, [' \/ ']).
+:- op(720, xfy, [' \\/ ']).
 :- op(750, xf,  ['THEN ... ELSE ...']).
 :- op(760, fx,  ['IF']).
 
@@ -68,7 +68,7 @@
 :- op(400, yfx, [*, /, 'Div', 'Mod', 'Rem', //]).
 :- op(500, yfx, [+, -, '++']).
 :- op(500, fx,  [-]).
-:- op(600, yfx, [\]).
+:- op(600, yfx, [\\]).
 
 
 %------------------------------------------------------------------------------
@@ -495,7 +495,7 @@ read_to_terminator(0'%, C2, _, [0'.], not_in_string) :-
    !,
    myttyskip(C2, 10).
 
-read_to_terminator(0'\, C2, Prompt, [0'\, C2|Cs], in_string) :-  !,
+read_to_terminator(0'\\, C2, Prompt, [0'\\, C2|Cs], in_string) :-  !,
    get_one_char(C2, Prompt, C3, in_string),
    get_one_char(C3, Prompt, C4, in_string),
    read_to_terminator(C3, C4, Prompt, Cs, in_string).
@@ -546,7 +546,7 @@ get_one_char(0'., Prompt, C, Switch) :- !,
    ( blank_char(C), Switch = not_in_string
      -> true
      ;  ( C = 10
-	  -> write(user_output, Prompt), %% ttyflush
+	  -> write(user_output, Prompt) %%, ttyflush
 	  ;  true
 	)
    ).
@@ -554,7 +554,7 @@ get_one_char(0'., Prompt, C, Switch) :- !,
 get_one_char(_, Prompt, C, _) :-
    get_char(C),
    ( C = 10
-     -> write(user_output, Prompt), %% ttyflush
+     -> write(user_output, Prompt) %%, ttyflush
      ;  true
    ).
 
@@ -1307,9 +1307,9 @@ remove_true(true ' & ' Goal, GGoal) :- !,
    remove_true(Goal, GGoal).
 remove_true(Goal ' & ' true, GGoal) :- !,
    remove_true(Goal, GGoal).
-remove_true(Goal ' \/ ' true, GGoal) :- !,
+remove_true(Goal ' \\/ ' true, GGoal) :- !,
    remove_true(Goal, GGoal).
-remove_true(true ' \/ ' Goal, GGoal) :- !,
+remove_true(true ' \\/ ' Goal, GGoal) :- !,
    remove_true(Goal, GGoal).
 remove_true('~ ' Goal, '~ ' GGoal) :- !,
    remove_true(Goal, GGoal).
@@ -1336,7 +1336,7 @@ convert_to_goedel_formula((Formula1; Formula2), GFormula) :-
    ( Formula1 = (Cond -> _Then)
      -> GFormula = ('IF' GCond 'THEN ... ELSE ...'),
         convert_to_goedel_formula(Cond, GCond)
-     ;  GFormula = (GFormula1 ' \/ ' GFormula2),
+     ;  GFormula = (GFormula1 ' \\/ ' GFormula2),
         convert_to_goedel_formula(Formula1, GFormula1)
    ).
 
@@ -1397,7 +1397,7 @@ convert_to_goedel_formula(union(Term1, Term2, Term3),
 
 % for Sets
 convert_to_goedel_formula(difference(Term1, Term2, Term3),
-				'='(GTerm3, '\'(GTerm1, GTerm2))) :-
+				'='(GTerm3, '\\'(GTerm1, GTerm2))) :-
    convert_set_terms([Term1, Term2, Term3], [GTerm1, GTerm2, GTerm3]). 
 
 % for Sets
@@ -1470,7 +1470,7 @@ constraint_goal_conversion(eval, 'Rationals', =, 2).
 
 constraint_goal_conversion(normalise, 'Sets', 'Inc', 2).	% Wrong!
 constraint_goal_conversion(union, 'Sets', '+', 2).          
-constraint_goal_conversion(difference, 'Sets', '\', 2).          
+constraint_goal_conversion(difference, 'Sets', '\\', 2).          
 constraint_goal_conversion(intersection, 'Sets', '*', 2).          
 constraint_goal_conversion(set_of_aux, 'Sets', 'SuchThat', 3).
 

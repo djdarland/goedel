@@ -1,5 +1,5 @@
-:- multifile '$$module'/1.
 :- module('Rationals', []).
+:- multifile '$$module'/1.
 
 :- op(500, yfx, and).
 :- op(400, yfx, or).

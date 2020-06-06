@@ -407,7 +407,7 @@ start_of_cformula([Token|Tokens], Language) :-
 
 connective(graphic_name(Name), SymbolList) :-  connective(Name, SymbolList).
 connective('&', connective('MetaDefs.&''.F2', 'Syntax.XFY.F1'(150))).
-connective('\/', connective('MetaDefs.\/''.F2', 'Syntax.XFY.F1'(140))).
+connective('\\/', connective('MetaDefs.\\/''.F2', 'Syntax.XFY.F1'(140))).
 connective('->', connective('MetaDefs.->''.F2', 'Syntax.XFY.F1'(120))).
 connective('<-', connective('MetaDefs.<-''.F2', 'Syntax.XFY.F1'(120))).
 connective('<->', connective('MetaDefs.<->''.F2', 'Syntax.XFX.F1'(120))).
@@ -508,8 +508,8 @@ lookup_reserved_word('False', proposition(
 
 lookup_reserved_word('&',
 	connective('MetaDefs.&''.F2', 'Syntax.YFX.F1'(150))).
-lookup_reserved_word('\/',
-	connective('MetaDefs.\/''.F2', 'Syntax.YFX.F1'(140))).
+lookup_reserved_word('\\/',
+	connective('MetaDefs.\\/''.F2', 'Syntax.YFX.F1'(140))).
 lookup_reserved_word('->',
 	connective('MetaDefs.->''.F2', 'Syntax.XFY.F1'(120))).
 lookup_reserved_word('<-',
@@ -793,7 +793,7 @@ end_of_conditional_aux('}'(_)).
 end_of_conditional_aux(graphic_name(N)) :-
    end_of_conditional_aux(N).
 end_of_conditional_aux('|').
-end_of_conditional_aux('\/').
+end_of_conditional_aux('\\/').
 end_of_conditional_aux('<-').
 end_of_conditional_aux('->').
 end_of_conditional_aux('<->').
@@ -1314,7 +1314,7 @@ end_of_atom(big_name(Name)) :-
 
 end_of_atom('&').
 end_of_atom('->').
-end_of_atom('\/').
+end_of_atom('\\/').
 end_of_atom('<-').
 end_of_atom('<->').
 end_of_atom('|').

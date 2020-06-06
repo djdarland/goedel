@@ -623,7 +623,7 @@ compile_formula('MetaDefs.&''.F2'(Formula1, Formula2),
    compile_formula(Formula1, BuiltFormula1, VarDict, VarDict1, Prefix),
    compile_formula(Formula2, BuiltFormula2, VarDict1, NewVarDict, Prefix).
 
-compile_formula('MetaDefs.\/''.F2'(Formula1, Formula2),
+compile_formula('MetaDefs.\\/''.F2'(Formula1, Formula2),
 	(BuiltFormula1; BuiltFormula2), VarDict, NewVarDict, Prefix) :-
    compile_formula(Formula1, BuiltFormula1, VarDict, VarDict1, Prefix),
    compile_formula(Formula2, BuiltFormula2, VarDict1, NewVarDict, Prefix).

@@ -48,20 +48,22 @@ split_list([H|T], A, [H|R], S):-
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
+ /*
 member(X,[X|_]).
 member(X,[_|Y]):-
    member(X,Y).
-
+ */
+ 
 % member_check doesn't allow backtracking
 member_check(X,[X|_]) :- !.
 member_check(X,[_|Y]) :- 
    member_check(X,Y).
 
-
+/*
 append([],Y,Y).
 append([U|X],Y,[U|Z]):-
    append(X,Y,Z).
-
+*/
 
 reverse(X,Y) :-
    reverse3(X,[],Y).

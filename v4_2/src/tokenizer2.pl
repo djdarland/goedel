@@ -169,7 +169,7 @@ string_chars_2nd([C|Chars], Remains, SChars) :-
    ( C = 0'"
      -> SChars = [],
 	Remains = Chars
-     ;  ( C = 0'\
+     ;  ( C = 0'\\
 	  -> ( Chars = [C2|Remains2]
 	       -> ( C2 = 0'n               % \n
         	    -> SChars = [10|SChars2]

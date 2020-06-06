@@ -40,7 +40,7 @@ The whole parser consists of files:
 ================================================================================
 */
 
-$$ '$$module'('@(#)parser.pl 1.68 last updated 94/04/18 22:22:18 by jiwei').
+%% $$ '$$module'('@(#)parser.pl 1.68 last updated 94/04/18 22:22:18 by jiwei').
 
 % for gfreeze
 :- op(500, yfx, and).
@@ -1358,7 +1358,7 @@ cond([Token|Tokens], RestTokens, Condition, WholeTokens, Error, Ln1, Ln2,
 		  and_seq(RestTokens3, RestTokens, Cond2, WholeTokens, Error,
 				Ln1, Ln2, WhichPart)
 			% error will automatically returned
-	       ;  ( Token3 = graphic_name('\/')
+	       ;  ( Token3 = graphic_name('\\/')
 	            -> Condition = 'ProgDefs.Or.F2'(Cond1, Cond2),
 		       or_seq(RestTokens3, RestTokens, Cond2, WholeTokens,
 				Error, Ln1, Ln2, WhichPart)
@@ -1451,7 +1451,7 @@ or_seq([Token|Tokens], RestTokens, Condition, WholeTokens, Error, Ln1, Ln2,
    cond1(Token, Tokens, RestTokens2, Cond1, WholeTokens, Error, Ln1, Ln2,
 		WhichPart),
    ( var(Error)
-     -> ( RestTokens2 = [graphic_name('\/')|RestTokens3]
+     -> ( RestTokens2 = [graphic_name('\\/')|RestTokens3]
 	  -> Condition = 'ProgDefs.Or.F2'(Cond1, Cond2),
 	     or_seq(RestTokens3, RestTokens, Cond2, WholeTokens, Error,
 			Ln1, Ln2, WhichPart)
@@ -1895,6 +1895,6 @@ reserved_word('->').
 reserved_word('<->').
 reserved_word('&').
 reserved_word('~').
-reserved_word('\/').
+reserved_word('\\/').
 reserved_word('|').
 
