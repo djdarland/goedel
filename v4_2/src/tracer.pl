@@ -242,8 +242,8 @@ extract_module_prefix(P, '', P).
 
 tracer_question(Predicate, Args, Entry, N, Return) :-
    format(user_error, ' ? ', []),
-   ttyflush,
-   ttyget0(C),
+%   ttyflush,
+   get_code(C),
    ( C = 10
      -> true
      ;  ttyskip(10)

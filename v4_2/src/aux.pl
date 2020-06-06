@@ -41,7 +41,7 @@ is_runtime_system.
 
 my_load(File):-
    sappend(File, '.pl', File2),
-   open(File2, read, Stream),
+   open(File2, read, Stream, [type(binary)]),
    read(Stream, module(ModuleName)),
    abolish_module(ModuleName),
    ( read(Stream, Clause)
