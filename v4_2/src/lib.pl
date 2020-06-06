@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -29,8 +30,7 @@
  *		Modified on 5 Jan. 1992 for the new parser
  */
 
-'$$module'('@(#)lib.pl 1.30 last updated 93/12/08 17:56:31 by jiwei
-').
+%% '$$module'('@(#)lib.pl 1.30 last updated 93/12/08 17:56:31 by jiwei').
 
 /*------------------------------------------------------------------------------
  * Operator declarations for delay declaratoins

@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -37,8 +38,7 @@ The good thing about new Goedel language definition is that tokenizing can be
 done with one look-ahead char.
 */
 
-'$$module'('@(#)tokenizer2.pl 1.12 last updated 93/11/24 17:34:36 by jiwei
-').
+%% '$$module'('@(#)tokenizer2.pl 1.12 last updated 93/11/24 17:34:36 by jiwei').
 
 
 /*------------------------------------------------------------------------------

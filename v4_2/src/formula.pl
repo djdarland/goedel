@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -31,8 +32,7 @@ Date:		18 November 1991, starting the ambiguous parser.
 ================================================================================
 */
 
-'$$module'('@(#)formula.pl 1.34 last updated 93/05/23 18:24:43 by jiwei
-').
+%% '$$module'('@(#)formula.pl 1.34 last updated 93/05/23 18:24:43 by jiwei').
 
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

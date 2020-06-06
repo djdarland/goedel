@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -31,8 +32,7 @@ Date:		30 June 1992
 ================================================================================
 */
 
-'$$module'('@(#)aux.pl 1.3 last updated 93/02/10 17:24:36 by jiwei
-').
+%%'$$module'('@(#)aux.pl 1.3 last updated 93/02/10 17:24:36 by jiwei').
 
 
 % a signal for the runtime system 

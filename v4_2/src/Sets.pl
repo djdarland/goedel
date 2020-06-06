@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 :- module('Sets', []).
 
 :- op(500, yfx, and).
@@ -13,8 +14,7 @@ Date:		17 July 1992
 */
 
 
-'$$module'('@(#)Sets.sup 1.5 last updated 93/12/09 12:28:00 by jiwei
-').
+%% '$$module'('@(#)Sets.sup 1.5 last updated 93/12/09 12:28:00 by jiwei').
 
 /*==============================================================================
  * Following are functions support the constraint solving with sets.

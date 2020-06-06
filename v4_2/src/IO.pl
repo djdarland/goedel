@@ -1,3 +1,5 @@
+:- multifile '$$module'/1.
+
 :- module('IO', []).
 
 :- op(500, yfx, and).
@@ -38,8 +40,7 @@ Date:      17 September 1991
 ================================================================================
 */
 
-'$$module'('@(#)IO.sup 1.13 last updated 94/02/11 17:07:48 by jiwei
-').
+%% '$$module'('@(#)IO.sup 1.13 last updated 94/02/11 17:07:48 by jiwei').
 
 
 ?- dynamic '$end_of_stream'/1.

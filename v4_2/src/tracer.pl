@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -86,8 +87,7 @@ Specification of the Tracer:
 ================================================================================
 */
 
-'$$module'('@(#)tracer.pl 1.33 last updated 94/04/08 15:45:54 by jiwei
-').
+%% '$$module'('@(#)tracer.pl 1.33 last updated 94/04/08 15:45:54 by jiwei').
 
 :- dynamic tracer_counter/1.
 

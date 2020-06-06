@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 :- module('Rationals', []).
 
 :- op(500, yfx, and).
@@ -13,8 +14,7 @@ Date:		29 April 1992
 */
 
 
-'$$module'('@(#)Rationals.sup 1.8 last updated 93/12/08 16:19:16 by jiwei
-').
+%% '$$module'('@(#)Rationals.sup 1.8 last updated 93/12/08 16:19:16 by jiwei').
 
 %------------------------------------------------------------------------------
 % not completely certain about the optimized implementation.
