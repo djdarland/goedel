@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -39,8 +40,7 @@ The whole parser consists of files:
 ================================================================================
 */
 
-'$$module'('@(#)parser.pl 1.68 last updated 94/04/18 22:22:18 by jiwei
-').
+$$ '$$module'('@(#)parser.pl 1.68 last updated 94/04/18 22:22:18 by jiwei').
 
 % for gfreeze
 :- op(500, yfx, and).

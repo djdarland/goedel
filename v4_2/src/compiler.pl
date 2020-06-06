@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -28,8 +29,7 @@
  *------------------------------------------------------------------------------
  */
 
-'$$module'('@(#)compiler.pl 1.58 last updated 94/04/18 22:34:11 by jiwei
-').
+%% '$$module'('@(#)compiler.pl 1.58 last updated 94/04/18 22:34:11 by jiwei').
 
 
 /* Methods of transformation:

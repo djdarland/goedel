@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
 % Group at the University of Bristol remains with the Goedel Group.
@@ -28,8 +29,7 @@
  
 % This version adapted for the Goedel ground representation 28.01.92
 
-'$$module'('@(#)transform.pl 1.18 last updated 93/12/14 12:00:18 by bowers
-').
+%% '$$module'('@(#)transform.pl 1.18 last updated 93/12/14 12:00:18 by bowers').
 
 /*------------------------------------------------------------------------------
  * transform_body(Formula?, Transformed^, FreeVariables^)

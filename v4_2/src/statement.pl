@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -32,8 +33,7 @@ Date:		3 December 1991
 ================================================================================
 */
 
-'$$module'('@(#)statement.pl 1.39 last updated 93/11/24 17:32:03 by jiwei
-').
+%% '$$module'('@(#)statement.pl 1.39 last updated 93/11/24 17:32:03 by jiwei').
 
 
 :- dynamic underscore_counter/1.

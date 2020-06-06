@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 :- module('Numbers', []).
 
 :- op(500, yfx, and).
@@ -13,8 +14,7 @@ Date:		28 October 1992
 */
 
 
-'$$module'('@(#)Numbers.sup 1.3 last updated 93/06/22 16:08:16 by jiwei
-').
+%% '$$module'('@(#)Numbers.sup 1.3 last updated 93/06/22 16:08:16 by jiwei').
 
 'Numbers.IntegerString.P2'(X, Y) :-
    integer(X), !,

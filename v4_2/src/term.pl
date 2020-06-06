@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -35,8 +36,7 @@ Comments:	the new design of the parser which copes with all kinds of
 ================================================================================
 */
 
-'$$module'('@(#)term.pl 1.42 last updated 93/12/14 11:58:33 by jiwei
-').
+%% '$$module'('@(#)term.pl 1.42 last updated 93/12/14 11:58:33 by jiwei').
 
 /*------------------------------------------------------------------------------
   The parsing method follows the general idea of recursive descent parsing

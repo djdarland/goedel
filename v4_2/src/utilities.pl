@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -30,8 +31,7 @@ Date:       11 September 1991
 Commonly used predicates. 
 */
 
-'$$module'('@(#)utilities.pl 1.15 last updated 93/12/08 16:19:53 by jiwei
-').
+%% '$$module'('@(#)utilities.pl 1.15 last updated 93/12/08 16:19:53 by jiwei').
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */

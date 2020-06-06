@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -36,12 +37,11 @@
  * Predicates for version control.
  */
 
-'$$module'('@(#)toplev.pl 1.112 last updated 94/04/18 22:35:33 by jiwei
-').
+%% '$$module'('@(#)toplev.pl 1.112 last updated 94/04/18 22:35:33 by jiwei').
 
-'$$module'(S) :- '$$init'(S).    % Special for init, which is not compiled.
+%% '$$module'(S) :- '$$init'(S).    % Special for init, which is not compiled.
 
-goedel_info :-	\+ ('$$module'(S), write(S), fail).
+%% goedel_info :-	\+ ('$$module'(S), write(S), fail).
 
 %------------------------------------------------------------------------------
 
@@ -477,8 +477,8 @@ rep(N, X, [X|Xs]) :-
 %------------------------------------------------------------------------------
  
 ask_to_terminator(Prompt1, Prompt2, Result) :-
-   write(user_output, Prompt1), ttyflush,
-   ttyget0(C0),
+   write(user_output, Prompt1), %% ttyflush,
+   get_char(C0),
    find_first_non_blank(C0, Prompt1, C1),
    ( C1 = 0'"
      -> get_one_char(C1, Prompt2, C2, in_string)
@@ -518,23 +518,23 @@ read_to_terminator(C1, C2, Prompt, [C1|Cs], Switch) :-
 myttyskip(FirstChar, C) :-
    ( FirstChar = C
      -> true
-     ;  ttyget0(C2),
+     ;  get_char(C2),
 	myttyskip(C2, C)
    ).
 
 %------------------------------------------------------------------------------
 
 find_first_non_blank(10, Prompt, C) :- !,
-   write(user_output, Prompt), ttyflush,
-   ttyget0(C1),
+   write(user_output, Prompt), %% ttyflush,
+   get_char(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(32, Prompt, C) :- !,
-   ttyget0(C1),
+   get_char(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(9, Prompt, C) :- !,
-   ttyget0(C1),
+   get_char(C1),
    find_first_non_blank(C1, Prompt, C).
 
 find_first_non_blank(C, _, C).
@@ -542,19 +542,19 @@ find_first_non_blank(C, _, C).
 %------------------------------------------------------------------------------
 
 get_one_char(0'., Prompt, C, Switch) :- !,
-   ttyget0(C),
+   get_char(C),
    ( blank_char(C), Switch = not_in_string
      -> true
      ;  ( C = 10
-	  -> write(user_output, Prompt), ttyflush
+	  -> write(user_output, Prompt), %% ttyflush
 	  ;  true
 	)
    ).
 
 get_one_char(_, Prompt, C, _) :-
-   ttyget0(C),
+   get_char(C),
    ( C = 10
-     -> write(user_output, Prompt), ttyflush
+     -> write(user_output, Prompt), %% ttyflush
      ;  true
    ).
 
@@ -1515,8 +1515,8 @@ write_codes([C|Cs]) :-
  */
 
 user_satisfied:-
-   format(user_output, ' ? ', []), ttyflush,
-   ttyget0(C),
+   format(user_output, ' ? ', []), %% ttyflush,
+   get_char(C),
    ( C = 0';
      -> ttyskip(10), fail
      ;  ( C = 10

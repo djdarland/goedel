@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -40,8 +41,7 @@ done with one look-ahead char.
 */
 
 
-'$$module'('@(#)tokenizer.pl 1.19 last updated 93/11/24 17:33:49 by jiwei
-').
+%% '$$module'('@(#)tokenizer.pl 1.19 last updated 93/11/24 17:33:49 by jiwei').
 
 /*------------------------------------------------------------------------------
  * Note: the line number for the first item is always not right.

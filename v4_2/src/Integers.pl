@@ -1,3 +1,5 @@
+:- multifile '$$module'/1.
+
 :- module('Integers', []).
 
 :- op(500, yfx, and).
@@ -12,8 +14,7 @@ Date:		17 September 1991
 ================================================================================
 */
 
-'$$module'('@(#)Integers.sup 1.17 last updated 93/12/08 16:19:08 by jiwei
-').
+%% '$$module'('@(#)Integers.sup 1.17 last updated 93/12/08 16:19:08 by jiwei').
 
 'Integers.=<.P2'(X, Y) :-
    ( integer(X), integer(Y)

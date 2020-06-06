@@ -1,3 +1,4 @@
+:- multifile '$$module'/1.
 :- module('Strings', []).
 
 :- op(500, yfx, and).
@@ -64,8 +65,7 @@ Date:		17 September 1991
 ================================================================================
 */
 
-'$$module'('@(#)Strings.sup 1.10 last updated 93/12/08 17:56:01 by jiwei
-').
+%% '$$module'('@(#)Strings.sup 1.10 last updated 93/12/08 17:56:01 by jiwei').
 
 
 'Strings.StringInts.P2'(String, IntList) :-
