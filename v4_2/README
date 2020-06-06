@@ -1,5 +1,5 @@
 
-Directories in release 1.3 :
+Directories in release 1.4 :
 ============================
 
 /src:		Prolog and C source code for the Goedel system.
@@ -7,8 +7,7 @@ Directories in release 1.3 :
 /lib:		library of system modules, including files for their export
 		parts (.exp files).
 
-/doc:		the Goedel book, user manual, and paper on the ground 
-                representation.
+/doc:		the user manual, and a paper on the ground representation.
 
 /programs: 	interesting example programs.
 		/programs/book contains all programs (except system modules)
@@ -55,26 +54,33 @@ This file occupies about 5.4 MBytes.
 How to use the executable binary Goedel:
 =======================================
 
-1. Install the executable file 'goedel' under /runtime in a directory which
-   users can access.
+1. In the runtime directory, there is an executable file called 'goedel'.       
+   Running this file starts the Goedel system.  It needs to be installed
+   in a directory which users can access, for example, /usr/local/bin.  
 
-2. To use the executable binary Goedel, users have to set the following
-   environment variables:
+2. The runtime directory has to be moved to somewhere globally
+   accessable, for example, /usr/local/lib/goedel.
+
+3. To run 'goedel', users have to set the following environment variables:
       GOEDEL_RUNTIME : the full path to /goedel/runtime
-      SP_PATH	     : the same as GOEDEL_RUNTIME
+      SP_PATH        : the same as GOEDEL_RUNTIME
 
    Note SP_PATH is the environment variable used by SICStus Prolog's runtime
    systems.  Changing it might cause problems to your other SICStus runtime
    systems, if you have a SICStus Prolog which is different from the one with
    which the Goedel runtime system was prepared.
 
-   These environment variables can be set in users' .cshrc/.login files
-   with commands, for example, 
+   These environment variables can be set in users' .cshrc/.login files,
+   if csh is used, with commands, for example,
       setenv GOEDEL_RUNTIME /usr/local/lib/goedel/runtime
       setenv SP_PATH /usr/local/lib/goedel/runtime
+
+   or in .bashrc/.profile files, if bash is used,
+      export GOEDEL_RUNTIME=/usr/local/lib/goedel/runtime
+      export SP_PATH=/usr/local/lib/goedel/runtime
 
 %------------------------------------------------------------------------------
 
 If you have any problems concerning the installation of the Goedel system,
 please contact:
-	(JANET): goedel@compsci.bristol.ac.uk.
+	goedel@compsci.bristol.ac.uk.

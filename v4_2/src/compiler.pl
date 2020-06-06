@@ -28,7 +28,7 @@
  *------------------------------------------------------------------------------
  */
 
-'$$module'('@(#)compiler.pl 1.56 last updated 93/11/24 17:29:38 by jiwei
+'$$module'('@(#)compiler.pl 1.58 last updated 94/04/18 22:34:11 by jiwei
 ').
 
 
@@ -123,7 +123,7 @@ IF_THEN and IF_SOME_THEN constructs:
 compile_program(Program, ModuleName):-
    retractall(there_is_error),
    string2Gstring(ModuleName, GModuleName),
-   format(user_error, 'Compiling module "~a" ...~n', [ModuleName]),
+   format(user_output, 'Compiling module "~a" ...~n', [ModuleName]),
    Program = 'ProgDefs.Program.F4'(_, ModuleDefAVL, Language,
 					StatementsAndDelays),
    'AVLTrees.AVLSearch.P3'(StatementsAndDelays, GModuleName, ModuleCode),
@@ -146,7 +146,7 @@ compile_program(Program, ModuleName):-
 
 compile_script(Script, ModuleName):-
    retractall(there_is_error),
-   format(user_error, 'Compiling script "~a" ...~n', [ModuleName]),
+   format(user_output, 'Compiling script "~a" ...~n', [ModuleName]),
    Script = 'Scripts.Script.F5'(_ModuleName, ModuleDefAVL, Language,
 					_GoalLanguage, CodeAVL),
    compile_program_aux(ModuleName, CodeAVL, ModuleDefAVL, Language,
@@ -185,7 +185,7 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	       -> true
 	       ;  fcompile(FileName)	% creating quick load format
 	     ),
-	     format(user_error, 'Module "~a" compiled.~n', [ModuleName]),
+	     format(user_output, 'Module "~a" compiled.~n', [ModuleName]),
              sappend(ModuleName, '.lng', LanFileName),
              ( open(LanFileName, write, Stream)
                -> string2Gstring(ModuleName, GModuleName),
@@ -365,7 +365,7 @@ make_program_aux('AVLTrees.Node.F5'(LeftTree, GModuleName,
         'AVLTrees.AVLSearch.P3'(ModuleDefAVL, GModuleName, ModuleDef),
 		% takes out the module definition of the module.
         gstring2string(GModuleName, ModuleName),
-        format(user_error, 'Compiling module "~a" ...~n', [ModuleName]),
+        format(user_output, 'Compiling module "~a" ...~n', [ModuleName]),
         compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor,
 			ordinary)
    ),

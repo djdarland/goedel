@@ -86,7 +86,7 @@ Specification of the Tracer:
 ================================================================================
 */
 
-'$$module'('@(#)tracer.pl 1.31 last updated 93/12/14 11:59:34 by jiwei
+'$$module'('@(#)tracer.pl 1.33 last updated 94/04/08 15:45:54 by jiwei
 ').
 
 :- dynamic tracer_counter/1.
@@ -248,11 +248,7 @@ tracer_question(Predicate, Args, Entry, N, Return) :-
      -> true
      ;  ttyskip(10)
    ),
-   ( tracer_question_aux(C, N, Return),
-     ( Return == redo
-       -> Entry == 'fail'
-       ;  true
-     )
+   ( tracer_question_aux(C, N, Entry, Return)
      -> ( 48 < C, C < 58
           -> tracer_display(Predicate, Args, Entry, N),
 	     tracer_question(Predicate, Args, Entry, N, Return)
@@ -268,38 +264,38 @@ tracer_question(Predicate, Args, Entry, N, Return) :-
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 % for system designers only
-tracer_question_aux(0'b, _, _) :- !,
+tracer_question_aux(0'b, _, _, _) :- !,
    break.
 
-tracer_question_aux(0'a, _, _) :- !,
+tracer_question_aux(0'a, _, _, _) :- !,
    raise_exception(catch_in_query).
 
-tracer_question_aux(0's, N, _) :- !,
+tracer_question_aux(0's, N, call, _) :- !,
    assert(skip_trace(N)).
 
-tracer_question_aux(0'r, _, redo) :- !.
+tracer_question_aux(0'r, _, fail, redo) :- !.
 
-tracer_question_aux(0'f, _, _) :- !,
+tracer_question_aux(0'f, _, _, _) :- !,
    assert(free_trace).
 
-tracer_question_aux(0'l, _, _) :- !,
+tracer_question_aux(0'l, _, _, _) :- !,
    retractall(start_trace),
    assert(stop_trace).
    
-tracer_question_aux(0'c, _, _) :- !,
+tracer_question_aux(0'c, _, _, _) :- !,
    assert(no_trace).
 
-tracer_question_aux(0'n, _, _) :- !.
+tracer_question_aux(0'n, _, _, _) :- !.
 
-tracer_question_aux(10, _, _) :- !.
+tracer_question_aux(10, _, _, _) :- !.
 
-tracer_question_aux(0'?, _, _) :- !,
+tracer_question_aux(0'?, _, _, _) :- !,
    display_tracer_message.
 
-tracer_question_aux(0'h, _, _) :- !,
+tracer_question_aux(0'h, _, _, _) :- !,
    display_tracer_message.
 
-tracer_question_aux(C, _, _) :-
+tracer_question_aux(C, _, _, _) :-
    ( 48 < C, C < 58
      -> retractall(display_depth(_)),
 	Level is C - 48,
@@ -325,7 +321,9 @@ display_tracer_message :-
    format(user_error,
 	'   r - redo:       reenter the failed goal, valid only in "fail" entries.~n', []),
    format(user_error,
-	'   s - skip:       skip the trace info for executing the current goal.~n', []),
+	'   s - skip:       skip the trace info for executing the current goal,~n', []),
+   format(user_error,
+	'                        valid only in "call" entries.~n', []),
    format(user_error,
 	'   1-9:            set term display depth in the tracer.~n', []).
 

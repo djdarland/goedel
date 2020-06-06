@@ -39,7 +39,7 @@ The whole parser consists of files:
 ================================================================================
 */
 
-'$$module'('@(#)parser.pl 1.66 last updated 94/01/24 13:00:34 by bowers
+'$$module'('@(#)parser.pl 1.68 last updated 94/04/18 22:22:18 by jiwei
 ').
 
 % for gfreeze
@@ -92,7 +92,7 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
      ;  ( Switch = compile, lang_file_ok(ModuleName)
 	  -> sappend(ModuleName, '.lng', LangFile),
 	     open(LangFile, read, Stream),
-	     my_format(user_error, 'Loading the language of module "~a" ...~n', [ModuleName]),
+	     my_format(user_output, 'Loading the language of module "~a" ...~n', [ModuleName]),
    	     read(Stream, version(_, ordinary)),
 	     read(Stream, ModuleDef),
 	     read(Stream, ModuleDescriptor),
@@ -185,7 +185,7 @@ module_as_items(ModuleName, ExpTokens, LocTokens):-
 module_part(ModuleName, String, Module):-
    sappend(ModuleName, String, FileName),
    ( open(FileName, read, Stream)
-     -> my_format(user_error, 'Reading file "~w" ...~n', [FileName]),
+     -> my_format(user_output, 'Reading file "~w" ...~n', [FileName]),
 	get_one_module(Stream, Module),	% in tokenizer.pl
 	close(Stream)
      ;  Module = []	% nonexisting file is NOT regarded as an error.
@@ -205,8 +205,8 @@ parse_module_decl(GModuleName, Switch, ExpTokens, ExpTokens2, LocTokens,
    parse_import(GModuleName, Switch, ExpTokens, ExpTokens3, LocTokens,
 		LocTokens3, Loaded, NewLoaded, OldProg, NewProg),
    ( system_module_name(GModuleName)
-     -> my_format(user_error, 'Parsing system module "~w" ...~n', [ModuleName])
-     ;  my_format(user_error, 'Parsing module "~w" ...~n', [ModuleName])
+     -> my_format(user_output, 'Parsing system module "~w" ...~n', [ModuleName])
+     ;  my_format(user_output, 'Parsing module "~w" ...~n', [ModuleName])
    ),
    check_module(GModuleName, ExpTokens3, ExpTokens2, LocTokens3, LocTokens2).
 
@@ -1485,22 +1485,24 @@ parse_statements_aux([Item|Items], ModuleName, Language, OldProg, NewProg):-
      -> Prog2 = OldProg,
 	print_error_return(ErrorReturn, WholeTokens, local, Ln1, Ln2)
      ;  'SharedPrograms.ProgramLanguage.P2'(OldProg, ProgLanguage),
-        'ParserPrograms.ParserCheckStatement.P4'(Formulae, ProgLanguage, Statement,
-			ErrorMessages),
+        'ParserPrograms.ParserCheckStatement.P4'(Formulae, ProgLanguage,
+			Statement, ErrorMessages),
 	( ErrorMessages = []
 	  -> get_predicate_arity(Statement, PredicateSymbol, Arity),
 	     'ParserPrograms.QuickInsertStatement.P6'(OldProg, ModuleName,
 			PredicateSymbol, Arity, Statement, Prog2),
-	     singleton_variable_checking(Statement, PredicateSymbol, Arity,
+	     ( checking_is_off
+	       -> true
+	       ;  singleton_variable_checking(Statement, PredicateSymbol, Arity,
 				Ln1, Ln2),
-	     quantified_variable_checking(Statement, Ln1, Ln2),
-	     floundering_checking(Statement, Ln1, Ln2)
+	          quantified_variable_checking(Statement, Ln1, Ln2),
+	          floundering_checking(Statement, Ln1, Ln2)
+	     )
 	  ;  Prog2 = OldProg,
 	     print_type_error(ErrorMessages, local, Ln1, Ln2)
 	)
    ),
    parse_statements_aux(Items, ModuleName, Language, Prog2, NewProg).
-
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */

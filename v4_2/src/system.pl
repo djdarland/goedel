@@ -1089,41 +1089,17 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'SharedPrograms.InsertSymbol.P5'('MetaDefs.Name.F4'('"','"False','MetaDefs.Proposition.C0',0), C, 'ProgDefs.Exported.C0', 'ProgDefs.PropositionDecl.C0', D),
         'SharedPrograms.InsertSymbol.P5'('MetaDefs.Name.F4'('"','"=','MetaDefs.Predicate.C0',2), D, 'ProgDefs.Exported.C0', 'ProgDefs.PredicateDecl.F3'(2,'Syntax.ZPZ.C0',['MetaDefs.Par.F1'(0),'MetaDefs.Par.F1'(0)]), E),
         'SharedPrograms.InsertSymbol.P5'('MetaDefs.Name.F4'('"','"~=','MetaDefs.Predicate.C0',2), E, 'ProgDefs.Exported.C0', 'ProgDefs.PredicateDecl.F3'(2,'Syntax.ZPZ.C0',['MetaDefs.Par.F1'(0),'MetaDefs.Par.F1'(0)]), B).
-'SharedPrograms.EmptyCategoryTable.P1'('ProgDefs.Categories.F2'(A,A)) :-
-        'AVLTrees.AVLIsEmpty.P1'(A).
-'SharedPrograms.BinaryInfixToIntDL.P12'(A, 'MetaDefs.Name.F4'(B,C,_,_), D, E, F, G, H, I, J, K, L, M) :-
-        (   B='"Rationals',
-            C='"//',
-            D='MetaDefs.Int.F1'(N),
-            E='MetaDefs.Int.F1'(O) ->
-            'SharedPrograms.RationalToIntDL.P9'(N, O, F, G, I, J, K, L, M)
-        ;   I=A,
-            'SharedPrograms.TermToIntDL.P9'(D, F, G, H, P, Q, R, S, T),
-            'SharedPrograms.TermToIntDL.P9'(E, F, G, H, U, V, W, X, Y),
-            'SharedPrograms.ClassifyToken.P2'(C, Z),
-            (   'SharedPrograms.RPrec.P2'(P, A1),
-                'SharedPrograms.LPrec.P2'(A, B1),
-                'SharedPrograms.BindsTighter.P2'(A1, B1) ->
-                J=Q,
-                L=S,
-                'SharedPrograms.SpaceIfNeeded.P4'(R, Z, T, C1)
-            ;   J='SharedPrograms.Bounded.C0',
-                'SharedPrograms.CharDL.P3'('"(', L, S),
-                'SharedPrograms.CharDL.P3'('")', T, C1)
-            ),
-            'Strings.StringInts.P2'(C, D1),
-            'Lists.Append.P3'(D1, E1, C1),
-            (   'SharedPrograms.LPrec.P2'(U, F1),
-                'SharedPrograms.RPrec.P2'(A, G1),
-                'SharedPrograms.BindsTighter.P2'(F1, G1) ->
-                K=W,
-                'SharedPrograms.SpaceIfNeeded.P4'(Z, V, E1, X),
-                M=Y
-            ;   K='SharedPrograms.Bounded.C0',
-                'SharedPrograms.CharDL.P3'('"(', E1, X),
-                'SharedPrograms.CharDL.P3'('")', Y, M)
-            )
-        ).
+'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.CTerm.F1'(_), _, _, _, A, A).
+'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Var.F2'(A,B), C, D, E, F, G) :-
+        'SharedPrograms.CharDL.P3'('"|', F, H),
+        'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), C, D, E, _, _, _, H, G).
+'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Var.F1'(A), B, C, D, E, F) :-
+        'SharedPrograms.CharDL.P3'('"|', E, G),
+        'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), B, C, D, _, _, _, G, F).
+'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Term.F2'(_,[A,B]), C, D, E, F, G) :-
+        'SharedPrograms.CharDL.P3'('",', F, H),
+        'SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, H, I),
+        'SharedPrograms.ChainExprToIntDL.P6'(B, C, D, E, I, G).
 'SharedPrograms.AddOtherModulesAux.P7'([], A, B, C, A, B, C).
 'SharedPrograms.AddOtherModulesAux.P7'([A|B], C, D, E, F, G, H) :-
         'SharedPrograms.AddModule.P7'(A, C, D, E, I, J, K),
@@ -1163,6 +1139,11 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'Lists.Append.P3'(C, A, J),
         'Lists.Append.P3'(B, J, K),
         'SharedPrograms.AddOtherModulesAux.P7'(K, D, E, F, G, H, I).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.&''.F2'(A,B), A, B).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.\/''.F2'(A,B), A, B).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.->''.F2'(A,B), A, B).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.<-''.F2'(A,B), A, B).
+'SharedPrograms.BinaryConnective.P3'('MetaDefs.<->''.F2'(A,B), A, B).
 'SharedPrograms.BaseInLanguage.P2'(A, B) :-
         'SharedPrograms.TypeSymbolInLanguage.P3'(A, B, 'ProgDefs.BaseDecl.C0').
 'SharedPrograms.AtomToIntDL.P8'('Syntax.NoPredInd.C0', 'MetaDefs.Name.F4'(A,B,C,D), E, F, G, H, I, J) :-
@@ -1216,11 +1197,6 @@ int_to_char_dl(Int, Chars, CharsT) :-
             'SharedPrograms.AndSeqToIntDL.P3'(B, G, D)
         ;   'SharedPrograms.SimpleCondToIntDL.P3'(B, G, D)
         ).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.&''.F2'(A,B), A, B).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.\/''.F2'(A,B), A, B).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.->''.F2'(A,B), A, B).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.<-''.F2'(A,B), A, B).
-'SharedPrograms.BinaryConnective.P3'('MetaDefs.<->''.F2'(A,B), A, B).
 'SharedPrograms.BinConnectiveChars.P3'('MetaDefs.&''.F2'(_,_), A, B) :-
         'Strings.StringInts.P2'('" & ', C),
         'Lists.Append.P3'(C, B, A).
@@ -1236,6 +1212,39 @@ int_to_char_dl(Int, Chars, CharsT) :-
 'SharedPrograms.BinConnectiveChars.P3'('MetaDefs.<->''.F2'(_,_), A, B) :-
         'Strings.StringInts.P2'('" <-> ', C),
         'Lists.Append.P3'(C, B, A).
+'SharedPrograms.BinaryInfixToIntDL.P12'(A, 'MetaDefs.Name.F4'(B,C,_,_), D, E, F, G, H, I, J, K, L, M) :-
+        (   B='"Rationals',
+            C='"//',
+            D='MetaDefs.Int.F1'(N),
+            E='MetaDefs.Int.F1'(O) ->
+            'SharedPrograms.RationalToIntDL.P9'(N, O, F, G, I, J, K, L, M)
+        ;   I=A,
+            'SharedPrograms.TermToIntDL.P9'(D, F, G, H, P, Q, R, S, T),
+            'SharedPrograms.TermToIntDL.P9'(E, F, G, H, U, V, W, X, Y),
+            'SharedPrograms.ClassifyToken.P2'(C, Z),
+            (   'SharedPrograms.RPrec.P2'(P, A1),
+                'SharedPrograms.LPrec.P2'(A, B1),
+                'SharedPrograms.BindsTighter.P2'(A1, B1) ->
+                J=Q,
+                L=S,
+                'SharedPrograms.SpaceIfNeeded.P4'(R, Z, T, C1)
+            ;   J='SharedPrograms.Bounded.C0',
+                'SharedPrograms.CharDL.P3'('"(', L, S),
+                'SharedPrograms.CharDL.P3'('")', T, C1)
+            ),
+            'Strings.StringInts.P2'(C, D1),
+            'Lists.Append.P3'(D1, E1, C1),
+            (   'SharedPrograms.LPrec.P2'(U, F1),
+                'SharedPrograms.RPrec.P2'(A, G1),
+                'SharedPrograms.BindsTighter.P2'(F1, G1) ->
+                K=W,
+                'SharedPrograms.SpaceIfNeeded.P4'(Z, V, E1, X),
+                M=Y
+            ;   K='SharedPrograms.Bounded.C0',
+                'SharedPrograms.CharDL.P3'('"(', E1, X),
+                'SharedPrograms.CharDL.P3'('")', Y, M)
+            )
+        ).
 'SharedPrograms.BinaryFormulaToIntDL.P6'(A, B, C, D, E, F) :-
         'SharedPrograms.BinaryConnective.P3'(A, G, H),
         'SharedPrograms.FormulaToIntDL.P6'(G, B, C, D, I, J),
@@ -1257,19 +1266,6 @@ int_to_char_dl(Int, Chars, CharsT) :-
         ;   'SharedPrograms.CharDL.P3'('"(', P, K),
             'SharedPrograms.CharDL.P3'('")', L, F)
         ).
-'SharedPrograms.ConstantInLanguage.P3'(A, B, C) :-
-        'SharedPrograms.SymbolInLanguage.P3'(A, B, 'ProgDefs.ConstantDecl.F1'(C)).
-'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.CTerm.F1'(_), _, _, _, A, A).
-'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Var.F2'(A,B), C, D, E, F, G) :-
-        'SharedPrograms.CharDL.P3'('"|', F, H),
-        'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), C, D, E, _, _, _, H, G).
-'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Var.F1'(A), B, C, D, E, F) :-
-        'SharedPrograms.CharDL.P3'('"|', E, G),
-        'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), B, C, D, _, _, _, G, F).
-'SharedPrograms.ChainExprToIntDL.P6'('MetaDefs.Term.F2'(_,[A,B]), C, D, E, F, G) :-
-        'SharedPrograms.CharDL.P3'('",', F, H),
-        'SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, H, I),
-        'SharedPrograms.ChainExprToIntDL.P6'(B, C, D, E, I, G).
 'SharedPrograms.CLPrec.P2'('MetaDefs.Empty.C0', 'SharedPrograms.Infinity.C0').
 'SharedPrograms.CLPrec.P2'('MetaDefs.PAtom.F1'(_), 'SharedPrograms.Infinity.C0').
 'SharedPrograms.CLPrec.P2'('MetaDefs.Atom.F2'(_,_), 'SharedPrograms.Infinity.C0').
@@ -1317,11 +1313,20 @@ int_to_char_dl(Int, Chars, CharsT) :-
 'SharedPrograms.CRPrec.P2'('MetaDefs.IST.F3'(_,_,_), 'SharedPrograms.Prec.F2'(70,'SharedPrograms.Y.C0')).
 'SharedPrograms.CRPrec.P2'('MetaDefs.ITE.F3'(_,_,_), 'SharedPrograms.Prec.F2'(70,'SharedPrograms.Y.C0')).
 'SharedPrograms.CRPrec.P2'('MetaDefs.IT.F2'(_,_), 'SharedPrograms.Prec.F2'(70,'SharedPrograms.Y.C0')).
-'SharedPrograms.CheckHeadArgs.P4'([], _, _, []).
-'SharedPrograms.CheckHeadArgs.P4'([A|B], [C|D], [E|F], G) :-
+'SharedPrograms.EmptyCategoryTable.P1'('ProgDefs.Categories.F2'(A,A)) :-
+        'AVLTrees.AVLIsEmpty.P1'(A).
+'SharedPrograms.ConstantInLanguage.P3'(A, B, C) :-
+        'SharedPrograms.SymbolInLanguage.P3'(A, B, 'ProgDefs.ConstantDecl.F1'(C)).
+'SharedPrograms.CheckHeadArgs1.P4'([], _, _, []).
+'SharedPrograms.CheckHeadArgs1.P4'([A|B], [C|D], [E|F], G) :-
         'SharedPrograms.VariantTypes.P4'(A, C, E, H),
         'Lists.Append.P3'(H, I, G),
-        'SharedPrograms.CheckHeadArgs.P4'(B, D, F, I).
+        'SharedPrograms.CheckHeadArgs1.P4'(B, D, F, I).
+'SharedPrograms.CheckHeadArgs.P4'('MetaDefs.PAtom.F1'(_), _, _, []).
+'SharedPrograms.CheckHeadArgs.P4'('MetaDefs.Atom.F2'(A,B), C, D, E) :-
+        'SharedPrograms.PredicateInLanguage.P4'(A, D, _, F),
+        'SharedPrograms.MeltTypeList.P4'(F, [], _, G),
+        'SharedPrograms.CheckHeadArgs1.P4'(G, C, B, E).
 'SharedPrograms.ConditionToIntDL.P3'(A, B, C) :-
         (   A='ProgDefs.And.F2'(_,_) ->
             'SharedPrograms.AndSeqToIntDL.P3'(A, B, C)
@@ -1521,18 +1526,12 @@ int_to_char_dl(Int, Chars, CharsT) :-
             'Lists.Append.P3'(O, B, J)
         ),
         'SharedPrograms.ImportedLanguage.P6'(J, C, D, I, H, G).
-'SharedPrograms.HeadAtom.P7'('MetaDefs.PAtom.F1'(A), B, C, C, 'MetaDefs.PAtom.F1'(A), 0, []) :-
+'SharedPrograms.HeadAtom.P9'('MetaDefs.PAtom.F1'(A), B, C, C, 'MetaDefs.PAtom.F1'(A), D, D, [], []) :-
         'SharedPrograms.PropositionInLanguage.P2'(A, B).
-'SharedPrograms.HeadAtom.P7'('MetaDefs.Atom.F2'(A,B), C, D, E, 'MetaDefs.Atom.F2'(A,F), G, H) :-
-        'SharedPrograms.PredicateInLanguage.P4'(A, C, _, I),
-        'SharedPrograms.MeltTypeList.P4'(I, [], _, J),
-        'SharedPrograms.MeltedArgumentTyping.P9'(J, B, C, D, E, F, K, [], L),
-        (   L=[] ->
-            'SharedPrograms.FixRationals.P2'(K, G),
-            'SharedPrograms.MeltTypeList.P4'(I, [], _, M),
-            'SharedPrograms.CheckHeadArgs.P4'(M, J, F, H)
-        ;   H=L
-        ).
+'SharedPrograms.HeadAtom.P9'('MetaDefs.Atom.F2'(A,B), C, D, E, 'MetaDefs.Atom.F2'(A,F), G, H, I, J) :-
+        'SharedPrograms.PredicateInLanguage.P4'(A, C, _, K),
+        'SharedPrograms.MeltTypeList.P4'(K, [], _, I),
+        'SharedPrograms.MeltedArgumentTyping.P9'(I, B, C, D, E, F, G, H, J).
 'SharedPrograms.MatchingDescriptor.P5'('ProgDefs.Symbol.F2'(A,B), C, D, E, B) :-
         'SharedPrograms.Accessible.P2'(C, A),
         'SharedPrograms.MatchingName.P3'(B, D, E).
@@ -1991,16 +1990,15 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'SharedPrograms.OrSeqToIntDL.P3'('ProgDefs.Or.F2'(A,B), E, F),
         'SharedPrograms.CharDL.P3'('")', F, D).
 'SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
-        'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, [], J),
-        (   J=[] ->
-            'SharedPrograms.FixRationals.P2'(I, K),
-            'SharedPrograms.HeadAtom.P7'(A, C, H, _, D, L, G),
-            (   G=[] ->
-                plus(K, L, M),
-                F=M
-            ;   true
+        'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
+        (   K=[] ->
+            'SharedPrograms.HeadAtom.P9'(A, C, H, _, D, J, [], L, M),
+            (   M=[] ->
+                'SharedPrograms.FixRationals.P2'(I, F),
+                'SharedPrograms.CheckHeadArgs.P4'(D, L, C, G)
+            ;   G=M
             )
-        ;   G=J
+        ;   G=K
         ).
 'SharedPrograms.TypeInLanguage.P2'('MetaDefs.Par.F2'(_,_), _).
 'SharedPrograms.TypeInLanguage.P2'('MetaDefs.Par.F1'(_), _).

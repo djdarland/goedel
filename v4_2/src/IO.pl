@@ -38,7 +38,7 @@ Date:      17 September 1991
 ================================================================================
 */
 
-'$$module'('@(#)IO.sup 1.12 last updated 93/07/31 14:53:33 by jiwei
+'$$module'('@(#)IO.sup 1.13 last updated 94/02/11 17:07:48 by jiwei
 ').
 
 
@@ -115,7 +115,7 @@ Date:      17 September 1991
 
 
 'IO.Put.P2.1'(ResultOfFind, Char) :-
-   Char > 0, Char < 128,
+   Char >= 0, Char =< 127,
    translate_stream(ResultOfFind, Stream),
    put(Stream, Char).
 

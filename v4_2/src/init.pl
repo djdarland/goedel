@@ -31,10 +31,10 @@ system_directory('').
 % Please don't change anything below this line.
 % ---------------------------------------------
 
-goedel_version('1.3.27').
+goedel_version('1.4').
 file_version('1.3').
 
-'$$init'('@(#)init.pl 1.59 last updated 94/01/24 13:05:26 by jiwei
+'$$init'('@(#)init.pl 1.64 last updated 94/04/24 15:56:56 by jiwei
 ').
 
 :- multifile '$$module'/1.
@@ -122,7 +122,7 @@ goedel:-
 					% support fastcode
 	), !,
 	goedel_version(Version),
-	format(user_error, "Goedel ~a~nType ;h. for help.~n", [Version]),
+	format(user_output, "Goedel ~a~nType ;h. for help.~n", [Version]),
 	nofileerrors,
 	top_loop('', null, null),
 	fileerrors.
@@ -182,6 +182,21 @@ make_runtime:-
 	             fcompile(DF)
 		   ), _).
 
+% Creating .ql files for the runtime system on Linux
+% All system modules are compiled in compact code
+make_pc_runtime:-
+	prolog_flag(compiling, _, compactcode),
+	fcompile(sys_modules),
+	findall(F, ( system_file(F),
+		     system_directory(D),
+		     join_string(D, F, DF),
+	             fcompile(DF)
+		   ), _),
+	findall(F, ( runtime_system_file(F),
+		     system_directory(D),
+		     join_string(D, F, DF),
+	             fcompile(DF)
+		   ), _).
 
 process(0) :-
 	goedel_version(Version),

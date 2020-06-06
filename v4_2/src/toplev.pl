@@ -22,7 +22,7 @@
 % should be directed to J.W. Lloyd at jwl@compsci.bristol.ac.uk.
 
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  * The top level query evaluator for the Goedel system. Entry point top_loop/1.
  *
  * File: 	toplev.pl
@@ -32,11 +32,11 @@
 ==============================================================================*/
 
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  * Predicates for version control.
  */
 
-'$$module'('@(#)toplev.pl 1.108 last updated 93/12/16 12:09:30 by jiwei
+'$$module'('@(#)toplev.pl 1.112 last updated 94/04/18 22:35:33 by jiwei
 ').
 
 '$$module'(S) :- '$$init'(S).    % Special for init, which is not compiled.
@@ -49,6 +49,7 @@ goedel_info :-	\+ ('$$module'(S), write(S), fail).
 :- dynamic no_message/0.
 :- dynamic create_tracer/0.
 :- dynamic trace_is_on/0.
+:- dynamic checking_is_off/0.
 :- dynamic spied/1.
 :- dynamic cached_program/2.
 
@@ -75,7 +76,7 @@ goedel_info :-	\+ ('$$module'(S), write(S), fail).
 % turn off SICStus system messages.
 portray_message(informational, _).
 
-/*============================================================================*/
+/*===========================================================================*/
  
 top_loop(ModuleName, Prog, SymbolTable) :-
    retractall(create_tracer),
@@ -83,7 +84,7 @@ top_loop(ModuleName, Prog, SymbolTable) :-
    retractall(no_message),
    next_command(ModuleName, Prog, SymbolTable).
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  */
 
 next_command(ModuleName, Prog, SymbolTable) :-
@@ -102,7 +103,7 @@ next_command(ModuleName, Prog, SymbolTable) :-
    ),
    top_loop(NewModuleName, NewProg, NewSymbolTable).
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  */
 
 process_command(String, SymbolTable, Prog, NewProg, ModuleName, NewModuleName,
@@ -112,7 +113,7 @@ process_command(String, SymbolTable, Prog, NewProg, ModuleName, NewModuleName,
    build_command(Tokens, SymbolTable, Prog, NewProg, ModuleName,
 	NewModuleName, LanguageDif).
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  */
 % ignore empty command
 build_command([], _, Prog, Prog, ModuleName, ModuleName, no).
@@ -149,33 +150,34 @@ build_command(Token, Tokens, SymbolTable, Prog, Prog, ModuleName, ModuleName,
 
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-command_execution(load_cmd(NewModuleName2), _, NewProg, _, NewModuleName, yes):-
+command_execution(load_cmd(ModuleName), _, NewProg, _, NewModuleName, yes):-
    !,
-   load_cmd(NewModuleName2, NewProg2),
+   load_cmd(ModuleName, NewProg2),
    ( NewProg2 = null
      -> NewProg = null,
         NewModuleName = ''
      ;  NewProg = NewProg2,
-        NewModuleName = NewModuleName2
+        NewModuleName = ModuleName
    ).
 
-command_execution(make_and_load_cmd(NewModuleName2), _, NewProg, _,
+command_execution(make_and_load_cmd(ModuleName), _, NewProg, _,
 		NewModuleName, yes):-
    !,
-   ( string2Gstring(NewModuleName2, GModuleName),
+   ( string2Gstring(ModuleName, GModuleName),
      system_module_name(GModuleName)
-     -> true
-     ;  make_cmd(NewModuleName2)
+     -> load_cmd(ModuleName, NewProg),
+        NewModuleName = ModuleName
+     ;  make_cmd(ModuleName)
    ),
    ( there_is_error
      -> NewProg2 = null
-     ;  load_cmd(NewModuleName2, NewProg2)
+     ;  load_cmd(ModuleName, NewProg2)
    ),
    ( NewProg2 = null
      -> NewProg = null,
         NewModuleName = ''
      ;  NewProg = NewProg2,
-        NewModuleName = NewModuleName2
+        NewModuleName = ModuleName
    ).
 
 command_execution(type_cmd(Symbol), Prog, Prog, ModuleName, ModuleName, no) :-
@@ -308,6 +310,18 @@ build_command_aux(save, Tokens, Command) :-
    ( Tokens = [string(File)|Tokens2]
      -> Command = save_cmd(File, Tokens2)
      ;  Command = true, show_usage(save)
+   ).
+
+build_command_aux(checking, Tokens, Command) :-
+   ( Tokens = []
+     -> Command = checking_on
+     ;  Command = true, show_usage(checking)
+   ).
+
+build_command_aux(nochecking, Tokens, Command) :-
+   ( Tokens = []
+     -> Command = checking_off
+     ;  Command = true, show_usage(nochecking)
    ).
 
 build_command_aux(type, Tokens, Command) :-
@@ -688,7 +702,7 @@ load_cmd_aux2([GModuleName|ImportedMods], Loaded, NewLoaded, Prog, NewProg) :-
    load_cmd_aux(GModuleName, Loaded, Loaded2, Prog, Prog2),
    load_cmd_aux2(ImportedMods, Loaded2, NewLoaded, Prog2, NewProg).
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  * This is the routine for Program.NewProgram, very similar to load_cmd
  * Prolog code is not loaded
  */
@@ -952,6 +966,16 @@ trace_off :-
 
 %------------------------------------------------------------------------------
 
+checking_on :-
+   format(user_output, 'All checking on~n', []),
+   retractall(checking_is_off).
+
+checking_off :-
+   format(user_output, 'All checking off~n', []),
+   assert(checking_is_off). 
+
+%------------------------------------------------------------------------------
+
 spyat(Predicate) :-
    format(user_output, 'Spy points set at all predicates with name "~w"~n',
 		[Predicate]),
@@ -966,7 +990,7 @@ removespy :-
    format(user_output, 'All spy points removed~n', []),
    retractall(spied(_)).
 
-/*------------------------------------------------------------------------------
+/*-----------------------------------------------------------------------------
  * help_cmd.
  */
 
@@ -981,8 +1005,9 @@ help_cmd_aux([H|T]) :-
    display_usage(H),
    help_cmd_aux(T).
 
-list_of_commands([h, c, ml, l, m, cs, pc, pd, sc, dc, fc, fd, cp, dp, t, trace, 
-notrace, spy, nospy, nospyall, save, cd, ls, pwd, more, shell, q]).
+list_of_commands([h, c, ml, l, m, dc, cs, pc, pd, sc, fc, fd, cp, dp, save,
+	checking, nochecking, t, trace, notrace, spy, nospy, nospyall,
+	cd, ls, pwd, more, shell, q]).
 
 usage(h, [";help.", "(;h)", "This message"]).
 usage(q, [";quit.", "(;q)", "Quit Goedel"]).
@@ -1000,12 +1025,14 @@ usage(cp, [";cp ""File1"" ""File2"".", "", "Canonicalise Prolog program/terms"])
 usage(dp, [";dp ""File1"" ""File2"".", "", "Decanonicalise Prolog program/terms"]).
 usage(dc, [";dc Module.", "", "Compile a Goedel program with the tracer on"]).
 usage(t, [";type Symbol.", "(;t)", "Show the possible type of Symbol in the loaded module"]).
+usage(save, [";save File Goal.", "", "Save the state into File to be restored to run Goal"]).
+usage(checking, [";checking.", "", "Switch on various checkings (default)"]).
+usage(nochecking, [";nochecking.", "", "Switch off all the checkings"]).
 usage(trace, [";trace.", "", "Switch on the tracer"]).
 usage(notrace, [";notrace.", "", "Switch off the tracer"]).
 usage(spy, [";spy Predicate.", "", "Set a spy point at Predicate"]).
 usage(nospy, [";nospy Predicate.", "", "Remove the spy point set at Predicate"]).
 usage(nospyall, [";nospyall.", "", "Remove all spy points"]).
-usage(save, [";save File Goal.", "", "Save the state into File to be restored to run Goal"]).
 usage(prolog, [";prolog.", "(;p)", "Enter a Prolog query"]).
 usage(cd, [";cd {""Directory""}.", "", "Change directory"]).
 usage(ls, [";ls {""Directory""}.", "", "Directory listing"]).
@@ -1178,10 +1205,7 @@ run_query(_, _, _, _) :-
 %------------------------------------------------------------------------------
 
 process_unsolved_goals(Suspended):-
-        % format(user_output, 'Unformated message:~n~w~n~n', [Suspended]),
-   	% for debugging
    deref_suspension_chain(Suspended, Goals),
-        % trace,
    convert_formulas(Goals, GGoals),
    pv_to_gv(GGoals, dict([], 1), _, RGoals),
    print_unsolved_goals(RGoals).
@@ -1347,7 +1371,8 @@ convert_to_goedel_formula(dif(Term1, Term2), '~='(GTerm1, GTerm2)) :-
    convert_arg_list([Term1, Term2], [GTerm1, GTerm2], 5).
    	% restricted to depth 5
 
-convert_to_goedel_formula(not_equal(Term1, Term2), '~='(GTerm1, GTerm2)) :-
+convert_to_goedel_formula(not_equal(_, _, Term1, Term2),
+					'~='(GTerm1, GTerm2)) :-
    convert_arg_list([Term1, Term2], [GTerm1, GTerm2], 5).
    	% restricted to depth 5
 
@@ -1385,7 +1410,7 @@ convert_to_goedel_formula(Module:Formula, GFormula) :-
    ( ( Module = user; Module = prolog)
      -> convert_to_goedel_formula(Formula, GFormula)
      ;  Formula =.. [Predicate|Argus],
-	( constraint_goal_conversion(Module, Predicate, Op, Arity)
+	( constraint_goal_conversion(Predicate, Module, Op, Arity)
 	  -> ( Op = 'SuchThat'		% to support intensional sets.
 	       -> Argus = [T, W, X],
 	          convert_arg_list([T], [GT], 5),
@@ -1427,40 +1452,29 @@ convert_set_terms_aux([H|T], [GH|GT]) :-
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 % this is a special version created for displaying floundered goals
-constraint_goal_conversion('Integers', negative, '-', 1):- !.
-constraint_goal_conversion('Integers', minus, '-', 2):- !.
-constraint_goal_conversion('Integers', plus, '+', 2):- !.
-constraint_goal_conversion('Integers', times, '*', 2):- !.
-constraint_goal_conversion('Integers', divides, 'Div', 2):- !.
-constraint_goal_conversion('Integers', power, '^', 2):- !.
-constraint_goal_conversion('Integers', mod, 'Mod', 2):- !.
-constraint_goal_conversion('Integers', rem, 'Rem', 2):- !.
-constraint_goal_conversion('Integers', sign, 'Sign', 1):- !.
-constraint_goal_conversion('Integers', maximum, 'Max', 2):- !.
-constraint_goal_conversion('Integers', minimum, 'Min', 2):- !.
-constraint_goal_conversion('Integers', absolute, 'Abs', 1):- !.
+constraint_goal_conversion(negative, _, '-', 1).
+constraint_goal_conversion(minus, _, '-', 2).
+constraint_goal_conversion(plus, _, '+', 2).
+constraint_goal_conversion(times, _, '*', 2).
+constraint_goal_conversion(divides, 'Integers', 'Div', 2).
+constraint_goal_conversion(divides, 'Rationals', '/', 2).
+constraint_goal_conversion(power, _, '^', 2).
+constraint_goal_conversion(mod, _, 'Mod', 2).
+constraint_goal_conversion(rem, 'Integers', 'Rem', 2).
+constraint_goal_conversion(sign, _, 'Sign', 1).
+constraint_goal_conversion(maximum, _, 'Max', 2).
+constraint_goal_conversion(minimum, _, 'Min', 2).
+constraint_goal_conversion(absolute, _, 'Abs', 1).
+constraint_goal_conversion(rational, 'Rationals', '//', 2).
+constraint_goal_conversion(eval, 'Rationals', =, 2).
 
-constraint_goal_conversion('Rationals', negative, '-', 1):- !.
-constraint_goal_conversion('Rationals', minus, '-', 2):- !.
-constraint_goal_conversion('Rationals', plus, '+', 2):- !.
-constraint_goal_conversion('Rationals', times, '*', 2):- !.
-constraint_goal_conversion('Rationals', divides, '/', 2):- !.
-constraint_goal_conversion('Rationals', power, '^', 2):- !.
-constraint_goal_conversion('Rationals', mod, 'Mod', 2):- !.
-constraint_goal_conversion('Rationals', sign, 'Sign', 1):- !.
-constraint_goal_conversion('Rationals', maximum, 'Max', 2):- !.
-constraint_goal_conversion('Rationals', minimum, 'Min', 2):- !.
-constraint_goal_conversion('Rationals', absolute, 'Abs', 1):- !.
-constraint_goal_conversion('Rationals', rational, '//', 2):- !.
-constraint_goal_conversion('Rationals', eval, =, 2):- !.
+constraint_goal_conversion(normalise, 'Sets', 'Inc', 2).	% Wrong!
+constraint_goal_conversion(union, 'Sets', '+', 2).          
+constraint_goal_conversion(difference, 'Sets', '\', 2).          
+constraint_goal_conversion(intersection, 'Sets', '*', 2).          
+constraint_goal_conversion(set_of_aux, 'Sets', 'SuchThat', 3).
 
-constraint_goal_conversion('Sets', normalise, 'Inc', 2):- !. % Wrong!
-constraint_goal_conversion('Sets', union, '+', 2):- !.          
-constraint_goal_conversion('Sets', difference, '\', 2):- !.          
-constraint_goal_conversion('Sets', intersection, '*', 2):- !.          
-constraint_goal_conversion('Sets', set_of_aux, 'SuchThat', 3):- !.
-
-constraint_goal_conversion('Strings', concat, '++', 2).
+constraint_goal_conversion(concat, 'Strings', '++', 2).
 
 %------------------------------------------------------------------------------
  
