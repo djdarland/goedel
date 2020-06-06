@@ -110,6 +110,7 @@ goedel:-
 	get_ready('ProgramsIO'),
 	get_ready('Theories'),
 	get_ready('TheoriesIO'),
+	get_ready('aux'),
 
 				% This file suplies routines for the runtime system.  Never included in
 				% the saved states.

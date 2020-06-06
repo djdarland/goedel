@@ -350,7 +350,7 @@ concat(X, Y, Z) :-
 'IO.Put.P2.1'(ResultOfFind, Char) :-
    Char > 0, Char < 128,
    'IO':translate_stream(ResultOfFind, Stream),
-   put(Stream, Char).
+   put_byte(Stream, Char).
 
 %------------------------------------------------------------------------------
 

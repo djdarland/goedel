@@ -274,3 +274,5 @@ var_list([Var|Vars]):-
    var(Var),
    var_list(Vars).
 
+call_residue(A, B) :-
+	call_residue_vars(A, B).
