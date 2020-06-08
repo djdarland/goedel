@@ -91,7 +91,7 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
 	NewLoaded = Loaded	% skip if the module is already parsed 
      ;  ( Switch = compile, lang_file_ok(ModuleName)
 	  -> sappend(ModuleName, '.lng', LangFile),
-	     open(LangFile, read, Stream, [type(binary)]),
+	     open(LangFile, read, Stream, [type(text)]),
 	     my_format(user_output, 'Loading the language of module "~a" ...~n', [ModuleName]),
    	     read(Stream, version(_, ordinary)),
 	     read(Stream, ModuleDef),

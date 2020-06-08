@@ -1,6 +1,8 @@
 :- use_module(library(system)).
 :- use_module(library(file_systems)).
+:- set_prolog_flag(discontiguous_warnings,off).
 :- multifile '$$module'/1.
+% is_runtime_system.
 
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -74,7 +76,7 @@ goedel:-
 	get_ready(transform),
 
 				% language files of system modules
-				% get_ready(sys_modules),
+	get_ready(sys_modules),
 				% NOTE =========================has been commented out=============
 
 				% system modules code

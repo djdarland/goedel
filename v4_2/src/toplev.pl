@@ -578,8 +578,8 @@ quit_cmd :-
 %------------------------------------------------------------------------------
 
 canonicalise_prolog_cmd(F1, F2) :-
-   ( open(F1, read, Stream1, [type(binary)])
-     -> ( open(F2, write, Stream2, [type(binary)])
+   ( open(F1, read, Stream1, [type(text)])
+     -> ( open(F2, write, Stream2, [type(text)])
           -> (  cp_aux(Stream1, Stream2),
 	        format(user_output, '~nCanonicalised "~a" is generated in "~a".~n', [F1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [F1])
@@ -602,8 +602,8 @@ cp_aux(Stream1, Stream2) :-
 %------------------------------------------------------------------------------
 
 decanonicalise_prolog_cmd(F1, F2) :-
-   ( open(F1, read, Stream1, [type(binary)])
-     -> ( open(F2, write, Stream2, [type(binary)])
+   ( open(F1, read, Stream1, [type(text)])
+     -> ( open(F2, write, Stream2, [type(text)])
 	  -> (  dcp_aux(Stream1, Stream2),
 	        format(user_output, '~nDecanonicalised "~a" is generated in "~a".~n', [F1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [F1])
@@ -641,17 +641,18 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 	     Signal = ordinary
 	  ;  gstring2string(GModuleName, ModuleName),
 	     sappend(ModuleName, '.lng', LangFile),
-	     ( open(LangFile, read, Stream, [type(binary)])
+	     ( open(LangFile, read, Stream, [type(text)])
                -> format(user_output, 'Loading module "~a" ...~n', [ModuleName]),
 		  ( file_version(V),
 		    read(Stream, version(V, Signal))
 		    -> read(Stream, ModuleDef),
                        read(Stream, ModuleDescriptor),
                        close(Stream),
-		       ( (  is_runtime_system
-			  ; is_eclipse		% defined in eclipse.pl
-			 )
-		         -> ( file_exist(ModuleName, '.pl')
+		       (
+%			 (  is_runtime_system
+%			  ; is_eclipse		% defined in eclipse.pl
+%			 )
+		         true -> ( file_exist(ModuleName, '.pl')
 		              -> (  my_load(ModuleName)
 		                  ; FileError = yes, % in case my_load fails
 			            format(user_error, '~nError: failed in loading file "~a.pl".~n', [ModuleName])
@@ -742,17 +743,17 @@ load_system_module_aux2([GMod|ImportedMods], Loaded, NewLoaded, Prog, NewProg):-
 
 %------------------------------------------------------------------------------
 
-file_exist(Name, Postfix) :-
+/*file_exist(Name, Postfix) :-
    sappend(Name, Postfix, File),
    sappend('test -f ', File, Command),
    unix(system(Command, 0)).
-
+*/
 %------------------------------------------------------------------------------
 % This is for the PC/DOS version of Goedel
-% file_exist(Name, Postfix) :-
-%   sappend(Name, Postfix, File),
-%   open(File, read, Streamx, [type(binary)]),
-%   close(Stream).
+file_exist(Name, Postfix) :-
+   sappend(Name, Postfix, File),
+   open(File, read, Streamx, [type(text)]),
+   close(Streamx).
 
 %------------------------------------------------------------------------------
 
@@ -773,7 +774,7 @@ program_compile_cmd(ModuleName) :-
 
 create_prm_file(ModuleName, Program) :-
    sappend(ModuleName, '.prm', FileName),
-   ( open(FileName, write, Stream, [type(binary)])
+   ( open(FileName, write, Stream, [type(text)])
      -> file_version(V),
 	format(Stream, 'version(''~a'', prm).~n', [V]),   % inserting version number
 	create_prm_file_aux(Program, Stream),
@@ -818,7 +819,7 @@ traverse_OBT('AVLTrees.Tree.F4'(Left, ModuleName, Item, Right),
 program_decompile_cmd(GFileName) :-
    gstring2string(GFileName, File),
    postfix_handler(File, '.prm', FileName),
-   ( open(FileName, read, Stream, [type(binary)])
+   ( open(FileName, read, Stream, [type(text)])
      -> readin_program(Stream, Program),
 	close(Stream),
         'ParserPrograms.Decompile.P2'(Program, 'ParserPrograms.Noisy.C0')
@@ -830,7 +831,7 @@ program_decompile_cmd(GFileName) :-
 script_compile_cmd(GModuleName) :-
    gstring2string(GModuleName, ModuleName),
    sappend(ModuleName, '.scr', FileName),
-   ( open(FileName, read, Stream, [type(binary)])
+   ( open(FileName, read, Stream, [type(text)])
      -> 'ScriptsIO':readin_script(Stream, Script),
 	close(Stream),
 	compile_script(Script, ModuleName)
@@ -879,13 +880,13 @@ debug_compile_cmd(ModuleName) :-
 %------------------------------------------------------------------------------
 
 flock_compile_cmd(F1, F2) :-
-   ( open(F1, read, Stream, [type(binary)])
+   ( open(F1, read, Stream, [type(text)])
      -> read_file(Stream, Chars),
         close(Stream),
         (  'Units':token_identifiers(Chars, Tokens, []),
            flock_compile_cmd_aux(Tokens, FlockList),
            sappend(F2, '.flk', FileName),
-           ( open(FileName, write, Stream2, [type(binary)])
+           ( open(FileName, write, Stream2, [type(text)])
 	     -> format(Stream2, '~q.~n', ['Flocks.Flock.F1'(FlockList)]),
 	        format(user_output, '~nUnits in "~a" are compiled into flock "~a".~n', [F1, FileName]),
 	        close(Stream2)
@@ -923,10 +924,10 @@ read_file(Stream, Chars) :-
 
 flock_decompile_cmd(F1, F2) :-
    postfix_handler(F1, '.flk', FF1),
-   ( open(FF1, read, Stream, [type(binary)])
+   ( open(FF1, read, Stream, [type(text)])
      -> read(Stream, 'Flocks.Flock.F1'(List)),
 	close(Stream),
-        ( open(F2, write, Stream2, [type(binary)])
+        ( open(F2, write, Stream2, [type(text)])
 	  -> (  flock_decompile_cmd_aux(List, Stream2),
 	        format(user_output, '~nThe flock in "~a" is decompiled into units in "~a".~n', [FF1, F2])
 	      ; format(user_error, '~nError: syntax error in file "~a", command failed.~n', [FF1])

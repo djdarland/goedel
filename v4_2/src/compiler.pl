@@ -1,3 +1,4 @@
+%% :- module(compiler, []).
 :- multifile '$$module'/1.
 % Copyright (C) Goedel Group, University of Bristol, June 1992.
 % Title and ownership of all Goedel software originating from the Goedel
@@ -124,6 +125,7 @@ compile_program(Program, ModuleName):-
    retractall(there_is_error),
    string2Gstring(ModuleName, GModuleName),
    format(user_output, 'Compiling module "~a" ...~n', [ModuleName]),
+%   trace, % DENNIS
    Program = 'ProgDefs.Program.F4'(_, ModuleDefAVL, Language,
 					StatementsAndDelays),
    'AVLTrees.AVLSearch.P3'(StatementsAndDelays, GModuleName, ModuleCode),
@@ -169,10 +171,14 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
         general_compile_module(Code, ModuleName, Switch),
         told,
 	( there_is_error
-	  -> sappend('rm ', FileName, UnixComm),
-	     unix(system(UnixComm))
+	-> true
+	    %sappend('rm ', FileName, UnixComm),
+	    % unix(system(UnixComm))
 	        % DOS/PC version should have these two lines replaced by "true"
-	  ;  sappend(ModuleName, '.sup', SupFile),
+	; ( sappend(ModuleName, '.sup', SupFile),
+	    djd_cat_1(SupFile, FileName, 'djd_work')),
+
+/*	    sappend(ModuleName, '.sup', SupFile),
 	     ( open(SupFile, read, SupStream, [type(binary)])
 	       -> close(SupStream),
 		  sappend(' >> ', FileName, CommString1),
@@ -184,10 +190,10 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	     ( is_runtime_system     % a switch for the runtime system
 	       -> true
 	       ;  fcompile(FileName)	% creating quick load format
-	     ),
+	     ), */
 	     format(user_output, 'Module "~a" compiled.~n', [ModuleName]),
              sappend(ModuleName, '.lng', LanFileName),
-             ( open(LanFileName, write, Stream, [type(binary)])
+             ( open(LanFileName, write, Stream, [type(text)])
                -> string2Gstring(ModuleName, GModuleName),
 		  ( system_module_name(GModuleName)
 		    -> ( open_system_module(GModuleName)

@@ -1,0 +1,11 @@
+procedure main()
+   while line := read() do { 
+      while line ? (part1 := tab(find(",") + 1 ) & part2 := tab(0))  do {
+         write(part1)
+         line := part2
+         }
+      write(part2)
+      }
+   write(part2)
+end
+   

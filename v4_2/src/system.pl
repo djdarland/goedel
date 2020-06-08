@@ -2308,6 +2308,7 @@ one_descriptor_in([Desc|Descs], Access, Cat, Arity, Decl) :-
 %------------------------------------------------------------------------------
 
 'SharedPrograms.SystemModule.P1'(S) :-
+%   (S == S), !.
    (S == '"' ; user:system_module_name(S)), !.
 
 '~SharedPrograms.SystemModule.P1'(S) :-
