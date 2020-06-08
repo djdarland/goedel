@@ -36,12 +36,15 @@ Date:		30 June 1992
 
 
 % a signal for the runtime system 
-is_runtime_system.
+is_runtime_system :- fail.
 
 
 my_load(File):-
+	consult(File).
+	/*
+	trace,
    sappend(File, '.pl', File2),
-   open(File2, read, Stream, [type(binary)]),
+   open(File2, read, Stream, [type(text)]),
    read(Stream, module(ModuleName)),
    abolish_module(ModuleName),
    ( read(Stream, Clause)
@@ -49,7 +52,7 @@ my_load(File):-
      ;  true		% in case that the program is empty
    ),
    close(Stream).
-
+*/
 my_load_aux(end_of_file, _, _):-
    !.
 
