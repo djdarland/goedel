@@ -1,0 +1,30 @@
+MODULE Search.
+
+IMPORT    Lists, WolfGoatCabbage.
+
+PREDICATE  Solve : State * List(State) * List(Move).
+
+Solve(current_state, _, []) <-
+		     Final(current_state).'
+
+Solve(current_state, history, [move|moves]) <-
+		     Applicable(move, current_state) &
+		     ApplyMove(move, current_state, new_state) &
+		     Legal(new_state) &
+		     NoLoops(new_state, history) &
+		     Solve(new_statem, [new_state|history], moves).
+
+PREDICATE NoLoops : State * List(State).
+
+NoLoops(_, []).
+NoLoops(state, [first_state|rest]) <-
+	       state ~= first_state &
+	       NoLoops(state, rest).
+
+PREDICATE   Run : List(Move).
+
+Run(moves) <-
+	   Initial(initial_state) &
+	   Solve(initial_state, [initial_state], moves).
+	   
+		    
