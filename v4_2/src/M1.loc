@@ -1,0 +1,8 @@
+LOCAL M1.
+Append(Nil,x,x).
+Append(Cons(u,x),y,Cons(u,z)) <-
+              Append(x,y,z).
+
+Append3(x,y,z,u) <-
+              Append(x,y,w) &
+              Append(w,z,u).

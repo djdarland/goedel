@@ -201,18 +201,23 @@ module_part(ModuleName, String, Module):-
 
 parse_module_decl(GModuleName, Switch, ExpTokens, ExpTokens2, LocTokens,
 		LocTokens2, Loaded, NewLoaded, OldProg, NewProg):-
-   gstring2string(GModuleName, ModuleName),
+	gstring2string(GModuleName, ModuleName),
    parse_import(GModuleName, Switch, ExpTokens, ExpTokens3, LocTokens,
 		LocTokens3, Loaded, NewLoaded, OldProg, NewProg),
    ( system_module_name(GModuleName)
-     -> my_format(user_output, 'Parsing system module "~w" ...~n', [ModuleName])
-     ;  my_format(user_output, 'Parsing module "~w" ...~n', [ModuleName])
+   -> my_format(user_output, 'Parsing system module "~w" ...~n', [ModuleName])
+   ;  my_format(user_output, 'Parsing module "~w" ...~n', [ModuleName])
    ),
+%%   trace,
    check_module(GModuleName, ExpTokens3, ExpTokens2, LocTokens3, LocTokens2).
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- */
-
+*/
+/*          	  ( ExpTokens = [item([big_name('CLOSED'), big_name(ExpName)],
+				      _, _) | ExpTokens2]
+                    -> true
+          	    ;  ( ExpTokens = [item([big_name('EXPORT'),big_name(ExpName)
+					   ], _, _) | ExpTokens2] */
 check_module(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
    gstring2string(GModuleName, ModuleName),
    ( LocTokens == [], ExpTokens == []
@@ -271,6 +276,69 @@ check_module(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
      -> true
      ;  format(user_error, '~nWarning: module name of the export part differs from the file name.~n', [])
    ).
+
+
+
+%%% check_module(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
+%%%    gstring2string(GModuleName, ModuleName),
+%%%    ( LocTokens == [], ExpTokens == []
+%%%      -> ExpTokens2 = [],
+%%% 	LocTokens2 = [],
+%%% 	print_out_error('Error: module "~w" missing', [ModuleName], null, 0, 0,
+%%% 			[], null)
+%%%      ;  ( ExpTokens == []
+%%%           -> ExpTokens2 =[],
+%%% 	     ( LocTokens = [item([big_name('MODULE'), big_name(LocName)], _, _)
+%%% 			    | LocTokens2]
+%%% 	       -> true
+%%% 	       ;  LocTokens = [_|LocTokens2],
+%%% 		  print_out_error('Error: illegal module declaration in the export part of module "~w" or export part of module "~w" missing',
+%%% 				[ModuleName, ModuleName], null, 0, 0, [], null)
+%%% 	     )
+%%%  	  ;  ( LocTokens == []
+%%%                -> LocTokens2 = [],
+%%%           	  ( ExpTokens = [item([big_name('CLOSED'), big_name(ExpName)],
+%%% 				      _, _) | ExpTokens2]
+%%%                     -> true
+%%%           	    ;  ( ExpTokens = [item([big_name('EXPORT'),big_name(ExpName)
+%%% 					   ], _, _) | ExpTokens2]
+%%% 			 -> format(user_error, '~nWarning: local part of module "~w" missing.~n', [ModuleName])
+%%%                          ;  ExpTokens = [_|ExpTokens2],
+%%% 		            print_out_error('Error: illegal module declaration in the export part of module "~w"',
+%%% 					[ModuleName], null, 0, 0, [], null)
+%%% 		       )
+%%% 		  )
+%%% 	       ;  ( ( ExpTokens = [item([big_name('EXPORT'), big_name(ExpName)],
+%%% 					_, _) | ExpTokens2];
+%%% 	              ExpTokens = [item([big_name('CLOSED'), big_name(ExpName)],
+%%% 					 _, _) | ExpTokens2]
+%%% 		    )
+%%%                     -> true
+%%%                     ;  ExpTokens = [_|ExpTokens2],
+%%% 		       print_out_error('Error: illegal module declaration in the export part of module "~w"',
+%%% 					[ModuleName], null, 0, 0, [], null)
+%%% 		  ),
+%%% 	          ( LocTokens = [item([big_name('LOCAL'), big_name(LocName)],
+%%% 					_, _) | LocTokens2]
+%%% 	            -> true
+%%% 	            ;  LocTokens = [_|LocTokens2],
+%%% 		       print_out_error('Error: illegal module declaration in the local part of module "~w"',
+%%% 					[ModuleName], null, 0, 0, [], null)
+%%% 	          )
+%%% 	     )
+%%% 	)
+%%%    ),
+%%%    % note LocName and ExpName may have not been instantiated.
+%%%    ( LocName = ModuleName
+%%%      -> true
+%%%      ;  format(user_error, '~nWarning: module name of the local part differs from the file name.~n', [])
+%%%    ),
+%%%    ( ExpName = ModuleName
+%%%      -> true
+%%%      ;  format(user_error, '~nWarning: module name of the export part differs from the file name.~n', [])
+%%%    ).
+
+
 
 /*------------------------------------------------------------------------------
  * parse_import(+ModuleName, Switch, +ExpTokens, -ExpTokens2, +LocTokens,

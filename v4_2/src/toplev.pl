@@ -109,7 +109,7 @@ next_command(ModuleName, Prog, SymbolTable) :-
 process_command(String, SymbolTable, Prog, NewProg, ModuleName, NewModuleName,
 	LanguageDif):-
    get_one_item_2nd_aux(String, _Remains, Tokens),
-	% redundant characters ignored
+				% redundant characters ignored
    build_command(Tokens, SymbolTable, Prog, NewProg, ModuleName,
 	NewModuleName, LanguageDif).
 
@@ -197,6 +197,7 @@ command_execution(save_cmd(File, Tokens), Prog, Prog, ModName, ModName, no) :-
    ).
 
 command_execution(Command, Prog, Prog, ModuleName, ModuleName, no) :-
+%%	trace,
    call(Command).
 
 %------------------------------------------------------------------------------
@@ -678,7 +679,7 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 	( var(FileError)
 	  -> ( Signal = script
                -> NewProg = 'ProgDefs.Program.F4'(GModuleName, ModuleDef,
-	                        ModuleDescriptor, Empty),
+	                        ModuleDescriptor, Empty), trace, %%DJD
                   'AVLTrees.AVLIsEmpty.P1'(Empty)  
                ;  'ParserPrograms.QuickInsertModuleDef.P4'(Prog, GModuleName,
 				ModuleDef, Prog2),
@@ -695,7 +696,7 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 	     )
 	  ;  NewProg = null
 	)
-   ).
+   ). %% ,trace. %% DJD
 
 
 load_cmd_aux2([], Loaded, Loaded, Prog, Prog).
@@ -711,7 +712,7 @@ load_cmd_aux2([GModuleName|ImportedMods], Loaded, NewLoaded, Prog, NewProg) :-
 load_system_module(ModuleName, Program):-
    string2Gstring(ModuleName, GModuleName),
    'SharedPrograms.EmptyLanguage.P1'(Language),
-   'AVLTrees.AVLIsEmpty.P1'(EmptyAVL),
+   'AVLTrees.AVLIsEmpty.P1'(EmptyAVL),  trace,  %% DJD
    Prog = 'ProgDefs.Program.F4'(GModuleName, EmptyAVL, Language, EmptyAVL),
    load_system_module_aux(GModuleName, [], _, Prog, Program), !.
 
@@ -780,7 +781,7 @@ create_prm_file(ModuleName, Program) :-
 	create_prm_file_aux(Program, Stream),
 	close(Stream),
 	format(user_output, 'Ground representation of program "~a" is in file "~a".~n', [ModuleName, FileName])
-     ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName]) 
+     ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName])
    ).
 
 create_prm_file_aux(Program, Stream) :-
@@ -1508,7 +1509,7 @@ display_binding(Var, PVal, Program, VarNumber, NewVarNumber) :-
 
 write_codes([]).
 write_codes([C|Cs]) :-
-   put(user_output, C),
+   put_code(user_output, C), %% was put DJD
    write_codes(Cs).
 
 /*------------------------------------------------------------------------------
@@ -1702,7 +1703,7 @@ readin_program(Stream, Program) :-
  	Program = 'ProgDefs.Program.F4'(MainModuleName, ModuleDefAVL, Language,
 			StatementsAndDelays),
    	Language = 'ProgDefs.Language.F1'(ModuleDescriptorAVL),
-   	user:'AVLTrees.AVLIsEmpty.P1'(EmptyAVL),
+   	user:'AVLTrees.AVLIsEmpty.P1'(EmptyAVL), trace, %% DJD
    	user:'SharedPrograms.EmptyLanguage.P1'(EmptyLang),
    	EmptyLang = 'ProgDefs.Language.F1'(EmptyMDAVL),
    	readin_program_aux(Stream, EmptyAVL, ModuleDefAVL, EmptyAVL,
