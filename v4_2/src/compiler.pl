@@ -175,8 +175,8 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	    %sappend('rm ', FileName, UnixComm),
 	    % unix(system(UnixComm))
 	        % DOS/PC version should have these two lines replaced by "true"
-	; ( sappend(ModuleName, '.sup', SupFile),
-	    djd_cat_1(SupFile, FileName, 'djd_work')),
+	; true,  %%( sappend(ModuleName, '.sup', SupFile),
+	    %% djd_cat_1(SupFile, FileName, 'djd_work')),
 
 /*	    sappend(ModuleName, '.sup', SupFile),
 	     ( open(SupFile, read, SupStream, [type(binary)])
@@ -210,11 +210,11 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
                        write_canonical(Stream, ModuleDescriptor),
 	               format(Stream, '.~n', [])
 		  ),
-	          close(Stream)
+		 close(Stream)
                ;  format(user_error,'~nError: cannot open file "~a".~n', [LanFileName])
 	     )
 	)
-     ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName])
+   ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName])
    ).
 
 %------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ compile_object_module(GModuleName, Code):-
 	sappend('rm ', FileName, UnixComm),
 	unix(system(UnixComm))
 	        % DOS/PC version should have these two lines removed.
-     ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName]),
+   ;  format(user_error, '~nError: cannot open file "~a".~n', [FileName]),
         raise_exception(catch_in_query)
    ).
 

@@ -611,7 +611,8 @@ int_to_char_dl(Int, Chars, CharsT) :-
             'ParserPrograms.DecompileLocalCode.P4'(P, E, A, R),
             'IO.EndOutput.P1'(R)
         ;   true
-        ).
+        , trace  %% DJD
+	).
 'ParserPrograms.DecompileModule.P7'('ProgDefs.ModuleKind.C0', A, _, B, C, D, E) :-
         call_residue(goedel_not('SharedPrograms.SystemModule.P1'(A)), F),
         (   F=[] ->

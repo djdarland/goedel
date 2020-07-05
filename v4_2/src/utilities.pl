@@ -299,12 +299,13 @@ djd_cat_1(File1, File2, Work3) :-
 		  close(Stream2),
 		  close(Stream3),
 		  djd_cp(Work3, File2),
-		  write(cat_file1_file2))
-	   ;  write(error3)
+		  format(user_error,'~nError: Cat "~a" and "~a" giving file "~a".~n', [File1], [File2], [Work3]))
+	   
+	   ;  format(user_error,'~nError: cannot open file "~a".~n', [File2])
 	   )
-	;  write(error2)
+	;  format(user_error,'~nError: cannot open file "~a".~n', [File1])
 	) 
-	; write(error_a).
+	; format(user_error,'~nError: cannot open file "~a".~n', [Work3]).
 
 
 djd_cp(File1, File2) :-
@@ -316,7 +317,11 @@ djd_cp(File1, File2) :-
 			  close(Stream1),
 			  close(Stream2))
 		   ;  format(user_error,'~nError: cannot open file "~a".~n', [File1]))
-		;  format(user_error,'~nError: cannot open file "~a".~n', [File2])).
+			     , write(dennis_open_021)
+
+		;  format(user_error,'~nError: cannot open file "~a".~n', [File2]))
+			     , write(dennis_open_022)
+.
 		
 		djd_cat_2(File1, File2, File3) :-
 			%% Copy File1 and then File2 to File3
@@ -330,6 +335,12 @@ djd_cp(File1, File2) :-
 				     close(Stream2),
 				     close(Stream3))
 			      ;  format(user_error,'~nError: cannot open file "~a".~n', [File2]))
+			   	     , write(dennis_open_023)
+
 			   ;  format(user_error,'~nError: cannot open file "~a".~n', [File1]))
-			;  format(user_error,'~nError: cannot open file "~a".~n', [File3]).
+				     , write(dennis_open_024)
+
+				     ;  format(user_error,'~nError: cannot open file "~a".~n', [File3])
+				     	     , write(dennis_open_025)
+.
 			

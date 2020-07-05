@@ -1,6 +1,7 @@
 :- use_module(library(system)).
 :- use_module(library(file_systems)).
 :- set_prolog_flag(discontiguous_warnings,off).
+:- set_prolog_flag(fileerrors,off).
 :- multifile '$$module'/1.
 % is_runtime_system.
 
@@ -41,79 +42,76 @@ file_version('4.2').
 
 %%'$$init'('@(#)init.pl 1.64 last updated 94/04/24 15:56:56 by jiwei').
 
-get_ready(It) :-
-	consult(It).
+%%get_ready(It) :-
+%%	consult(It).
 
 
 goedel:-
 				% top-level
-	get_ready(toplev),
-	get_ready(utilities),
-	get_ready(tracer),
-
+	consult(toplev),
+	consult(utilities),
+	consult(tracer),
 				% library
-	get_ready(lib),
-	get_ready(gfreeze),
-
+	consult(lib),
+	consult(gfreeze),
 				% parser
-	get_ready(tokenizer),
-	get_ready(tokenizer2),
-	get_ready(term),
-	get_ready(formula),
-	get_ready(statement),
-	get_ready(parser),
-	get_ready(checking),
+	consult(tokenizer),
+	consult(tokenizer2),
+	consult(term),
+	consult(formula),
+	consult(statement),
+	consult(parser),
+	consult(checking),
 
 				% ground representation
-	get_ready(system),
-	get_ready(avltrees),
-	get_ready(builtin),
+	consult(system),
+	consult(avltrees),
+	consult(builtin),
 
 				% compiler
-	get_ready(compiler),
-	get_ready(delay),
-	get_ready(constraint),
-	get_ready(transform),
+	consult(compiler),
+	consult(delay),
+	consult(constraint),
+	consult(transform),
 
 				% language files of system modules
-	get_ready(sys_modules),
+	consult(sys_modules),
 				% NOTE =========================has been commented out=============
 
 				% system modules code
-	get_ready('Integers'),
-	get_ready('Rationals'),
-	get_ready('Floats'),
-	get_ready('Numbers'),
-	get_ready('Lists'),
-	get_ready('Sets'),
-	get_ready('Strings'),
+	consult('Integers'),
+	consult('Rationals'),
+	consult('Floats'),
+	consult('Numbers'),
+	consult('Lists'),
+	consult('Sets'),
+	consult('Strings'),
 
-	get_ready('Tables'),
-	get_ready('Units'),
-	get_ready('Flocks'),
-	get_ready('FlocksIO'),
-	get_ready('IO'),
-	get_ready('NumbersIO'),
+	consult('Tables'),
+	consult('Units'),
+	consult('Flocks'),
+	consult('FlocksIO'),
+	consult('IO'),
+	consult('NumbersIO'),
 
-	get_ready('Syntax'),
-	get_ready('ExtraSyntax'),
-	get_ready('SharedSyntax'),
-	get_ready('Substs'),
+	consult('Syntax'),
+	consult('ExtraSyntax'),
+	consult('SharedSyntax'),
+	consult('Substs'),
 
-	get_ready('Programs'),
-	get_ready('SharedPrograms'),
-	get_ready('ProgramCache'),
+	consult('Programs'),
+	consult('SharedPrograms'),
+	consult('ProgramCache'),
 
-	get_ready('Scripts'),
-	get_ready('ScriptsIO'),
+	consult('Scripts'),
+	consult('ScriptsIO'),
 
-	get_ready('AVLTrees'),
+	consult('AVLTrees'),
 
-	get_ready('ProgramsIO'),
-	get_ready('Theories'),
-	get_ready('TheoriesIO'),
-	get_ready('aux'),
-
+	consult('ProgramsIO'),
+	consult('Theories'),
+	consult('TheoriesIO'),
+	consult('aux'),
 				% This file suplies routines for the runtime system.  Never included in
 				% the saved states.
 	%% runtime_system_file(init).

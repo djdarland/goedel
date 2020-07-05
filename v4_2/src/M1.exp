@@ -1,4 +1,4 @@
-MODULE        M1.
+EXPORT        M1.
 
 BASE          Day, ListOfDay.
 
@@ -8,5 +8,3 @@ CONSTANT      Nil : ListOfDay;
 FUNCTION      Cons : Day * ListOfDay -> ListOfDay.
 PREDICATE     Append : ListOfDay * ListOfDay * ListOfDay;
               Append3 : ListOfDay * ListOfDay * ListOfDay * ListOfDay.
-
-EXPORT        .
