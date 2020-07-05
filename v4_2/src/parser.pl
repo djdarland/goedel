@@ -90,7 +90,9 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
      -> NewProg = OldProg,
 	NewLoaded = Loaded	% skip if the module is already parsed 
      ;  ( Switch = compile, lang_file_ok(ModuleName)
-	  -> sappend(ModuleName, '.lng', LangFile),
+	-> sappend(ModuleName, '.lng', LangFile2),
+	    	    sappend('GL/', LangFile2, LangFile),
+
 	     open(LangFile, read, Stream, [type(text)]),
 	     my_format(user_output, 'Loading the language of module "~a" ...~n', [ModuleName]),
    	     read(Stream, version(_, ordinary)),
@@ -140,7 +142,9 @@ parse_module(ModuleName, Switch, Loaded, NewLoaded, OldProg, NewProg):-
 
 
 lang_file_ok(ModuleName) :-
-   sappend(ModuleName, '.lng', LangFile),
+	sappend(ModuleName, '.lng', LangFile2),
+		    sappend('GL/', LangFile2, LangFile),
+
    open(LangFile, read, Stream, [type(binary)]),
    file_version(V),
    ( read(Stream, version(V, ordinary))
@@ -183,7 +187,8 @@ module_as_items(ModuleName, ExpTokens, LocTokens):-
  */
 
 module_part(ModuleName, String, Module):-
-   sappend(ModuleName, String, FileName),
+	sappend(ModuleName, String, FileName2),
+	sappend('GL/', FileName2, FileName),
    ( open(FileName, read, Stream, [type(binary)])
      -> my_format(user_output, 'Reading file "~w" ...~n', [FileName]),
 	get_one_module(Stream, Module),	% in tokenizer.pl

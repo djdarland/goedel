@@ -1,0 +1,11 @@
+consult(init).
+goedel.
+;cs M1.
+;c M1.
+;l M1.
+Append3(Cons(Monday, Nil), Cons(Tuesday, Nil), Cons(Wednesday, Nil), x).
+
+Append3(x, y, z, Cons(Monday, Cons(Tuesday, Cons(Wednesday, Nil)))).
+
+halt.
+

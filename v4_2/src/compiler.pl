@@ -161,7 +161,8 @@ compile_script(Script, ModuleName):-
 % an AVLTree of List of clause definitions.
 
 compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
-   sappend(ModuleName, '.pl', FileName),
+   sappend(ModuleName, '.pl', FileName2),
+   sappend('GL/',FileName2, FileName),
    ( tell(FileName)
      -> ( is_runtime_system	% a switch for the runtime system
 	  -> format('module(~q).~n', [ModuleName])
@@ -191,8 +192,10 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	       -> true
 	       ;  fcompile(FileName)	% creating quick load format
 	     ), */
-	     format(user_output, 'Module "~a" compiled.~n', [ModuleName]),
-             sappend(ModuleName, '.lng', LanFileName),
+	format(user_output, 'Module "~a" compiled.~n', [ModuleName]),
+	    
+	    sappend(ModuleName, '.lng', LanFileName2),
+	    sappend('GL/', LanFileName2, LanFileName),
              ( open(LanFileName, write, Stream, [type(text)])
                -> string2Gstring(ModuleName, GModuleName),
 		  ( system_module_name(GModuleName)
@@ -265,7 +268,8 @@ compile_object_module(GModuleName, Code):-
 					% which is not normally there.
    gstring2string(GModuleName, ModuleName),
    sappend('%%', ModuleName, ModuleName2),
-   sappend(ModuleName2, '.pl', FileName),
+   sappend(ModuleName, '.pl', FileName2),
+   sappend('GL/', FileName2, FileName),
    ( tell(FileName)
      -> ( is_runtime_system
 	  -> format('module(~q).~n', [ModuleName2])

@@ -1,0 +1,107 @@
+#!/bin/csh -f
+#
+# Test program for Goedel
+#
+#
+# This program runs Goedel over one or several test programs and records the
+# differences in the standard and error outputs.
+#
+#
+# Read-only files:
+#	program.exp	Goedel export source code
+#	program.loc	Goedel local source code
+#	program.in	Input script to Prolog
+#	program.ref	Reference standard output
+#	program.referr	Reference error output
+#
+# Output files:
+#	program.out	Most recent standard output
+#	program.err	Most recent error output
+#	program.refdiff Difference between .out and .ref files
+#	program.errdiff Difference between .err and .referr files
+#
+
+
+# Make all files rw by everyone
+umask 000
+
+
+# Version of STICtus to use:
+set PROLOG = "/usr/local/sicstus4.6.0/bin/sicstus"
+
+
+# clear
+#echo "Testing interpreter: Goedel"
+#echo "Date: `date`"
+#echo ""
+# echo ""
+# echo "                       Goedel test suite"
+# echo "                       --------------------"
+# echo ""
+# echo "interpreter: Goedel"
+# echo ""
+# echo ""
+# echo ""
+
+
+    set goedel_tests = 0
+    set goedel_tests_match = 0
+    set goedel_tests_differ = 0
+    set goedel_tests_out_differ = 0
+    set goedel_tests_err_differ = 0
+# Run the test suite
+foreach I ($*)
+    @ goedel_tests ++
+
+    # Make sure ref files exist
+    touch ../Tests/REFOUT/$I:r.refout
+    touch ../Tests/REFERR/$I:r.referr
+
+if(-e $I:r.in) then
+
+# Run Goedel
+#    echo ../Tests/OUT/$I:r.out
+#    echo ../Tests/ERR/$I:r.err
+    $PROLOG <$I:r.in >../Tests/OUT/$I:r.out.tmp
+
+#    echo "Testing $I:r.in"
+    
+# Check for core dump
+   if(-e core) then
+	echo "          ***    C O R E   D U M P  ! !       ***"
+   endif
+
+# Calculate the differences
+# files ending with 2 have whitepace removed (by tr above).
+# Whitespace is different in c++ version - appears more correct.
+# difference is from "void pretty_output()" in print.c
+
+    (diff  ../Tests/OUT/$I:r.out.tmp ../Tests/REFOUT/$I:r.refout > ../Tests/REFDIFF/$I:r.refdiff.tmp) >& /dev/null
+    (diff  ../Tests/ERR/$I:r.err.tmp ../Tests/REFERR/$I:r.referr > ../Tests/ERRDIFF/$I:r.errdiff.tmp) >& /dev/null
+#
+# Report them to the developer
+#    if((`wc -c < ../Tests/REFDIFF/$I:r.refdiff2.tmp` != 0) || (`wc -c < ../Testrs/ERRDIFF/$I:r.errdiff2.tmp` != 0)) then
+    if((`wc -c < ../Tests/REFDIFF/$I:r.refdiff.tmp` != 0) || (`wc -c < ../Tests/ERRDIFF/$I:r.errdiff.tmp` != 0)) then
+    echo "./work.sh $I:r"
+    @ goedel_tests_differ ++
+    else
+    echo "echo ./$I:r -- Matches Perfectly"
+    @ goedel_tests_match ++
+    endif
+    if (`wc -c < ../Tests/REFDIFF/$I:r.refdiff.tmp` == 0) then
+    rm -f ../Tests/REFDIFF/$I:r.refdiff.tmp
+    else
+    @ goedel_tests_out_differ ++
+    endif
+    if (`wc -c < ../Tests/ERRDIFF/$I:r.errdiff.tmp` == 0) then
+    rm -f ../Tests/ERRDIFF/$I:r.errdiff.tmp
+    else
+	@ goedel_tests_err_differ ++
+	endif
+	end
+    echo "echo $goedel_tests Total Tests completed"
+    echo "echo $goedel_tests_match Total Tests match"
+    echo "echo $goedel_tests_differ Total Tests differ"
+    echo "echo $goedel_tests_out_differ Total Tests out differ"
+    echo "echo $goedel_tests_err_differ Total Tests err differ"
+	    endif

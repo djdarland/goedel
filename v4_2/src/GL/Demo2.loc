@@ -1,0 +1,32 @@
+LOCAL Demo2.
+
+Demo(program, goal, answer) <-
+     EmptyVarTyping(empty_var_types) &
+     FormulaInProgram(program, empty_var_types, goal, _) &
+     FormulaMaxVarIndex([goal], initial_sp) &
+     Demo1(program, goal, initial_sp, _, answer).
+
+
+PREDICATE Demo1 : Program * Formula * Integer * Integer * TermSubst.
+
+Demo1(_, empty_goal, sp, sp, empty_answer) <-
+     EmptyFormula(empty_goal) |
+     EmptyTermSubst(empty_answer).
+
+Demo1(program, goal_atom, sp, new_sp, answer) <-
+     Atom(goal_atom) |
+     StatementMatchAtom(program, _, goal_atom, statement) &
+     StandardiseFormula(statement, sp, sp1, standard_statement) &
+     IsImpliedBy(head, body, standard_statement) &
+     EmptyTermSubst(empty_substitution) &
+     UnifyAtoms(head, goal_atom, empty_substitution, substitution) &
+     ApplySubstToFormula(body, substitution, body_instance) &
+     Demo1(program, body_instance, sp1, new_sp, body_answer) &
+     ComposeTermSubsts(substitution, body_answer, answer).
+
+Demo1(program, goal, sp, new_sp, answer) <-
+     And(left, right, goal) |
+     Demo1(program, left, sp, sp1, left_answer) &
+     ApplySubstToFormula(right, left_answer, right_instance) &
+     Demo1(program, right_instance, sp1, new_sp, right_answer) &
+     ComposeTermSubsts(left_answer, right_answer, answer).

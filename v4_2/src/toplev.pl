@@ -118,11 +118,13 @@ process_command(String, SymbolTable, Prog, NewProg, ModuleName, NewModuleName,
 % ignore empty command
 build_command([], _, Prog, Prog, ModuleName, ModuleName, no).
 
+build_command([halt],Prog, Prog, ModuleName, ModuleName, no) :-
+	halt.
+
 build_command([Token|Tokens], SymbolTable, Prog, NewProg, ModuleName,
 		NewModuleName, LanguageDif) :-
    build_command(Token, Tokens, SymbolTable, Prog, NewProg, ModuleName,
 		NewModuleName, LanguageDif).
-
 
 build_command(';', Tokens, _, Prog, NewProg, ModuleName,
 		NewModuleName, LanguageDif) :- !,
@@ -641,7 +643,8 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 	  -> system_module(GModuleName, ModuleDef, ModuleDescriptor, _),
 	     Signal = ordinary
 	  ;  gstring2string(GModuleName, ModuleName),
-	     sappend(ModuleName, '.lng', LangFile),
+	     sappend(ModuleName, '.lng', LangFile2),
+	    	    sappend('GL/', LangFile2, LangFile),
 	     ( open(LangFile, read, Stream, [type(text)])
                -> format(user_output, 'Loading module "~a" ...~n', [ModuleName]),
 		  ( file_version(V),
@@ -653,8 +656,8 @@ load_cmd_aux(GModuleName, Loaded, NewLoaded, Prog, NewProg) :-
 %			 (  is_runtime_system
 %			  ; is_eclipse		% defined in eclipse.pl
 %			 )
-		         true -> ( file_exist(ModuleName, '.pl')
-		              -> (  my_load(ModuleName)
+		         true -> ( file_exist('GL/', ModuleName, '.pl')
+		              -> (  my_load('GL/', ModuleName)
 		                  ; FileError = yes, % in case my_load fails
 			            format(user_error, '~nError: failed in loading file "~a.pl".~n', [ModuleName])
 		                 ), !
@@ -753,6 +756,13 @@ load_system_module_aux2([GMod|ImportedMods], Loaded, NewLoaded, Prog, NewProg):-
 % This is for the PC/DOS version of Goedel
 file_exist(Name, Postfix) :-
    sappend(Name, Postfix, File),
+   open(File, read, Streamx, [type(text)]),
+   close(Streamx).
+
+% This is for the PC/DOS version of Goedel
+file_exist(Path, Name, Postfix) :-
+   sappend(Name, Postfix, File2),
+   sappend(Path, File2, File),
    open(File, read, Streamx, [type(text)]),
    close(Streamx).
 
@@ -1520,10 +1530,10 @@ user_satisfied:-
    format(user_output, ' ? ', []), %% ttyflush,
    get_code(C),
    ( C = 0';
-     -> ttyskip(10), fail
+     -> myttyskip(C, 10), fail
      ;  ( C = 10
 	  -> true
-   	  ;  ttyskip(10),
+   	  ;  myttyskip(C, 10),
    	     format(user_output, '~n";" for more choices, otherwise <return>',
 			[]),
 	     user_satisfied

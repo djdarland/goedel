@@ -1,0 +1,26 @@
+#!/bin/csh -f
+# Test program for Wild-LIFE
+# Runs the entire test-suite and generates a log file
+set umask=666
+rm -f editdiffs.sh
+touch editdiffs.sh
+chmod u+x editdiffs.sh
+if (! -d "../Tests/ERR" ) then 
+    mkdir ../Tests/ERR
+endif
+if (! -d "../Tests/OUT" ) then 
+    mkdir ../TestsOUT
+endif
+if (! -d "../Tests/ERRDIFF" ) then 
+    mkdir ../Tests/ERRDIFF
+endif
+if (! -d "../Tests/REFDIFF" ) then 
+    mkdir ../Tests/REFDIFF
+endif
+#if [ -d "" ] ; then
+#    PATH="$HOME/src/other/unicon/unicon/bin:$PATH"
+#fi
+echo "Running complete Test"
+ls *.in
+./check_edit `ls *.in` | tee editdiffs.sh
+chmod u+x editdiffs.sh

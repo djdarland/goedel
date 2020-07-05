@@ -43,7 +43,24 @@ my_load(File):-
 	consult(File).
 	/*
 	trace,
-   sappend(File, '.pl', File2),
+   sappend(File, '.pl', File3),
+   sappend('GL/', File3, File2),
+   open(File2, read, Stream, [type(text)]),
+   read(Stream, module(ModuleName)),
+   abolish_module(ModuleName),
+   ( read(Stream, Clause)
+     -> my_load_aux(Clause, ModuleName, Stream)
+     ;  true		% in case that the program is empty
+   ),
+   close(Stream).
+*/
+my_load(Path, File2):-
+	sappend(Path, File2, File),
+	consult(File).
+	/*
+	trace,
+   sappend(File, '.pl', File3),
+   sappend('GL/', File3, File2),
    open(File2, read, Stream, [type(text)]),
    read(Stream, module(ModuleName)),
    abolish_module(ModuleName),

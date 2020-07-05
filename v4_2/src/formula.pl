@@ -1027,8 +1027,9 @@ process_term_return([Stack/Remains|TermReturn], NewRemains, LeftAtoms,
 		    -> atom_middleway(Symbol, Remains3, NewRemains, Term,
 				LeftAtoms, LeftAtoms3, ErrorReturn3, Language),
 		       append(ErrorReturn3, ErrorReturn2, ErrorReturn)
-		    ;  length(Remains, Position),
-		       ErrorReturn = [error('predicate expected', [])/Position|ErrorReturn2],
+		  ;  length(Remains, Position),
+		      (Token = halt) -> halt
+		       ; ErrorReturn = [error('predicate expected', [])/Position|ErrorReturn2],
 		       LeftAtoms = LeftAtoms3
 		  )
 	       ;  length(Remains, Position),
