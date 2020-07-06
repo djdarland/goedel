@@ -1,0 +1,21 @@
+SICStus 4.6.0 (x86_64-linux-glibc2.17): Mon Apr  6 09:23:37 PDT 2020
+Licensed to SP4.6darlandcomplimentary
+% consulting /home/dennis/src/mine/mng_git/goedel/v4_2/src/init.pl...
+%  loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/system.po...
+%  module system imported into user
+%   loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/types.po...
+%   module types imported into system
+%   loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/types.po in module types, 3 msec 8208 bytes
+%  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/system.po in module system, 12 msec 28368 bytes
+%  loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/file_systems.po...
+%  module file_systems imported into user
+%   module types imported into file_systems
+%   module system imported into file_systems
+%   loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/lists.po...
+%   module lists imported into file_systems
+%    module types imported into lists
+%   loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/lists.po in module lists, 10 msec 182976 bytes
+%  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/file_systems.po in module file_systems, 20 msec 255232 bytes
+% consulted /home/dennis/src/mine/mng_git/goedel/v4_2/src/init.pl in module user, 73 msec 411184 bytes
+yes
+% consulting /home/dennis/src/mine/mng_git/goedel/v4_2/src/toplev.pl...
