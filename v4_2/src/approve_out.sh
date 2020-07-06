@@ -6,13 +6,14 @@ else
     rm ../Tests/REFOUT/$1.refout
     touch ../Tests/REFOUT/$1.refout
 fi
-# if test -f ERR/$1.err.tmp
-# then
-#    cp ERR/$1.err.tmp REFERR/$1.referr
-# else
-#    rm REFERR/$1.referr
-#    touch REFERR/$1.referr
-# fi
+if test -f ../Tests/ERR/$1.err.tmp
+then
+    echo cp ../Tests/ERR/$1.err.tmp ../Tests/REFERR/$1.referr
+    cp ../Tests/ERR/$1.err.tmp ../Tests/REFERR/$1.referr
+else
+    rm ../Tests/REFERR/$1.referr
+    touch ../Tesdts/REFERR/$1.referr
+fi
 echo "$1 approved" >../Tests/APPROVED/$1.approved
 echo "$1 approved"
 

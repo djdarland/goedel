@@ -1,8 +1,6 @@
 consult(init).
 goedel.
-;cs Search.
-;c Search.
-;l Search.
+;ml Search.
 Run(x).
 
 halt.

@@ -62,7 +62,7 @@ if(-e $I:r.in) then
 # Run Goedel
 #    echo ../Tests/OUT/$I:r.out
 #    echo ../Tests/ERR/$I:r.err
-    $PROLOG <$I:r.in >../Tests/OUT/$I:r.out.tmp
+    ($PROLOG <$I:r.in >../Tests/OUT/$I:r.out.tmp) >& ../Tests/ERR/$I:r.err.tmp
 
 #    echo "Testing $I:r.in"
     
@@ -80,7 +80,6 @@ if(-e $I:r.in) then
     (diff  ../Tests/ERR/$I:r.err.tmp ../Tests/REFERR/$I:r.referr > ../Tests/ERRDIFF/$I:r.errdiff.tmp) >& /dev/null
 #
 # Report them to the developer
-#    if((`wc -c < ../Tests/REFDIFF/$I:r.refdiff2.tmp` != 0) || (`wc -c < ../Testrs/ERRDIFF/$I:r.errdiff2.tmp` != 0)) then
     if((`wc -c < ../Tests/REFDIFF/$I:r.refdiff.tmp` != 0) || (`wc -c < ../Tests/ERRDIFF/$I:r.errdiff.tmp` != 0)) then
     echo "./work.sh $I:r"
     @ goedel_tests_differ ++
