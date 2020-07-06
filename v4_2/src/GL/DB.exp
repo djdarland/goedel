@@ -1,0 +1,8 @@
+EXPORT  DB.
+
+BASE Person.
+
+CONSTANT  Fred, Mary, George, James, Jane, Sue, : Person.
+
+PREDICATE Ancestor, Parent, Mother, Father : Person * Person.
+

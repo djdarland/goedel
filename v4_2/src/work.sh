@@ -35,10 +35,10 @@ do
 	2) $EDITOR $1.exp;;
 	3) $EDITOR $1.loc;;
 	4) $EDITOR ../Tests/REFDIFF/$1.refdiff.tmp;;
-	5) $EDITOR ../Tests/REFOUT/$1.refout ../Tests/OUT/$1.out.tmp;;
-	6) $EDITOR ../Tesrs/ERRDIFF/$1.errdiff.tmp;;
-	7) $EDITOR ../Tests/REFERR/$1.referr ../Tests/ERR/$1.err.tmp;;
-	11) ../Tests/approve_out.sh $1;;
+	5) $EDITOR ../Tests/REFOUT/$1.refout.tmp ../Tests/OUT/$1.out.tmp;;
+	6) $EDITOR ../Tests/ERRDIFF/$1.errdiff.tmp;;
+	7) $EDITOR ../Tests/REFERR/$1.referr.tmp ../Tests/ERR/$1.err.tmp;;
+	11) ./approve_out.sh $1;;
 	16) $EDITOR Port.txt;;
 	888) exit 2;;
     esac

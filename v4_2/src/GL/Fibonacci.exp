@@ -1,0 +1,8 @@
+EXPORT Fibonacci.
+
+IMPORT Integers.
+
+PREDICATE Fib : Integer * Integer.
+
+PREDICATE FibIt : Integer * Integer * Integer * Integer.
+

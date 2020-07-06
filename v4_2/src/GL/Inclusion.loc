@@ -1,0 +1,5 @@
+LOCAL Inclusion.
+
+IncludedIn(x,y) <- ALL [z] (Member(z,y) <- Member(z,x)).
+
+

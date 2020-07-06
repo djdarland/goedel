@@ -1,9 +1,4 @@
-MODULE    Fibonacci.
-
-IMPORT    Integers.
-
-
-PREDICATE Fib : Integer * Integer.
+LOCAL    Fibonacci.
 
 % Fib(k,n) <-> n is the Fibonacci number F_{k} of rank k.
 
@@ -13,8 +8,6 @@ Fib(k,n) <-
           k > 1 &
           FibIt(k-2,1,1,n).
 
-
-PREDICATE FibIt : Integer * Integer * Integer * Integer.
 
 % FibIt(k,f,g,n) <-> n  =  F_{k} * f  +  F_{k+1} * g.
 

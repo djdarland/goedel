@@ -1,0 +1,8 @@
+EXPORT      GCD.
+
+IMPORT      Integers.
+
+PREDICATE   Gcd  : Integer * Integer * Integer.
+
+PREDICATE    CommonDivisor : Integer * Integer * Integer.
+

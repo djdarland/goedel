@@ -1,0 +1,26 @@
+LOCAL        Search.
+
+% A depth-first state-transition search framework for problem solving, 
+% similar to the one on page 285 of Sterling and Shapiro, The Art of 
+% Prolog. It is used here to solve the wolf-goat-cabbage problem, also
+% described in Sterling and Shapiro, pages 285-287.
+
+Solve(current_state, _, []) <-
+              Final(current_state).
+Solve(current_state, history, [move|moves]) <-
+              Applicable(move, current_state) &
+              ApplyMove(move, current_state, new_state) &
+              Legal(new_state) &
+              NoLoops(new_state, history) &
+              Solve(new_state, [new_state|history], moves).
+
+
+NoLoops(_, []).                
+NoLoops(state, [first_state|rest]) <-     
+              state ~= first_state & 
+              NoLoops(state, rest).
+  
+
+Run(moves) <-
+              Initial(initial_state) & 
+              Solve(initial_state, [initial_state], moves).

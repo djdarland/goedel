@@ -1,0 +1,11 @@
+consult(init).
+goedel.
+;cs GCD.
+;c GCD.
+;l GCD.
+Gcd(6,24,x).
+
+Gcd(11, 999, y).
+
+halt.
+

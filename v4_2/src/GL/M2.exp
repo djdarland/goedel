@@ -1,0 +1,12 @@
+EXPORT M2.
+
+BASE    Day.
+CONSTRUCTOR  List/1.
+
+CONSTANT   Nil: List(Day);
+   Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday : Day.
+
+FUNCTION Cons : Day * List(Day) -> List(Day).
+
+PREDICATE Append : List(Day) * List(Day) * List(Day);
+Append3 : List(Day) *  List(Day) * List(Day) * List(Day).

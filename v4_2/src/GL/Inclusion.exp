@@ -1,0 +1,6 @@
+EXPORT Inclusion.
+
+IMPORT Lists.
+
+PREDICATE IncludedIn : List(a) * List(a).
+
