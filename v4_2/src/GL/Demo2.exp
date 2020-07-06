@@ -1,0 +1,5 @@
+EXPORT Demo2.
+
+IMPORT Programs.
+
+PREDICATE Demo : Program * Formula * TermSubst.

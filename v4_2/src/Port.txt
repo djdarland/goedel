@@ -1,0 +1,6 @@
+I've created a batch testing mechanism.
+./ts.sh.
+The .exp and .loc files belong in the GL subdirectory.
+The .lng and .pl files will be created in that subdirectory.
+The .in files are created to run any particular tests.
+I added a "halt" goedel instruction to halt the prolog program.
