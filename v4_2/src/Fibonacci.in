@@ -1,0 +1,11 @@
+consult(init).
+goedel.
+;cs Fibonacci.
+;c Fibonacci.
+;l Fibonacci.
+Fib(235, y).
+
+Fib(x, 5789092068864820527338372482892113982249794889765).
+
+halt.
+

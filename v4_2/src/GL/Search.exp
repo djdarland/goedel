@@ -1,0 +1,16 @@
+EXPORT        Search.
+
+% A depth-first state-transition search framework for problem solving, 
+% similar to the one on page 285 of Sterling and Shapiro, The Art of 
+% Prolog. It is used here to solve the wolf-goat-cabbage problem, also
+% described in Sterling and Shapiro, pages 285-287.
+
+IMPORT        Lists, WolfGoatCabbage.
+
+
+PREDICATE     Solve : State * List(State) * List(Move).
+
+PREDICATE  NoLoops : State * List(State).
+
+PREDICATE     Run : List(Move).
+

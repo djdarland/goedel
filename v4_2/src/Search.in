@@ -1,0 +1,9 @@
+consult(init).
+goedel.
+;cs Search.
+;c Search.
+;l Search.
+Run(x).
+
+halt.
+

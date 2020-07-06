@@ -1,0 +1,13 @@
+consult(init).
+goedel.
+;cs M4.
+;c M4.
+;l M4.
+Append3([Monday], [Tuesday], [Wednesday], x).
+
+Append3(x, y, z, [Fred, Bill, Mary]).
+
+Append3(x, y, z, [1, 2, 3]).
+
+halt.
+

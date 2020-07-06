@@ -1,0 +1,20 @@
+consult(init).
+goedel.
+;cs DB.
+;c DB.
+;l DB.
+
+ALL [x] (SOME [y] Mother(y, x) -> SOME [z] Father(z,x)).
+
+ALL [x] (Mother(_, x) -> Father(_, x)).
+
+SOME [z] Mother(x, z) & ~ SOME [y] Father(y, x).
+
+Mother(x, _) & ~ Father(_, x).
+
+x: Parent(x, y) & Parent(y, Jane).
+
+SOME [y] (Parent(x, y) & Parent(y, Jane)).
+
+halt.
+

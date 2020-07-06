@@ -1,0 +1,19 @@
+EXPORT M3.
+
+BASE Day, Person.
+
+CONSTRUCTOR List/1.
+
+CONSTANT Nil: List(a);
+
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday : Day;
+
+Fred, Bill, Mary : Person.
+
+FUNCTION Cons : a * List(a) -> List(a).
+
+PREDICATE Append : List(a) * List(a) * List(a);
+
+Append3 : List(a) * List(a) * List(a) * List(a).
+
+
