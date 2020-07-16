@@ -311,7 +311,7 @@ concat(X, Y, Z) :-
 'IO.Get.P2'('IO.StdIn.C0', Char) :-
    !,
    prompt(Old, ''),
-   get_byte(user_input, Char),
+   get_code(user_input, Char),
    prompt(_, Old).
 
 'IO.Get.P2'(ResultOfFind, Char) :-
@@ -320,7 +320,7 @@ concat(X, Y, Z) :-
 
 'IO.Get.P2'(ResultOfFind, Char) :-
    'IO':translate_stream(ResultOfFind, Stream),
-   get_byte(Stream, Char),
+   get_code(Stream, Char),
    check_for_end_of_stream(ResultOfFind, Char).
 
 %------------------------------------------------------------------------------
@@ -328,7 +328,7 @@ concat(X, Y, Z) :-
 'IO.ReadChar.P2'('IO.StdIn.C0', String) :-
    !,
    prompt(Old, ''),
-   get_byte(user_input, Char),
+   get_code(user_input, Char),
    'Strings.StringInts.P2'(String, [Char]),
    prompt(_, Old).
 
@@ -338,7 +338,7 @@ concat(X, Y, Z) :-
 
 'IO.ReadChar.P2'(ResultOfFind, String) :-
    'IO':translate_stream(ResultOfFind, Stream),
-   get_byte(Stream, Char),
+   get_code(Stream, Char),
    'Strings.StringInts.P2'(String, [Char]),
    check_for_end_of_stream(ResultOfFind, Char).
 
@@ -364,7 +364,7 @@ check_for_end_of_stream(ID, -1) :-
 
 'IO.FindInput.P2'(FileString, ResultOfFind) :-
    user:gstring2string(FileString, FileName),
-   ( open(FileName, read, Stream, [type(binary)])
+   ( open(FileName, read, Stream, [type(text)])
      -> 'IO':translate_stream('IO.InputStreamDescriptor.F1'(List), Stream),
 	ResultOfFind = 'IO.In.F1'('IO.InputStreamDescriptor.F1'(List))
      ;  ResultOfFind = 'IO.NotFound.C0'
@@ -374,7 +374,7 @@ check_for_end_of_stream(ID, -1) :-
  
 'IO.FindOutput.P2'(FileString, ResultOfFind) :-
    user:gstring2string(FileString, FileName),
-   ( open(FileName, write, Stream, [type(binary)])
+   ( open(FileName, write, Stream, [type(text)])
      -> 'IO':translate_stream('IO.OutputStreamDescriptor.F1'(List), Stream),
 	ResultOfFind = 'IO.Out.F1'('IO.OutputStreamDescriptor.F1'(List))
      ;  ResultOfFind = 'IO.NotFound.C0'
@@ -384,7 +384,7 @@ check_for_end_of_stream(ID, -1) :-
 
 'IO.FindUpdate.P2'(FileString, ResultOfFind) :-
    user:gstring2string(FileString, FileName),
-   ( open(FileName, append, Stream, [type(binary)])
+   ( open(FileName, append, Stream, [type(text)])
      -> 'IO':translate_stream('IO.OutputStreamDescriptor.F1'(List), Stream),
 	ResultOfFind = 'IO.Out.F1'('IO.OutputStreamDescriptor.F1'(List))
      ;  ResultOfFind = 'IO.NotFound.C0'

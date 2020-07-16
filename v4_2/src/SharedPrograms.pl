@@ -1190,11 +1190,19 @@
         '~SharedPrograms.OrSeqToIntDL.P3'('ProgDefs.Or.F2'(A,B), E, F),
         '~SharedPrograms.CharDL.P3'('")', F, D).
 'SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
+write(shared_programs_Stmt_in_lang_000),
         'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
-        user:goedel_freeze(ground([K]), (K=[],true->'SharedPrograms':'SharedPrograms.HeadAtom.P9'(A,C,H,_,D,J,[],L,M),user:goedel_freeze(ground([M]),(M=[],true->'SharedPrograms':'SharedPrograms.FixRationals.P2'(I,F),'SharedPrograms':'SharedPrograms.CheckHeadArgs.P4'(D,L,C,G);G=M));G=K)).
+write(shared_programs_Stmt_in_lang_001),
+user:goedel_freeze(ground([K]), (K=[],true->'SharedPrograms':'SharedPrograms.HeadAtom.P9'(A,C,H,_,D,J,[],L,M),user:goedel_freeze(ground([M]),(M=[],true->'SharedPrograms':'SharedPrograms.FixRationals.P2'(I,F),'SharedPrograms':'SharedPrograms.CheckHeadArgs.P4'(D,L,C,G);G=M));G=K)),
+write(shared_programs_Stmt_in_lang_002).
+
 '~SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
+write(shared_programs_Stmt_in_lang_003),
         '~SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
-        user:goedel_freeze(ground([K]), (K=[],true->'SharedPrograms':'~SharedPrograms.HeadAtom.P9'(A,C,H,_,D,J,[],L,M),user:goedel_freeze(ground([M]),(M=[],true->'SharedPrograms':'~SharedPrograms.FixRationals.P2'(I,F),'SharedPrograms':'~SharedPrograms.CheckHeadArgs.P4'(D,L,C,G);G=M));G=K)).
+write(shared_programs_Stmt_in_lang_004),
+        user:goedel_freeze(ground([K]), (K=[],true->'SharedPrograms':'~SharedPrograms.HeadAtom.P9'(A,C,H,_,D,J,[],L,M),user:goedel_freeze(ground([M]),(M=[],true->'SharedPrograms':'~SharedPrograms.FixRationals.P2'(I,F),'SharedPrograms':'~SharedPrograms.CheckHeadArgs.P4'(D,L,C,G);G=M));G=K)),
+write(shared_programs_Stmt_in_lang_005).
+
 'SharedPrograms.TypeInLanguage.P2'('MetaDefs.Par.F2'(_,_), _).
 '~SharedPrograms.TypeInLanguage.P2'('MetaDefs.Par.F2'(_,_), _).
 'SharedPrograms.TypeInLanguage.P2'('MetaDefs.Par.F1'(_), _).

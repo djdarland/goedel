@@ -123,7 +123,7 @@ get_one_token(Stream, Token, Start, End, Left, Ahead):-
 	Ahead =  [A],
 	End = Start
      ;  ( Left = []
-	  -> get_byte(Stream, C)
+	  -> get_code(Stream, C)
 	  ;  Left = [C]
 	),
 	token(C, Stream, Token, Start, End, Ahead)
@@ -149,7 +149,7 @@ token(0'%, Stream, Token, Start, End, Ahead) :- !,
  */
 
 comment(Stream, EndOfFile):-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( C = 10
      -> true
      ;  ( C = -1
@@ -187,13 +187,13 @@ token(0'", Stream, string(String), Start, End, Ahead) :- !,
  */
 
 string_chars(Cs, Stream, Very_first, Start, End, Ahead) :-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    string_chars_aux(C, Cs, Stream, Very_first, Start, End, Ahead).
 
 string_chars_aux(0'", [], _, _, Start, Start, []) :- !.
 
 string_chars_aux(0'\\, Cs, Stream, Very_first, Start, End, Ahead) :- !,
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( C = -1
      -> format(user_error, '~nError: incomplete string in lines: ~d-~d.~n',
 			     [Very_first, Start]),
@@ -233,7 +233,7 @@ token(0'}, Stream, '}'(N), Ln, Ln, Ahead) :- !,
    commit_label(N, Stream, Ahead).
 
 commit_label(N, Stream, Ahead) :-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( C == 0'_
      -> number_chars(Cs, Stream, Ahead),
 	name(N, Cs)
@@ -260,7 +260,7 @@ token(0',, _, ',', Ln, Ln, []) :- !.
 
 % Underscore, the name is "_littlename"
 token(0'_, Stream, '_'(N), Ln, Ln, Ahead) :- !,
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( little_letter(C) 
      -> name_chars(Cs, Stream, Ahead),
         name(N, [0'_, C|Cs])
@@ -295,7 +295,7 @@ token(C, Stream, little_name(N), Ln, Ln, Ahead) :-
 % name_chars is written in this clumsy form in order to remove choice points
 % hence improve efficiency
 name_chars(Cs, Stream, Ahead) :-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( ( little_letter(C);
        number_char(C);
        big_letter(C);
@@ -356,7 +356,7 @@ graphic_char(0'\').
 
 
 graphic_chars(Cs, Stream, Ahead) :-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( graphic_char(C)
      -> Cs = [C|Cs2],
 	graphic_chars(Cs2, Stream, Ahead)
@@ -376,11 +376,11 @@ token(C, Stream, Token, Ln, Ln, Ahead) :-
    !,
    number_chars(Cs1, Stream, Ahead1),
    ( Ahead1 = [0'.]
-     -> get_byte(Stream, C0),
+     -> get_code(Stream, C0),
 	( number_char(C0)	% make sure it's not P(a) <- a = 3.
 	  -> number_chars(Cs2, Stream, Ahead2),
 	     ( Ahead2 = [0'E]
-	       -> get_byte(Stream, C2),
+	       -> get_code(Stream, C2),
 		  ( signed_number(C2)
 		    -> number_chars(Cs3, Stream, Ahead),
 		       append(Cs2, [0'E, C2|Cs3], Cs4),
@@ -416,7 +416,7 @@ signed_number(C) :-
 
 
 number_chars(Cs, Stream, Ahead) :-
-   get_byte(Stream, C),
+   get_code(Stream, C),
    ( number_char(C)
      -> Cs = [C|Cs2],
         number_chars(Cs2, Stream, Ahead)

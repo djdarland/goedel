@@ -1,0 +1,9 @@
+EXPORT Fl.
+
+IMPORT Strings.
+
+IMPORT Floats.
+
+BASE Dennis.
+
+PREDICATE ThFl : Float * Float.

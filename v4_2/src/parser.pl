@@ -145,7 +145,7 @@ lang_file_ok(ModuleName) :-
 	sappend(ModuleName, '.lng', LangFile2),
 		    sappend('GL/', LangFile2, LangFile),
 
-   open(LangFile, read, Stream, [type(binary)]),
+   open(LangFile, read, Stream, [type(text)]),
    file_version(V),
    ( read(Stream, version(V, ordinary))
      -> close(Stream)
@@ -189,7 +189,7 @@ module_as_items(ModuleName, ExpTokens, LocTokens):-
 module_part(ModuleName, String, Module):-
 	sappend(ModuleName, String, FileName2),
 	sappend('GL/', FileName2, FileName),
-   ( open(FileName, read, Stream, [type(binary)])
+   ( open(FileName, read, Stream, [type(text)])
      -> my_format(user_output, 'Reading file "~w" ...~n', [FileName]),
 	get_one_module(Stream, Module),	% in tokenizer.pl
 	close(Stream)

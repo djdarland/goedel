@@ -100,7 +100,9 @@ goedel:-
 	consult('Substs'),
 
 	consult('Programs'),
-	consult('SharedPrograms'),
+%	consult('ProgDefs'), % DJD added stubs
+ 	
+	consult('SharedPrograms'),  
 	consult('ProgramCache'),
 
 	consult('Scripts'),

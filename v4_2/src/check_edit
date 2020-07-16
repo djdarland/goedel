@@ -62,8 +62,12 @@ if(-e $I:r.in) then
 # Run Goedel
 #    echo ../Tests/OUT/$I:r.out
 #    echo ../Tests/ERR/$I:r.err
-    ($PROLOG <$I:r.in >../Tests/OUT/$I:r.out.tmp) >& ../Tests/ERR/$I:r.err.tmp
+    ($PROLOG <$I:r.in >../Tests/OUT/$I:r.out.tmp) |& \
+        sed "s/[0-9]* msec//"> ../Tests/ERR/$I:r.err.tmp
 
+
+#	|& \
+#        sed "s/.......s cpu (.*)//"
 #    echo "Testing $I:r.in"
     
 # Check for core dump

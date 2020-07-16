@@ -1,0 +1,10 @@
+LOCAL AssocList.
+
+Lookup(key, value, assoc_list, new_assoc_list) <-
+
+IF SOME [v] Member(Pair(key, v), assoc_list)
+THEN value = v &
+new_assoc_list = assoc_list
+ELSE
+new_assoc_list = [Pair(key, value) | assoc_list].
+

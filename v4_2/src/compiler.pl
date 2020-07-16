@@ -180,7 +180,7 @@ compile_program_aux(ModuleName, Code, ModuleDef, ModuleDescriptor, Switch) :-
 	    %% djd_cat_1(SupFile, FileName, 'djd_work')),
 
 /*	    sappend(ModuleName, '.sup', SupFile),
-	     ( open(SupFile, read, SupStream, [type(binary)])
+	     ( open(SupFile, read, SupStream, [type(text)])
 	       -> close(SupStream),
 		  sappend(' >> ', FileName, CommString1),
 		  sappend(SupFile, CommString1, CommString2),

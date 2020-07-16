@@ -41,7 +41,8 @@ set_of(T, W, X, FreeVars) :-
 %- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 set_of_aux(T, W, set(X)) :-
-   ( setof(pair(T, Suspended), W^call_residue(W, Suspended), Y)
+%   ( setof(pair(T, Suspended), W^call_residue(W, Suspended), Y)
+   ( setof(pair(T, Suspended), user:call_residue(W, Suspended), Y)
      -> ( 'Sets':clear_set(Y, X)
 	  -> true
 	  ;  format(user_error, 'Floundered in an intensional set.~n', []),

@@ -357,6 +357,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
             D=[H],
             C='MetaDefs.Empty.C0'
         ).
+
 'ParserPrograms.ExportSymbolTable.P3'('ProgDefs.Program.F4'(_,A,'ProgDefs.Language.F1'(B),_), C, 'ParserPrograms.SymbTab.F4'(C,D,E,F)) :-
         (   'AVLTrees.AVLSearch.P3'(B, C, G) ->
             D=G,
@@ -378,6 +379,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'IO.WriteString.P2'(C, '".'),
         'ParserPrograms.NewLines.P2'(C, 2).
 'ParserPrograms.CheckStatementAux.P6'([], _, _, A, A, []).
+
 'ParserPrograms.CheckStatementAux.P6'([A|B], C, D, E, F, G) :-
         'SharedPrograms.StatementInLanguage.P5'(A, C, H, I, J),
         (   J=[],
@@ -391,7 +393,8 @@ int_to_char_dl(Int, Chars, CharsT) :-
             K=D
         ),
         'Lists.Append.P3'(J, M, G),
-        'ParserPrograms.CheckStatementAux.P6'(B, C, K, L, F, M).
+	    'ParserPrograms.CheckStatementAux.P6'(B, C, K, L, F, M).
+
 'ParserPrograms.CandidateNames.P6'([], _, _, _, A, A).
 'ParserPrograms.CandidateNames.P6'(['ProgDefs.Symbol.F2'(B,C)|A], D, E, F, G, H) :-
         (   'SharedPrograms.Accessible.P2'(F, B) ->
@@ -1649,9 +1652,9 @@ int_to_char_dl(Int, Chars, CharsT) :-
 'SharedPrograms.MeltedBodyTyping.P8'(A, B, C, D, E, F, G, H) :-
         (   A='MetaDefs.Empty.C0' ->
             D=C,
-            F=G,
+            F=G, 
             H=[],
-            E='MetaDefs.Empty.C0'
+           E='MetaDefs.Empty.C0'
         ;   A='MetaDefs.&''.F2'(I,J) ->
             'SharedPrograms.MeltedBodyTyping.P8'(I, B, C, K, L, F, M, N),
             (   N=[] ->
@@ -1664,6 +1667,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
             E='MetaDefs.Commit.F2'(P,L)
         ;   'SharedPrograms.MeltedStandardTyping.P8'(A, B, C, D, E, F, G, H)
         ).
+
 'SharedPrograms.MeltedTermType.P9'('MetaDefs.Var.F2'(A,B), C, _, D, E, 'MetaDefs.Var.F2'(A,B), F, F, G) :-
         'SharedPrograms.LookupVarTyping.P4'(D, 'MetaDefs.Var.F2'(A,B), E, H),
         'SharedPrograms.UnifyMeltedTypes.P4'(C, H, 'MetaDefs.Var.F2'(A,B), G).
@@ -1989,7 +1993,8 @@ int_to_char_dl(Int, Chars, CharsT) :-
 'SharedPrograms.SimpleCondToIntDL.P3'('ProgDefs.Or.F2'(A,B), C, D) :-
         'SharedPrograms.CharDL.P3'('"(', C, E),
         'SharedPrograms.OrSeqToIntDL.P3'('ProgDefs.Or.F2'(A,B), E, F),
-        'SharedPrograms.CharDL.P3'('")', F, D).
+'SharedPrograms.CharDL.P3'('")', F, D).
+
 'SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
         'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
         (   K=[] ->

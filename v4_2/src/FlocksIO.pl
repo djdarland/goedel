@@ -55,7 +55,7 @@ Date:		2 Dec. 1992
 'FlocksIO.FlockCompile.P2'(GString, 'Flocks.Flock.F1'(FlockList)) :-
    nonvar(GString), !,
    user:gstring2string(GString, String),
-   ( open(String, read, Stream, [type(binary)])
+   ( open(String, read, Stream, [type(text)])
      -> user:read_file(Stream, Chars),
         'Units':token_identifiers(Chars, Tokens, []),
         user:flock_compile_cmd_aux(Tokens, FlockList), !,
@@ -78,7 +78,7 @@ Date:		2 Dec. 1992
    nonvar(GString), !,
    user:gstring2string(GString, String),
    Flock = 'Flocks.Flock.F1'(List),
-   ( open(String, write, Stream, [type(binary)])
+   ( open(String, write, Stream, [type(text)])
      -> user:flock_decompile_cmd_aux(List, Stream), !,
         close(Stream)
      ;  format(user_error, '~nError: cannot open file "~a".~n', [String])

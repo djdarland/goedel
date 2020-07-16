@@ -1,0 +1,10 @@
+EXPORT   AssocList.
+
+IMPORT Strings.
+
+BASE PairType.
+
+FUNCTION  Pair : Integer * String -> PairType.
+
+PREDICATE  Lookup : Integer * String * List(PairType) * List(PairType).
+

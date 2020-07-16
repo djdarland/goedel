@@ -24,15 +24,19 @@
 '~Lists.Delete.P3.0'(A, [B|C], [B|D]) :-
         '~Lists.Delete.P3'(A, C, D).
 'Lists.Append.P3'(A, B, C) :-
-        user:goedel_freeze(nonvar(A)or nonvar(C), 'Lists':'Lists.Append.P3.0'(A,B,C)).
+        user:goedel_freeze(nonvar(A) or nonvar(C), 'Lists':'Lists.Append.P3.0'(A,B,C)).
 '~Lists.Append.P3'(A, B, C) :-
-        user:goedel_freeze(nonvar(A)or nonvar(C), 'Lists':'~Lists.Append.P3.0'(A,B,C)).
-'Lists.Append.P3.0'([], A, A).
-'~Lists.Append.P3.0'([], A, A).
+user:goedel_freeze(nonvar(A) or nonvar(C), 'Lists':'~Lists.Append.P3.0'(A,B,C)).
+
+'Lists.Append.P3.0'([], A, A) :-
+     '~Lists.Append.P3.0'([], A, A).
+
 'Lists.Append.P3.0'([A|B], C, [A|D]) :-
         'Lists.Append.P3'(B, C, D).
+
 '~Lists.Append.P3.0'([A|B], C, [A|D]) :-
         '~Lists.Append.P3'(B, C, D).
+
 'Lists.DeleteFirst.P3'(A, B, C) :-
         user:goedel_freeze(nonvar(A)and nonvar(B)or nonvar(C), 'Lists':'Lists.DeleteFirst.P3.0'(A,B,C)).
 '~Lists.DeleteFirst.P3'(A, B, C) :-

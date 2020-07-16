@@ -924,7 +924,7 @@ flock_compile_cmd_aux(Tokens, Flock) :-
    ).
 
 read_file(Stream, Chars) :-
-   get_byte(Stream, Char),
+   get_code(Stream, Char),
    ( Char = -1
      -> Chars = []
      ;  Chars = [Char|Chars2],

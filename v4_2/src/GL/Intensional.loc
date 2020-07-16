@@ -1,0 +1,20 @@
+LOCAL Intensional.
+
+Sum(s,y) <-
+	 x In s &
+	 Sum1(s\{x},x,y).
+
+Sum1({}, x, x).
+Sum1(s,x,x+w) <-
+	      z In s &
+	      Sum1(s\{z},z,w).
+
+Max(s,y) <-
+	 x In s &
+	 Max1(s\{x},x,y).
+
+Max1({},x,x).
+Max1(s,x,y) <-
+	    z In s &
+	    IF z > x THEN Max1(s\{z},z,y) ELSE Max1(s\{z},x,y).
+
