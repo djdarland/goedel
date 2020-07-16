@@ -16,13 +16,13 @@ do
     if test -f ../Tests/REFDIFF/$1.refdiff.tmp
     then
 	echo "4 ../Tests/REFDIFF/$1.refdiff.tmp"
-	echo "5 ../Tests/REFOUT/$1.refout OUT/$1.out.tmp"
     fi
+	echo "5 ../Tests/REFOUT/$1.refout OUT/$1.out.tmp"
     if test -f ../Tests/ERRDIFF/$1.errdiff.tmp 
     then
 	echo "6 ../Tests/ERRDIFF/$1.errdiff.tmp"
-	echo "7 ../Tests/REFERR/$1.referr ERR/$1.err.tmp"
     fi
+	echo "7 ../Tests/REFERR/$1.referr ERR/$1.err.tmp"
     echo "11 Approve New $1 Output To Reference"
     echo "16 edit Port.txt"
 

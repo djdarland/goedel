@@ -1,0 +1,9 @@
+EXPORT Fl.
+
+IMPORT Strings.
+
+IMPORT Integers.
+
+BASE Dennis.
+
+PREDICATE ThFl : Integer * Integer.

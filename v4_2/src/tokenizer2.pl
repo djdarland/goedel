@@ -61,14 +61,14 @@ get_one_module_aux(Chars, Module) :-
 
 
 stream2chars(Str,Cs):-
-   get_byte(Str, C),
+   get_code(Str, C),
    stream2chars_aux(Str, C, Cs).
 
 stream2chars_aux(Str, C, Cs):-
    ( C = -1
      -> Cs = []
      ;  Cs = [C|Cs1],
-	get_byte(Str, C1),
+	get_code(Str, C1),
 	stream2chars_aux(Str, C1, Cs1)
    ).
 

@@ -1,0 +1,14 @@
+EXPORT Intensional.
+
+IMPORT Sets.
+
+IMPORT Integers.
+
+PREDICATE Sum : Set(Integer) * Integer.
+
+PREDICATE Sum1 : Set(Integer) * Integer * Integer.
+
+PREDICATE Max : Set(Integer) * Integer.
+
+PREDICATE Max1 : Set(Integer) * Integer * Integer.
+

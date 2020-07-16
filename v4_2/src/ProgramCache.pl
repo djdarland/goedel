@@ -27,7 +27,7 @@
 find_program(Main, Program) :-
    'Strings':concat(Main, '".prm', GFile),
    user:gstring2string(GFile, File),
-   ( open(File, read, Stream, [type(binary)]),
+   ( open(File, read, Stream, [type(text)]),
      user:readin_program(Stream, Object) ->
      Program = Object
    ; 'Strings':'Strings.StringInts.P2'(Main, Chars),

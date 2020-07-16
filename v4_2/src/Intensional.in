@@ -1,0 +1,24 @@
+consult(init).
+goedel.
+;cs Intensional.
+;c Intensional.
+;l Intensional.x
+
+k = {s : s Subset {z : n Mod z = 0 & 1 =< z < 10}} & n = 10.
+
+djd1 = 6 + 8.
+
+Sum({1, 5, 5, 1}, x).
+
+Sum({1, 5, 5, 1, 9}, x).
+
+Sum({x : 100 Mod x = 0 & 1 < x < 100}, s).
+
+Max({8, 99, 5, 4}, 99).
+
+k = {s : s Subset {z : n Mod z = 0 & 1 =< z < 10}} & n = 10.
+
+halt.
+
+
+
