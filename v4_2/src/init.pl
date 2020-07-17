@@ -65,6 +65,7 @@ goedel:-
 
 				% ground representation
 	consult(system),
+
 	consult(avltrees),
 	consult(builtin),
 
@@ -210,7 +211,7 @@ process(0) :-
 
 process(1) :-
 	goedel,
-	unix(exit(1)).
+	halt.
 
 /*------------------------------------------------------------------------------
 * utility routines for init.pl only.

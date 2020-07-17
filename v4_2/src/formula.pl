@@ -150,7 +150,7 @@ formula([Token|Tokens], Return, SpecLeft, PrecLeft, Language):-
 	  ;  Return = Return2
 	)
      ;  length(Tokens, Position),
-	Return = [error('undeclared or illegal symbol: "~w"', [Token])/Position]
+	Return = [error('B undeclared or illegal symbol: "~w"', [Token])/Position]
    ).
 
 /*------------------------------------------------------------------------------
@@ -529,12 +529,19 @@ lookup_reserved_word('|', end_of_formula(graphic_name('|'))).
  */
 
 atom([], [], [], [], _).
+
 atom([Token|Tokens], Remains, Formulae, ErrorReturn, Language):-
-   ( check_formula_token(Token, SymbolList, Language)
-     -> atom(SymbolList, Tokens, Remains, Formulae, ErrorReturn, Language)
-     ;  Formulae = [],
+	write(dennis),
+	write(Token),
+	reserved_word(Token),
+	atom(Tokens, Remains, Formulae, ErrorReturn, Language).
+
+atom([Token|Tokens], Remains, Formulae, ErrorReturn, Language):-
+   (check_formula_token(Token, SymbolList, Language)
+   -> atom(SymbolList, Tokens, Remains, Formulae, ErrorReturn, Language)
+   ;  Formulae = [],
 	length(Tokens, Position),
-	ErrorReturn = [error('undeclared or illegal symbol: "~w"',
+	ErrorReturn = [error('A undeclared or illegal symbol: "~w"',
 				[Token])/Position]
    ).
 

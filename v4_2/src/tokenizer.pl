@@ -371,42 +371,146 @@ graphic_chars(Cs, Stream, Ahead) :-
  */
 
 % Number & Float
-token(C, Stream, Token, Ln, Ln, Ahead) :-
-   0'0 =< C, C =< 0'9,
+token(First_digit, Stream, Token, Ln, Ln, Ahead) :-
+   0'0 =< First_digit, First_digit =< 0'9,
    !,
-   number_chars(Cs1, Stream, Ahead1),
+   number_chars(Rest_Whole, Stream, Ahead1),
+   write(rest_whole),
+   write(Rest_Whole),
    ( Ahead1 = [0'.]
-     -> get_code(Stream, C0),
-	( number_char(C0)	% make sure it's not P(a) <- a = 3.
-	  -> number_chars(Cs2, Stream, Ahead2),
+   -> get_code(Stream, First_digit_fraction),
+       write(first_digit_fraction),
+       write(First_digit_fraction),
+	( number_char(First_digit_fraction) % make sure it's not P(a) <- a = 3.
+	-> number_chars(Fraction, Stream, Ahead2),
+	    write(fraction),
+	    write(Fraction),
 	     ( Ahead2 = [0'E]
-	       -> get_code(Stream, C2),
-		  ( signed_number(C2)
-		    -> number_chars(Cs3, Stream, Ahead),
-		       append(Cs2, [0'E, C2|Cs3], Cs4),
-		       append(Cs1, [0'., C0|Cs4], Cs5),
-		       name(Int2, [C|Cs5]),
-		       Token = float(Int2)
-		    ;  format(user_error, '~nError: wrong format in the float number in line ~d.~n', [Ln]),
+	     -> get_code(Stream, First_of_exponent),
+		      write(first_of_exponent),
+		      write(First_of_exponent),
+		 
+		  ( signed_number(First_of_exponent)  % +, -, or digit
+		  -> number_chars(Rest_of_exponent, Stream, Ahead),
+		      write(rest_of_exponent),
+		      write(Rest_of_exponent),
+		      append([First_of_exponent], Rest_of_exponent, Part1),
+		      write(part1),
+		      write(Part1),
+		      
+		      append([0'E], Part1, Exponent),
+		      write(exponent),
+		      write(Exponent),
+		      
+		      append([First_digit], Rest_Whole, Part2),
+		      write(part2),
+		      write(Part2),
+		      
+		      append(Part2, [0'.], Part3),
+		      write(part3),
+		      write(Part3),
+		      
+		      append(Part3, [First_digit_fraction], Part4),
+		      write(part4),
+		      write(Part4),
+
+		      append(Part4, Fraction, Mantissa),
+		      write(mantissa),
+		      write(Mantissa),
+		      
+		      append(Mantissa, Exponent, Whole),
+		      write(whole),
+		      write(Whole),
+		      
+		      name(Int2, Whole),
+
+%		      Token = float(Int2),
+		      Token = float(Int2),
+		      write(token),
+		      write(Token),
+		      write(ahead),
+		      write(Ahead)
+		    ;  format(user_error, '~nError: wrong format in the float number in line ~d.~n', [Ln])
 		            % here is the error recovery job
-	       	       append(Cs1, [0'., C0|Cs2], Cs7),
-		       name(Int4, [C|Cs7]),
-		       Token = float(Int4),
-		       Ahead = [C2]
+%	       	       append(Cs1, [0'., C0|Cs2], Cs7),
+%		       name(Int4, [C|Cs7]),
+%		       Token = float(Int4),
+%		       Ahead = [C2]
 		  )
-	       ;  append(Cs1, [0'., C0|Cs2], Cs6),
-		  name(Int3, [C|Cs6]),
-		  Token = float(Int3),
-		  Ahead = Ahead2
+	     ;
+		 append([First_digit], Rest_Whole, Part2),
+		      write(part2),
+		      write(Part2),
+		 append(Part2, [0'.], Part3),
+		      write(part3),
+		      write(Part3),
+		 append(Part3, [First_digit_fraction], Part4),
+		      write(part4),
+		      write(Part4),
+		 append(Part4, Fraction, Mantissa),
+		      write(mantissa),
+		      write(Mantissa),
+		 name(Int3, Mantissa),
+		 Token = float(Int3),
+		      write(token),
+		      write(Token),
+		 Ahead = Ahead2
 	     )
-	  ;  name(Int1, [C|Cs1]),
+	;
+	    append([First_digit], Rest_Whole, Whole),
+	    name(Int1, Whole),
 	     Token = number(Int1),
-	     Ahead = [0'., C0]
+		      write(token),
+		      write(Token),
+	     Ahead = [0'.]
 	)
-     ;  name(Int1, [C|Cs1]),
-	Token = number(Int1),
-	Ahead = Ahead1
+     ;  
+       append([First_digit], Rest_Whole, Whole),
+       name(Int1, Whole),
+       Token = number(Int1),
+		      write(token),
+		      write(Token),
+       Ahead = Ahead1
    ).
+
+
+%%% % Number & Float
+%%% token(C, Stream, Token, Ln, Ln, Ahead) :-
+%%%    0'0 =< C, C =< 0'9,
+%%%    !,
+%%%    number_chars(Cs1, Stream, Ahead1),
+%%%    ( Ahead1 = [0'.]
+%%%      -> get_code(Stream, C0),
+%%% 	( number_char(C0)	% make sure it's not P(a) <- a = 3.
+%%% 	  -> number_chars(Cs2, Stream, Ahead2),
+%%% 	     ( Ahead2 = [0'E]
+%%% 	       -> get_code(Stream, C2),
+%%% 		  ( signed_number(C2)
+%%% 		    -> number_chars(Cs3, Stream, Ahead),
+%%% 		       append(Cs2, [0'E, C2|Cs3], Cs4),
+%%% 		       append(Cs1, [0'., C0|Cs4], Cs5),
+%%% 		       name(Int2, [C|Cs5]),
+%%% 		       Token = float(Int2)
+%%% 		    ;  format(user_error, '~nError: wrong format in the float number in line ~d.~n', [Ln]),
+%%% 		            % here is the error recovery job
+%%% 	       	       append(Cs1, [0'., C0|Cs2], Cs7),
+%%% 		       name(Int4, [C|Cs7]),
+%%% 		       Token = float(Int4),
+%%% 		       Ahead = [C2]
+%%% 		  )
+%%% 	       ;  append(Cs1, [0'., C0|Cs2], Cs6),
+%%% 		  name(Int3, [C|Cs6]),
+%%% 		  Token = float(Int3),
+%%% 		  Ahead = Ahead2
+%%% 	     )
+%%% 	  ;  name(Int1, [C|Cs1]),
+%%% 	     Token = number(Int1),
+%%% 	     Ahead = [0'., C0]
+%%% 	)
+%%%      ;  name(Int1, [C|Cs1]),
+%%% 	Token = number(Int1),
+%%% 	Ahead = Ahead1
+%%%    ).
 
 
 signed_number(0'+) :- !.

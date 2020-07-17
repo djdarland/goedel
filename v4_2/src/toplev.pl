@@ -210,7 +210,7 @@ contiuation(1, Tokens, Prog, ModName) :-
    string2Gstring(ModName, GModuleName),
    'ParserPrograms.GoalSymbolTable.P3'(Prog, GModuleName, SymbolTable),
    process_query(Tokens, Prog, SymbolTable),
-   unix(exit(0)).
+   halt.
 
 %------------------------------------------------------------------------------
 
@@ -576,7 +576,7 @@ prolog_cmd :-
    ). 
 
 quit_cmd :-
-   unix(exit(0)).
+   halt.
 
 %------------------------------------------------------------------------------
 

@@ -307,6 +307,7 @@ graphic_chars_2nd([C|Chars], Remains, Cs) :-
 token_2nd(C, Chars, Remains, Token) :-
    0'0 =< C, C =< 0'9,
    !,
+   write(enter_number_2nd),
    number_chars_2nd(Chars, Remains1, Cs1),
    ( Remains1 = [0'.|Remains2]
      -> ( Remains2 = [C0|Remains3],
@@ -319,7 +320,9 @@ token_2nd(C, Chars, Remains, Token) :-
                        append(Cs2, [0'E, C2|Cs3], Cs4),
                        append(Cs1, [0'., C0|Cs4], Cs5),
                        name(Int2, [C|Cs5]),
-                       Token = float(Int2)
+		      Token = float(Int2),
+		      write(token_2nd),
+		      write(Token)
                     ;  format(user_error, '~nError: wrong format in the float number.~n', []),
                   		% here is the error recovery job
                        append(Cs1, [0'., C0|Cs2], Cs7),
