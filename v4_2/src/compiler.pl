@@ -976,6 +976,8 @@ evaluatable_functor('"Integers').
 evaluatable_functor('"Rationals').
 evaluatable_functor('"Sets').
 evaluatable_functor('"Strings').
+evaluatable_functor('"Floats').  %% added DJD
+
 
 /*------------------------------------------------------------------------------
  * make_flat_name(OName, FlatName, Prefix, Postfix)
