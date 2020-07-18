@@ -1,7 +1,10 @@
 consult(init).
 goedel.
+;cs Fl.
 ;c Fl.
+;l Fl.
+ThFl(5.0, z).
 
-exit.
+halt.
 
 

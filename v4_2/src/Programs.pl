@@ -885,6 +885,10 @@
 '~Programs.InstanceOfHead1.P4'('MetaDefs.CTerm.F1'(A), 'MetaDefs.CTerm.F1'(A), B, B).
 'Programs.InstanceOfHead1.P4'('MetaDefs.Int.F1'(A), 'MetaDefs.Int.F1'(A), B, B).
 '~Programs.InstanceOfHead1.P4'('MetaDefs.Int.F1'(A), 'MetaDefs.Int.F1'(A), B, B).
+
+%% Next 2 added DJD
+'Programs.InstanceOfHead1.P4'('MetaDefs.Flo.F1'(A), 'MetaDefs.Flo.F1'(A), B, B).
+'~Programs.InstanceOfHead1.P4'('MetaDefs.Flo.F1'(A), 'MetaDefs.Flo.F1'(A), B, B).
 'Programs.InstanceOfHead1.P4'('MetaDefs.Str.F1'(A), 'MetaDefs.Str.F1'(A), B, B).
 '~Programs.InstanceOfHead1.P4'('MetaDefs.Str.F1'(A), 'MetaDefs.Str.F1'(A), B, B).
 'Programs.InstanceOfHead1.P4'('MetaDefs.Prm.F1'(A), 'MetaDefs.Prm.F1'(A), B, B).

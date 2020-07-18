@@ -105,6 +105,10 @@
         'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Int.F1'(A)), C, D).
 '~Substs.AddTermBinding1.P4'('MetaDefs.Int.F1'(A), B, C, D) :-
         '~Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Int.F1'(A)), C, D).
+'Substs.AddTermBinding1.P4'('MetaDefs.Flo.F1'(A), B, C, D) :-
+        'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Flo.F1'(A)), C, D).
+'~Substs.AddTermBinding1.P4'('MetaDefs.Flo.F1'(A), B, C, D) :-
+        '~Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Flo.F1'(A)), C, D).
 'Substs.AddTermBinding1.P4'('MetaDefs.Prm.F1'(A), B, C, D) :-
         'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Prm.F1'(A)), C, D).
 '~Substs.AddTermBinding1.P4'('MetaDefs.Prm.F1'(A), B, C, D) :-
@@ -539,6 +543,8 @@
 '~Substs.Dereference.P3'('MetaDefs.Str.F1'(A), _, 'MetaDefs.Str.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
 '~Substs.Dereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
+'Substs.Dereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
+'~Substs.Dereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 '~Substs.Dereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.SuchThat.F2'(A,B), _, 'MetaDefs.SuchThat.F2'(A,B)).
@@ -569,6 +575,8 @@
         '~Substs.FullDerefTerm1.P4'(B, D, E, F).
 'Substs.FullDerefTerm.P4'('MetaDefs.Int.F1'(A), _, _, 'MetaDefs.Int.F1'(A)).
 '~Substs.FullDerefTerm.P4'('MetaDefs.Int.F1'(A), _, _, 'MetaDefs.Int.F1'(A)).
+'Substs.FullDerefTerm.P4'('MetaDefs.Flo.F1'(A), _, _, 'MetaDefs.Flo.F1'(A)).
+'~Substs.FullDerefTerm.P4'('MetaDefs.Flo.F1'(A), _, _, 'MetaDefs.Flo.F1'(A)).
 'Substs.FullDerefTerm.P4'('MetaDefs.Prm.F1'(A), _, _, 'MetaDefs.Prm.F1'(A)).
 '~Substs.FullDerefTerm.P4'('MetaDefs.Prm.F1'(A), _, _, 'MetaDefs.Prm.F1'(A)).
 'Substs.FullDerefTerm.P4'('MetaDefs.Str.F1'(A), _, _, 'MetaDefs.Str.F1'(A)).
@@ -723,6 +731,8 @@
 '~Substs.GetConstant1.P4'('MetaDefs.XCTerm.F2'(A,B), 'MetaDefs.XCTerm.F2'(A,B), C, C).
 'Substs.GetConstant1.P4'('MetaDefs.Int.F1'(A), 'MetaDefs.Int.F1'(A), B, B).
 '~Substs.GetConstant1.P4'('MetaDefs.Int.F1'(A), 'MetaDefs.Int.F1'(A), B, B).
+'Substs.GetConstant1.P4'('MetaDefs.Flo.F1'(A), 'MetaDefs.Flo.F1'(A), B, B).
+'~Substs.GetConstant1.P4'('MetaDefs.Flo.F1'(A), 'MetaDefs.Flo.F1'(A), B, B).
 'Substs.GetConstant1.P4'('MetaDefs.Prm.F1'(A), 'MetaDefs.Prm.F1'(A), B, B).
 '~Substs.GetConstant1.P4'('MetaDefs.Prm.F1'(A), 'MetaDefs.Prm.F1'(A), B, B).
 'Substs.GetConstant1.P4'('MetaDefs.Str.F1'(A), 'MetaDefs.Str.F1'(A), B, B).
@@ -753,6 +763,8 @@
 '~Substs.FullDereference.P3'('MetaDefs.Str.F1'(A), _, 'MetaDefs.Str.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
 '~Substs.FullDereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
+'Substs.FullDereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
+'~Substs.FullDereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 '~Substs.FullDereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.SuchThat.F2'(A,B), _, 'MetaDefs.SuchThat.F2'(A,B)).

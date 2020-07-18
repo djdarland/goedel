@@ -1560,6 +1560,9 @@ pobj_to_ground(Term, VarNo, NewVarNo, Ground) :-
    ; integer(Term) ->
      Ground = 'MetaDefs.Int.F1'(Term),
      NewVarNo is VarNo
+   ; float(Term) ->
+     Ground = 'MetaDefs.Flo.F1'(Term),
+     NewVarNo is VarNo
    ; Term = N // M ->
      Ground = 'MetaDefs.Term.F2'('MetaDefs.Name.F4'('"Rationals', '"//'
         , 'MetaDefs.Function.C0', 2), ['MetaDefs.Int.F1'(N), 'MetaDefs.Int.F1'(M)]),

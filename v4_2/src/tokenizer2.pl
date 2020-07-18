@@ -307,7 +307,6 @@ graphic_chars_2nd([C|Chars], Remains, Cs) :-
 token_2nd(C, Chars, Remains, Token) :-
    0'0 =< C, C =< 0'9,
    !,
-   write(enter_number_2nd),
    number_chars_2nd(Chars, Remains1, Cs1),
    ( Remains1 = [0'.|Remains2]
      -> ( Remains2 = [C0|Remains3],

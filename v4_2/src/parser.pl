@@ -61,38 +61,24 @@ parse_program(ModuleName, Switch, Program):-
    'ParserPrograms.QuickNewProgram.P3'(GModuleName, ModuleKind, EmptyProg),
    parse_module_decl(GModuleName, Switch, ExpTokens, ExpTokens2, LocTokens,
 		     LocTokens2, [ModuleName], _LoadedModule, EmptyProg, Prog2),
-   write(past_parse_module_decl),
    'ParserPrograms.ExportSymbolTable.P3'(Prog2, GModuleName, ExpLang), 
-   write(past_parse_module_decl_001),
    parse_language1(ExpTokens2, ExpTokens3, GModuleName, 'ProgDefs.Exported.C0',
 			ExpLang, ExpLang2),
-   write(past_parse_module_decl_002),
    parse_language2(ExpTokens3, ExpTokens4, GModuleName, 'ProgDefs.Exported.C0',
 			ExpLang2, ExpLang3),
-   write(past_parse_module_decl_003),
    'ParserPrograms.UpdateProgramLanguage.P4'(Prog2, GModuleName, ExpLang3, Prog3), 
-   write(past_parse_module_decl_004),
    parse_delays_aux(ExpTokens4, ExpTokens5, GModuleName, ModulePartExp,
 	                ExpLang3, Prog3, Prog4, export),
-   write(past_parse_module_decl_005),
    'ParserPrograms.LocalSymbolTable.P3'(Prog4, GModuleName, LocLang), 
-   write(past_parse_module_decl_006),
    parse_language1(LocTokens2, LocTokens3, GModuleName, 'ProgDefs.Hidden.C0',
 			LocLang, LocLang2),
-   write(past_parse_module_decl_007),
    parse_language2(LocTokens3, LocTokens4, GModuleName, 'ProgDefs.Hidden.C0',
 			LocLang2, LocLang3),
-   write(past_parse_module_decl_008),
    'ParserPrograms.UpdateProgramLanguage.P4'(Prog4, GModuleName, LocLang3, Prog5), 
-   write(past_parse_module_decl_009),
    parse_delays_aux(LocTokens4, LocTokens5, GModuleName, ModulePartLoc,
 	                LocLang3, Prog5, Prog6, local),
-   write(past_parse_module_decl_010),
    parse_statements(GModuleName, ExpTokens5, LocTokens5, LocLang3,
-		    Prog6, Program),
-      write(past_parse_module_decl_011).
-
-
+		    Prog6, Program).
 
 /*------------------------------------------------------------------------------
  */
@@ -296,77 +282,8 @@ check_module(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
    ( ExpName = ModuleName
      -> true
      ;  format(user_error, '~nWarning: module name of the export part differs from the file name.~n', [])
-   ),
-   write(bottom_check_module).
+   ).
 
-
-
-check_module_try(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2) :-
-	gstring2string(GModuleName, ModuleName),
-	write(modulename),
-	write(ModuleName),
-	LocName = ModuleName,
-	ExpName = ModuleName,
-	write(locname),
-	write(LocName),
-	write(expname),
-	write(ExpName),
-	write(check_0002),
-	( ExpTokens = [item([big_name('EXPORT'), big_name(ExpName)],
-%	( ExpTokens2 = [item(['EXPORT', big_name(ExpName)],
-			     _, _) | ExpTokens2]
-	-> true
-	; ExpTokens2 = [_|ExpTokens],
-	      print_out_error('Error: BB illegal module declaration in the export part of module "~w"', [ModuleName], null, 0, 0, [], null)
-	),
-	write(check_0003),
-	
-%	( LocTokens2 = [item(['LOCAL', big_name(LocName)],
-	( LocTokens = [item([big_name('LOCAL'), big_name(LocName)],
-			     _, _) | LocTokens2]
-	-> true
-	;  LocTokens2 = [_|LocTokens],
-	    print_out_error('Error: DD illegal module declaration in the local part of module "~w"',
-			    [ModuleName], null, 0, 0, [], null)
-	),
-	write(check_0004),
-	write(module_name),
-	write(ModuleName),
-	write(loc_tokens2),
-	write(LocTokens2),
-	write(exp_tokens2),
-	write(ExpTokens2).
-
-check_module_bad(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
-	gstring2string(GModuleName, ModuleName),
-	write(module_name),
-	write(ModuleName),
-	write(loc_tokens),
-	write(LocTokens),
-	write(exp_tokens),
-	write(ExpTokens),
-	( (LocTokens == [], ExpTokens == [])
-	-> (ExpTokens2 = [],
-	    LocTokens2 = [],
-	    print_out_error('Error: module "~w" missing', [ModuleName], null, 0, 0,[], null),
-	LocTokens == [])
-	; ( ExpTokens2 = [item(big_name('EXPORT'),big_name(ModuleName)
-				   , _, _) | ExpTokens])
-	  -> true
-	  ; format(user_error, '~nWarning: export part of module "~w" missing.~n', [ModuleName])
-	; (LocTokens2 = [item(big_name('LOCAL'), big_name(ModuleName), _, _) | LocTokens])
-	  -> true
-	  ;  (LocTokens2 = [_|LocTokens],
-	      print_out_error('Error: illegal module declaration in the local part of module "~w"',[ModuleName], null, 0, 0, [], null))),
-	  
-%	;  LocTokens2 = [_|LocTokens],
-%	    print_out_error('Error: illegal module declaration in the local part of module "~w" or export part of module "~w" missing', [ModuleName, ModuleName], null, 0, 0, [], null)
-	write(module_name),
-	write(ModuleName),
-	write(loc_tokens2),
-	write(LocTokens2),
-	write(exp_tokens2),
-	write(ExpTokens2).
 
 check_module_orig(GModuleName, ExpTokens, ExpTokens2, LocTokens, LocTokens2):-
    gstring2string(GModuleName, ModuleName),
@@ -1753,44 +1670,34 @@ parse_statements(ModuleName, ExpTokens, LocTokens, Language, OldProg, NewProg):-
 	format(user_error, '~nAAA Error: there are illegal items in the export part of module "~w"~nThese items are:~n', [ModuleName]),
 	print_error_items(ExpTokens)
    ),
-   write(parse_sdtatements_001),
    parse_statements_aux(LocTokens, ModuleName, Language, OldProg, NewProg).
 
 
 parse_statements_aux([], _, _, Prog, Prog).
 parse_statements_aux([Item|Items], ModuleName, Language, OldProg, NewProg):-
-	write(part_statements_aux_001),
    statement(Item, ModuleName, Formulae, ErrorReturn, Language),
    Item = item(WholeTokens, Ln1, Ln2),	% for errors and other checking
    ( Formulae = []
      -> Prog2 = OldProg,
-	write(part_statements_aux_002),
 	print_error_return(ErrorReturn, WholeTokens, local, Ln1, Ln2)
      ;  'SharedPrograms.ProgramLanguage.P2'(OldProg, ProgLanguage),
-	write(part_statements_aux_03),
         'ParserPrograms.ParserCheckStatement.P4'(Formulae, ProgLanguage,
 			Statement, ErrorMessages),
-	write(part_statements_aux_03B),
 	( ErrorMessages = []
 	  -> get_predicate_arity(Statement, PredicateSymbol, Arity),
-	write(part_statements_aux_004),
 	     'ParserPrograms.QuickInsertStatement.P6'(OldProg, ModuleName,
 			PredicateSymbol, Arity, Statement, Prog2),
 	     ( checking_is_off
 	       -> true
 	       ;  singleton_variable_checking(Statement, PredicateSymbol, Arity,
 				Ln1, Ln2),
-	write(part_statements_aux_005),
 	          quantified_variable_checking(Statement, Ln1, Ln2),
 	          floundering_checking(Statement, Ln1, Ln2)
 	     )
 	  ;  Prog2 = OldProg,
-	write(part_statements_aux_006),
 	     print_type_error(ErrorMessages, local, Ln1, Ln2)
 	)
    ),
-   
-	write(part_statements_aux_099),
    parse_statements_aux(Items, ModuleName, Language, Prog2, NewProg).
 
 /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -2062,6 +1969,9 @@ print_type_error_term('MetaDefs.Str.F1'(S)) :-
 
 print_type_error_term('MetaDefs.Int.F1'(N)) :-
    format(user_error, 'integer "~d"', [N]).
+
+print_type_error_term('MetaDefs.Flo.F1'(N)) :-
+   format(user_error, 'float "~d"', [N]).  %% added DJD
 
 print_type_error_term('MetaDefs.Num.F1'(N)) :-
    format(user_error, 'number "~d"', [N]).
