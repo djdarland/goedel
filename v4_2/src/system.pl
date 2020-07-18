@@ -2656,7 +2656,7 @@ not_occurs_in_list([Term|Terms], Var) :-
  
 'SharedPrograms.SStringToCondition.P2'(String, Condition) :-
    user:'Strings.StringInts.P2'(String, IntList),
-   user:append(IntList, [0'.], Chars),
+   append(IntList, [0'.], Chars),
    user:get_one_item_2nd(Chars, [], Item),
    user:cond(Item, [], Condition, [], Error, 1, 2, local),
    var(Error).

@@ -1,3 +1,5 @@
 LOCAL M4.
 
-Append3(x,y,z,u) <- Append(x,y,w) & Append(w,z,u).
+Append6(x,y,z,u) <- Append(x,y,w) &
+
+Append(w,z,u).

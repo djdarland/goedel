@@ -1564,7 +1564,7 @@
 
 'Programs.StringToProgramTypeAux.P4'(Program, Module, String, [Type]) :-
    name(String, [0'"|Chars]),
-   user:append(Chars, [0'.], Chars1),
+   append(Chars, [0'.], Chars1),
    user:get_one_item_2nd_aux(Chars1, Remains, Tokens),
    Remains = [],
    user:'ParserPrograms.LocalSymbolTable.P3'(Program, Module, SymbolTable),
@@ -1580,7 +1580,7 @@
  
 'Programs.StringToProgramTermAux.P4'(Program, Module, String, Terms) :-
    name(String, [0'"|Chars]),
-   user:append(Chars, [0'.], Chars1),
+   append(Chars, [0'.], Chars1),
    user:get_one_item_2nd_aux(Chars1, Remains, Tokens),
    Remains = [],
    user:'ParserPrograms.LocalSymbolTable.P3'(Program, Module, SymbolTable),
@@ -1603,7 +1603,7 @@
 
 'Programs.StringToProgramFormulaAux.P4'(Program, Module, String, Formulae) :-
    name(String, [0'"|Chars]),
-   user:append(Chars, [0'.], Chars1),
+   append(Chars, [0'.], Chars1),
    user:get_one_item_2nd_aux(Chars1, Rest, Tokens),
    Rest= [],
    user:'ParserPrograms.LocalSymbolTable.P3'(Program, Module, SymbolTable),
