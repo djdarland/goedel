@@ -54,8 +54,8 @@ unit2chars('Units.Unit.F2'(Head, Tail), Chars) :-
      -> name(Head, [_|Chars])
      ;  unit2chars_aux(Tail, Chars2),
         name(Head, [_|HeadChars]),
-        user:append(Chars2, [0')], Chars3),
-        user:append(HeadChars, [0'(|Chars3], Chars)
+        append(Chars2, [0')], Chars3),
+        append(HeadChars, [0'(|Chars3], Chars)
    ).
 
 unit2chars_aux([], []).
@@ -63,8 +63,8 @@ unit2chars_aux([H|T], St) :-
    unit2chars(H, Sh),
    unit2chars_aux(T, St2),
    ( St2 = []
-     -> user:append(Sh, St2, St)
-     ;  user:append(Sh, [0',, 32|St2], St)
+     -> append(Sh, St2, St)
+     ;  append(Sh, [0',, 32|St2], St)
    ).
 
 %------------------------------------------------------------------------------

@@ -156,7 +156,7 @@ concat(X, Y, Z) :-
    nonvar(X), nonvar(Y), !,
    name(X, Xs),
    name(Y, [0'"|Ys]),
-   user:append(Xs, Ys, L),
+   append(Xs, Ys, L),
    name(Z, L).
 
 concat(X, Y, Z) :-
@@ -164,13 +164,13 @@ concat(X, Y, Z) :-
    name(Z, [0'"|Zs]),
    ( nonvar(X)
      -> name(X, [0'"|Xs]),
-	user:append(Xs, Ys, Zs),
+	append(Xs, Ys, Zs),
 	name(Y, [0'"|Ys])
      ;  ( nonvar(Y)
           -> name(Y, [0'"|Ys]),
-	     user:append(Xs, Ys, Zs), !,
+	     append(Xs, Ys, Zs), !,
 	     name(X, [0'"|Xs])
-	  ;  user:append(Xs, Ys, Zs),
+	  ;  append(Xs, Ys, Zs),
 	     name(Y, [0'"|Ys]),
 	     name(X, [0'"|Xs])
 	)
