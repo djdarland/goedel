@@ -833,6 +833,14 @@
         G='MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0),
         '~SharedPrograms.BaseInLanguage.P2'(G, C),
         '~SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(G), 'MetaDefs.Int.F1'(A), F).
+'SharedPrograms.MeltedTermType.P9'('MetaDefs.Flo.F1'(A), B, C, D, D, 'MetaDefs.Flo.F1'(A), E, E, F) :-
+        G='MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0),
+        'SharedPrograms.BaseInLanguage.P2'(G, C),
+        'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(G), 'MetaDefs.Flo.F1'(A), F).
+'~SharedPrograms.MeltedTermType.P9'('MetaDefs.Flo.F1'(A), B, C, D, D, 'MetaDefs.Flo.F1'(A), E, E, F) :-
+        G='MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0),
+        '~SharedPrograms.BaseInLanguage.P2'(G, C),
+        '~SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(G), 'MetaDefs.Flo.F1'(A), F).
 'SharedPrograms.MeltedTermType.P9'('MetaDefs.Str.F1'(A), B, C, D, D, 'MetaDefs.Str.F1'(A), E, E, F) :-
         G='MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0),
         'SharedPrograms.BaseInLanguage.P2'(G, C),
@@ -1287,6 +1295,14 @@ write(shared_programs_Stmt_in_lang_005).
         '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0), B),
         'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, E, F),
         user:goedel_freeze(ground([A]), ('Integers':'~Integers.<.P2'(A,0),true->'SharedPrograms':'~SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Integers','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+        user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+        user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'~SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Prm.F1'(A), B, C, D, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', E, F) :-
         'SharedPrograms.TermInLanguage.P5'('MetaDefs.Prm.F1'(A), C, 'MetaDefs.VarTyping.F1'(D), _, G),
         'SharedPrograms.CharDL.P3'('"<', E, H),

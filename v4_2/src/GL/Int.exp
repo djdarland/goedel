@@ -1,9 +1,7 @@
-EXPORT Fl.
+EXPORT Int.
 
 IMPORT Strings.
 
 IMPORT Integers.
-
-BASE Dennis.
 
 PREDICATE ThFl : Integer * Integer.

@@ -88,8 +88,18 @@
             C=A
         ;   C=B
         ).
+'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Var.F1'(A), B, C) :-
+        (   'Floats.>.P2'(A, B) ->
+            C=A
+        ;   C=B
+        ).
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Var.F2'(_,A), B, C) :-
         (   'Integers.>.P2'(A, B) ->
+            C=A
+        ;   C=B
+        ).
+'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Var.F2'(_,A), B, C) :-
+        (   'Floats.>.P2'(A, B) ->
             C=A
         ;   C=B
         ).
@@ -100,6 +110,7 @@
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.XTerm.F3'(_,A,_), B, C) :-
         'SharedSyntax.MaxVarIndexInTerms.P3'(A, B, C).
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Int.F1'(_), A, A).
+'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Flo.F1'(_), A, A).
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Str.F1'(_), A, A).
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.Prm.F1'(_), A, A).
 'SharedSyntax.MaxVarIndexInTerm.P3'('MetaDefs.SuchThat.F2'(A,B), C, D) :-
@@ -196,6 +207,7 @@
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.CTerm.F1'(_), []).
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.XCTerm.F2'(_,_), []).
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.Int.F1'(_), []).
+'SharedSyntax.STermFreeVars.P2'('MetaDefs.Flo.F1'(_), []).
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.Num.F1'(_), []).
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.Str.F1'(_), []).
 'SharedSyntax.STermFreeVars.P2'('MetaDefs.Prm.F1'(_), []).
@@ -236,6 +248,7 @@
         'SharedSyntax.TermNotOccur1.P2'(A, B).
 'SharedSyntax.TermNotOccur.P2'('MetaDefs.XCTerm.F2'(_,_), _).
 'SharedSyntax.TermNotOccur.P2'('MetaDefs.Int.F1'(_), _).
+'SharedSyntax.TermNotOccur.P2'('MetaDefs.Flo.F1'(_), _).
 'SharedSyntax.TermNotOccur.P2'('MetaDefs.Str.F1'(_), _).
 'SharedSyntax.TermNotOccur.P2'('MetaDefs.Prm.F1'(_), _).
 'SharedSyntax.TermNotOccur.P2'('MetaDefs.XTerm.F3'(_,A,_), B) :-
@@ -261,6 +274,8 @@
         'Substs.UnifyConstant.P5'(D, C, 'MetaDefs.XCTerm.F2'(A,B), E, F).
 'SharedSyntax.UnifyTerms1.P5'('MetaDefs.Int.F1'(A), B, C, D, E) :-
         'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Int.F1'(A), D, E).
+'SharedSyntax.UnifyTerms1.P5'('MetaDefs.Flo.F1'(A), B, C, D, E) :-
+        'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Flo.F1'(A), D, E).
 'SharedSyntax.UnifyTerms1.P5'('MetaDefs.Str.F1'(A), B, C, D, E) :-
         'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Str.F1'(A), D, E).
 'SharedSyntax.UnifyTerms1.P5'('MetaDefs.Prm.F1'(A), B, C, D, E) :-
@@ -283,6 +298,8 @@
         'Substs.GetConstant.P4'(C, 'MetaDefs.XCTerm.F2'(A,B), D, E).
 'SharedSyntax.UnifyTerms0.P4'('MetaDefs.Int.F1'(A), B, C, D) :-
         'Substs.GetConstant.P4'(B, 'MetaDefs.Int.F1'(A), C, D).
+'SharedSyntax.UnifyTerms0.P4'('MetaDefs.Flo.F1'(A), B, C, D) :-
+        'Substs.GetConstant.P4'(B, 'MetaDefs.Flo.F1'(A), C, D).
 'SharedSyntax.UnifyTerms0.P4'('MetaDefs.Str.F1'(A), B, C, D) :-
         'Substs.GetConstant.P4'(B, 'MetaDefs.Str.F1'(A), C, D).
 'SharedSyntax.UnifyTerms0.P4'('MetaDefs.Prm.F1'(A), B, C, D) :-
@@ -332,23 +349,40 @@
    ).
 
 '~SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT) :-
-   'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
+'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
+
+'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
+      float_to_char_dl(Int1, Chars1, CharsT).
+
+'~SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
+   'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT).
+
+float_to_char_dl(Flo, Chars, CharsT) :-
+	name(Flo, CharsT).
+   %%% ( Int = 0 ->
+   %%%   Chars = CharsT
+   %%% ; C is 0'0 + Int mod 10,
+   %%%   Int1 is Int // 10,
+   %%%   int_to_char_dl(Int1, Chars, [C|CharsT])
+   %%% ).
+
+
+
 
 int_to_char_dl(Int, Chars, CharsT) :-
-   ( Int = 0 ->
-     Chars = CharsT
-   ; C is 0'0 + Int mod 10,
-     Int1 is Int // 10,
-     int_to_char_dl(Int1, Chars, [C|CharsT])
-   ).
+	name(Int, Chars).
+   %%% ( Int = 0 ->
+   %%%   Chars = CharsT
+   %%% ; C is 0'0 + Int mod 10,
+   %%%   Int1 is Int // 10,
+   %%%   int_to_char_dl(Int1, Chars, [C|CharsT])
+   %%% ).
 
 :- op(500, yfx, and).
 :- op(400, yfx, or).
 
 'ParserPrograms.ParserCheckStatement.P4'(A, B, C, D) :-
-write(system_parsercheckstatement001),
         'ParserPrograms.CheckStatementAux.P6'(A, B, 0, [], E, F),
-write(system_parsercheckstatement002),
         (   E=[G] ->
             C=G,
             D=[]
@@ -383,9 +417,7 @@ write(system_parsercheckstatement002),
 'ParserPrograms.CheckStatementAux.P6'([], _, _, A, A, []).
 
 	'ParserPrograms.CheckStatementAux.P6'([A|B], C, D, E, F, G) :-
-	write(system_checkstatementaux001),
         'SharedPrograms.StatementInLanguage.P5'(A, C, H, I, J),
-	write(system_checkstatementaux002),
         (   J=[],
             'Integers.>=.P2'(I, D) ->
             K=I,
@@ -398,6 +430,7 @@ write(system_parsercheckstatement002),
         ),
         'Lists.Append.P3'(J, M, G),
 	    'ParserPrograms.CheckStatementAux.P6'(B, C, K, L, F, M).
+
 
 'ParserPrograms.CandidateNames.P6'([], _, _, _, A, A).
 'ParserPrograms.CandidateNames.P6'(['ProgDefs.Symbol.F2'(B,C)|A], D, E, F, G, H) :-
@@ -468,6 +501,24 @@ write(system_parsercheckstatement002),
         'AVLTrees.AVLToBinary.P2'(C, D),
         'ParserPrograms.DecompileModuleTree.P3'(D, A, B).
 'ParserPrograms.CheckTermAux.P6'([], _, _, A, A, []).
+'ParserPrograms.CheckTermAux.P6'([A|B], C, D, E, F, G) :-
+        'SharedPrograms.MeltedTermType.P9'(A, _, C, [], _, H, I, [], J),
+        (   J=[] ->
+            'SharedPrograms.FixRationals.P2'(I, K)
+        ;   K=0
+        ),
+        (   J=[],
+            'Integers.>=.P2'(K, D) ->
+            L=K,
+            (   K=D ->
+                M=[H|E]
+            ;   M=[H]
+            )
+        ;   L=D,
+            M=E
+        ),
+        'Lists.Append.P3'(J, N, G),
+        'ParserPrograms.CheckTermAux.P6'(B, C, L, M, F, N).
 'ParserPrograms.CheckTermAux.P6'([A|B], C, D, E, F, G) :-
         'SharedPrograms.MeltedTermType.P9'(A, _, C, [], _, H, I, [], J),
         (   J=[] ->
@@ -1654,15 +1705,12 @@ write(system_parsercheckstatement002),
         ;   L=O
         ).
 'SharedPrograms.MeltedBodyTyping.P8'(A, B, C, D, E, F, G, H) :-
-write(meltedbodytyping001), 
         (   A='MetaDefs.Empty.C0' ->
-write(meltedbodytyping002), 
             D=C,
             F=G, 
             H=[],
            E='MetaDefs.Empty.C0'
         ;
-write(meltedbodytyping003), 
 		%%% write(iii),
 		%%% write(I),
 		%%% write(jjj),
@@ -1683,9 +1731,25 @@ write(meltedbodytyping003),
 		%%% write(N),
 	    A='MetaDefs.&''.F2'(I,J) ->
             'SharedPrograms.MeltedBodyTyping.P8'(I, B, C, K, L, F, M, N),
-write(meltedbodytyping004), 
+		%%% write(iii),
+		%%% write(I),
+		%%% write(jjj),
+		%%% write(J),
+		%%% write(bbb),
+		%%% write(B),
+		%%% write(ccc),
+		%%% write(C),
+		%%% write(kkk),
+		%%% write(K),
+		%%% write(lll),
+		%%% write(L),
+		%%% write(fff),
+		%%% write(F),
+		%%% write(mmm),
+		%%% write(M),
+		%%% write(nnn),
+		%%% write(N),
             (   N=[] ->
-write(meltedbodytyping005),
 		%%% write(jjj),
 		%%% write(J),
 		%%% write(bbb),
@@ -1705,19 +1769,13 @@ write(meltedbodytyping005),
                 'SharedPrograms.MeltedBodyTyping.P8'(J, B, K, D, O, M, G, H),
                 E='MetaDefs.&''.F2'(L,O)
             ;
-write(meltedbodytyping006A),
-		H=N,
-write(meltedbodytyping006B)
+		H=N
             )
         ;   A='MetaDefs.Commit.F2'(P,Q) ->
             'SharedPrograms.MeltedBodyTyping.P8'(Q, B, C, D, L, F, G, H),
-write(meltedbodytyping007),
             E='MetaDefs.Commit.F2'(P,L)
-        ;   'SharedPrograms.MeltedStandardTyping.P8'(A, B, C, D, E, F, G, H),
-write(meltedbodytyping008)
-	    
-        ),
-write(meltedbodytyping099).
+        ;   'SharedPrograms.MeltedStandardTyping.P8'(A, B, C, D, E, F, G, H)
+        ).
 
 'SharedPrograms.MeltedTermType.P9'('MetaDefs.Var.F2'(A,B), C, _, D, E, 'MetaDefs.Var.F2'(A,B), F, F, G) :-
         'SharedPrograms.LookupVarTyping.P4'(D, 'MetaDefs.Var.F2'(A,B), E, H),
@@ -1755,6 +1813,11 @@ write(meltedbodytyping099).
         G='MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0),
         'SharedPrograms.BaseInLanguage.P2'(G, C),
         'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(G), 'MetaDefs.Int.F1'(A), F).
+'SharedPrograms.MeltedTermType.P9'('MetaDefs.Flo.F1'(A), B, C, D, D, 'MetaDefs.Flo.F1'(A), E, E, F) :-
+        G='MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0),
+        'SharedPrograms.BaseInLanguage.P2'(G, C),
+        'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(G), 'MetaDefs.Flo.F1'(A), F).
+
 'SharedPrograms.MeltedTermType.P9'('MetaDefs.Str.F1'(A), B, C, D, D, 'MetaDefs.Str.F1'(A), E, E, F) :-
         G='MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0),
         'SharedPrograms.BaseInLanguage.P2'(G, C),
@@ -1787,6 +1850,12 @@ write(meltedbodytyping099).
             F=['SharedPrograms.NumType.F3'(A,'MetaDefs.BType.F1'(I),E)|G],
             'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(I), 'MetaDefs.Num.F1'(A), H)
         ;   'SharedPrograms.MeltedTermType.P9'('MetaDefs.Int.F1'(A), B, C, D, _, E, F, G, H)
+        ).
+'SharedPrograms.MeltedTermType.P9'('MetaDefs.Num.F1'(A), B, C, D, D, E, F, G, H) :-
+        (   'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Rationals','"Rational','MetaDefs.Base.C0',0), C) ->
+            F=['SharedPrograms.NumType.F3'(A,'MetaDefs.BType.F1'(I),E)|G],
+            'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(I), 'MetaDefs.Num.F1'(A), H)
+        ;   'SharedPrograms.MeltedTermType.P9'('MetaDefs.Flo.F1'(A), B, C, D, _, E, F, G, H)
         ).
 'SharedPrograms.MeltedStandardTyping.P8'('MetaDefs.ISTE.F4'(A,B,C,D), E, F, G, 'MetaDefs.ISTE.F4'(A,H,I,J), K, L, M) :-
         'SharedPrograms.DivideBindings.P4'(A, F, N, O),
@@ -2047,9 +2116,7 @@ write(meltedbodytyping099).
 'SharedPrograms.CharDL.P3'('")', F, D).
 
 'SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
-write(statementinlanguage001),
         'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
-write(statementinlanguage002),
         (   K=[] ->
             'SharedPrograms.HeadAtom.P9'(A, C, H, _, D, J, [], L, M),
             (   M=[] ->
@@ -2113,6 +2180,17 @@ write(statementinlanguage002),
         ;   'SharedPrograms.CharDL.P3'('"_', F, H),
             'SharedSyntax.IntegerToCharDL.P3'(B, H, D)
         ).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', C, D) :-
+        user:'FloatInts'(A, E),
+        'Lists.Append.P3'(E, F, C),
+        (   (   B=0
+            ;   concat('"_', _, G),
+                A=G
+            ) ->
+            D=F
+        ;   'SharedPrograms.CharDL.P3'('"_', F, H),
+            'SharedSyntax.IntegerToCharDL.P3'(B, H, D)
+        ).
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
         'Strings.StringInts.P2'('"v', D),
         'Lists.Append.P3'(D, E, B),
@@ -2121,15 +2199,32 @@ write(statementinlanguage002),
         ;   'SharedPrograms.CharDL.P3'('"_', E, F),
             'SharedSyntax.IntegerToCharDL.P3'(A, F, C)
         ).
-'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
-        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
-        'Strings.StringInts.P2'(A, E),
-        'SharedPrograms.ExpandString.P3'(E, C, D).
+%%% 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+%%%         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
+%%%         'Strings.StringInts.P2'(A, E),
+%%%         'SharedPrograms.ExpandString.P3'(E, C, D).
+%%% 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+%%% write(got_HERE_001), 
+%%%         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+%%% write(got_HERE_002), 
+%%%         user:'FloatInts'(A, D),
+%%% write(got_HERE_003).
+%%% %'SharedPrograms.ExpandFloat.P3'(E, C, D),
+%%% %write(got_HERE_004).
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Int.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0), B),
         'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
         (   'Integers.<.P2'(A, 0) ->
             'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Integers','"-','MetaDefs.Function.C0',1), B, C, _, _),
+            D='SharedPrograms.Graphic.C0'
+        ;   C='Syntax.NoFunctInd.C0',
+            D='SharedPrograms.AlphaNum.C0'
+        ).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+        (   'Floats.<.P2'(A, 0) ->
+            'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1), B, C, _, _),
             D='SharedPrograms.Graphic.C0'
         ;   C='Syntax.NoFunctInd.C0',
             D='SharedPrograms.AlphaNum.C0'
@@ -2163,7 +2258,14 @@ write(statementinlanguage002),
         'SharedPrograms.ProgramLanguage.P2'(A, E),
         'SharedPrograms.ModuleLanguage.P3'(A, B, F),
         'SharedPrograms.TermInLanguage.P5'(C, E, 'MetaDefs.VarTyping.F1'([]), 'MetaDefs.VarTyping.F1'(G), _),
-        'SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
+'SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
+
+'SharedPrograms.TermToFloatList.P4'(A, B, C, D) :-
+        'SharedPrograms.ProgramLanguage.P2'(A, E),
+        'SharedPrograms.ModuleLanguage.P3'(A, B, F),
+        'SharedPrograms.TermInLanguage.P5'(C, E, 'MetaDefs.VarTyping.F1'([]), 'MetaDefs.VarTyping.F1'(G), _),
+'SharedPrograms.TermToFloatDL.P9'(C, F, E, G, _, _, _, D, []).
+
 'SharedPrograms.TermToIntDLAux.P11'('Syntax.NoFunctInd.C0', 'MetaDefs.Name.F4'(A,B,C,D), E, F, G, H, 'Syntax.NoFunctInd.C0', I, 'SharedPrograms.Bounded.C0', J, K) :-
         (   A='"Lists',
             B='"Cons',
@@ -2467,6 +2569,7 @@ list_fix_type([Type|Types], N, NewN) :-
    list_fix_type(Types, N1, NewN).
 
 
+
 'SharedPrograms.FixRationals.P2'([], 0).
 
 'SharedPrograms.FixRationals.P2'([NumType|NumTypes], Count) :-
@@ -2707,6 +2810,8 @@ in_par_dict(P1, [A1/A2|Entries], P2) :-
         'Substs.AddBinding.P4'(C, 'Substs.T.F1'('MetaDefs.XCTerm.F2'(A,B)), D, E).
 'Substs.AddTermBinding1.P4'('MetaDefs.Int.F1'(A), B, C, D) :-
         'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Int.F1'(A)), C, D).
+'Substs.AddTermBinding1.P4'('MetaDefs.Flo.F1'(A), B, C, D) :-
+        'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Flo.F1'(A)), C, D).
 'Substs.AddTermBinding1.P4'('MetaDefs.Prm.F1'(A), B, C, D) :-
         'Substs.AddBinding.P4'(B, 'Substs.T.F1'('MetaDefs.Prm.F1'(A)), C, D).
 'Substs.AddTermBinding1.P4'('MetaDefs.Str.F1'(A), B, C, D) :-
@@ -2928,6 +3033,7 @@ in_par_dict(P1, [A1/A2|Entries], P2) :-
 'Substs.Dereference.P3'('MetaDefs.XCTerm.F2'(A,B), _, 'MetaDefs.XCTerm.F2'(A,B)).
 'Substs.Dereference.P3'('MetaDefs.Str.F1'(A), _, 'MetaDefs.Str.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
+'Substs.Dereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 'Substs.Dereference.P3'('MetaDefs.SuchThat.F2'(A,B), _, 'MetaDefs.SuchThat.F2'(A,B)).
 'Substs.Dereference.P3'('MetaDefs.Var.F2'(A,B), 'Substs.TermSubst.F2'(C,D), E) :-
@@ -2949,6 +3055,7 @@ in_par_dict(P1, [A1/A2|Entries], P2) :-
 'Substs.FullDerefTerm.P4'('MetaDefs.XTerm.F3'(A,B,C), D, E, 'MetaDefs.XTerm.F3'(A,F,C)) :-
         'Substs.FullDerefTerm1.P4'(B, D, E, F).
 'Substs.FullDerefTerm.P4'('MetaDefs.Int.F1'(A), _, _, 'MetaDefs.Int.F1'(A)).
+'Substs.FullDerefTerm.P4'('MetaDefs.Flo.F1'(A), _, _, 'MetaDefs.Flo.F1'(A)).
 'Substs.FullDerefTerm.P4'('MetaDefs.Prm.F1'(A), _, _, 'MetaDefs.Prm.F1'(A)).
 'Substs.FullDerefTerm.P4'('MetaDefs.Str.F1'(A), _, _, 'MetaDefs.Str.F1'(A)).
 'Substs.FullDerefTerm.P4'('MetaDefs.SuchThat.F2'(A,B), _, _, 'MetaDefs.SuchThat.F2'(A,B)).
@@ -3032,6 +3139,7 @@ in_par_dict(P1, [A1/A2|Entries], P2) :-
 'Substs.GetConstant1.P4'('MetaDefs.CTerm.F1'(A), 'MetaDefs.CTerm.F1'(A), B, B).
 'Substs.GetConstant1.P4'('MetaDefs.XCTerm.F2'(A,B), 'MetaDefs.XCTerm.F2'(A,B), C, C).
 'Substs.GetConstant1.P4'('MetaDefs.Int.F1'(A), 'MetaDefs.Int.F1'(A), B, B).
+'Substs.GetConstant1.P4'('MetaDefs.Flo.F1'(A), 'MetaDefs.Flo.F1'(A), B, B).
 'Substs.GetConstant1.P4'('MetaDefs.Prm.F1'(A), 'MetaDefs.Prm.F1'(A), B, B).
 'Substs.GetConstant1.P4'('MetaDefs.Str.F1'(A), 'MetaDefs.Str.F1'(A), B, B).
 'Substs.GetBase.P4'(A, B, C, D) :-
@@ -3047,6 +3155,7 @@ in_par_dict(P1, [A1/A2|Entries], P2) :-
 'Substs.FullDereference.P3'('MetaDefs.XCTerm.F2'(A,B), _, 'MetaDefs.XCTerm.F2'(A,B)).
 'Substs.FullDereference.P3'('MetaDefs.Str.F1'(A), _, 'MetaDefs.Str.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.Int.F1'(A), _, 'MetaDefs.Int.F1'(A)).
+'Substs.FullDereference.P3'('MetaDefs.Flo.F1'(A), _, 'MetaDefs.Flo.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.Prm.F1'(A), _, 'MetaDefs.Prm.F1'(A)).
 'Substs.FullDereference.P3'('MetaDefs.SuchThat.F2'(A,B), _, 'MetaDefs.SuchThat.F2'(A,B)).
 'Substs.FullDerefType1.P4'([], _, _, []).
@@ -3398,287 +3507,52 @@ member3(X,_,[Y|L]) :-
 '~Substs.SDelBindingInTermSubst.P4'(Subst, Var, Term, NewSubst) :-
    'Substs.SDelBindingInTermSubst.P4'(Subst, Var, Term, NewSubst).
 
-'ParserPrograms.CheckFormulaAux.P6'([A|B], C, D, E, F, G) :-
-        'SharedPrograms.MeltedFormulaTyping.P8'(A, C, [], _, H, I, [], J),
-        (   J=[] ->
-            'SharedPrograms.FixFloats.P2'(I, K)
-        ;   K=0
-        ),
-        (   J=[],
-            'Integers.>=.P2'(K, D) ->
-            L=K,
-            (   K=D ->
-                M=[H|E]
-            ;   M=[H]
-            )
-        ;   L=D,
-            M=E
-        ),
-        'Lists.Append.P3'(J, N, G),
-        'ParserPrograms.CheckFormulaAux.P6'(B, C, L, M, F, N).
-'ParserPrograms.CheckTermAux.P6'([A|B], C, D, E, F, G) :-
-        'SharedPrograms.MeltedTermType.P9'(A, _, C, [], _, H, I, [], J),
-        (   J=[] ->
-            'SharedPrograms.FixFloats.P2'(I, K)
-        ;   K=0
-        ),
-        (   J=[],
-            'Integers.>=.P2'(K, D) ->
-            L=K,
-            (   K=D ->
-                M=[H|E]
-            ;   M=[H]
-            )
-        ;   L=D,
-            M=E
-        ),
-        'Lists.Append.P3'(J, N, G),
-        'ParserPrograms.CheckTermAux.P6'(B, C, L, M, F, N).
-'SharedPrograms.BinaryInfixToIntDL.P12'(A, 'MetaDefs.Name.F4'(B,C,_,_), D, E, F, G, H, I, J, K, L, M) :-
-        (   B='"Floats',
-            C='"//',
-            D='MetaDefs.Int.F1'(N),
-            E='MetaDefs.Int.F1'(O) ->
-            'SharedPrograms.FloatToIntDL.P9'(N, O, F, G, I, J, K, L, M)
-        ;   I=A,
-            'SharedPrograms.TermToIntDL.P9'(D, F, G, H, P, Q, R, S, T),
-            'SharedPrograms.TermToIntDL.P9'(E, F, G, H, U, V, W, X, Y),
-            'SharedPrograms.ClassifyToken.P2'(C, Z),
-            (   'SharedPrograms.RPrec.P2'(P, A1),
-                'SharedPrograms.LPrec.P2'(A, B1),
-                'SharedPrograms.BindsTighter.P2'(A1, B1) ->
-                J=Q,
-                L=S,
-                'SharedPrograms.SpaceIfNeeded.P4'(R, Z, T, C1)
-            ;   J='SharedPrograms.Bounded.C0',
-                'SharedPrograms.CharDL.P3'('"(', L, S),
-                'SharedPrograms.CharDL.P3'('")', T, C1)
-            ),
-            'Strings.StringInts.P2'(C, D1),
-            'Lists.Append.P3'(D1, E1, C1),
-            (   'SharedPrograms.LPrec.P2'(U, F1),
-                'SharedPrograms.RPrec.P2'(A, G1),
-                'SharedPrograms.BindsTighter.P2'(F1, G1) ->
-                K=W,
-                'SharedPrograms.SpaceIfNeeded.P4'(Z, V, E1, X),
-                M=Y
-            ;   K='SharedPrograms.Bounded.C0',
-                'SharedPrograms.CharDL.P3'('"(', E1, X),
-                'SharedPrograms.CharDL.P3'('")', Y, M)
-            )
-        ).
-'SharedPrograms.CookFloatTerm.P2'(A, B) :-
-        (   'Integers.<.P2'(A, 0) ->
-            negative(A, D),
-            C=D,
-            B='MetaDefs.Term.F2'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),['MetaDefs.Int.F1'(C)])
-        ;   B='MetaDefs.Int.F1'(A)
-        ).
-'SharedPrograms.MeltedTermType.P9'('MetaDefs.Num.F1'(A), B, C, D, D, E, F, G, H) :-
-        (   'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), C) ->
-            F=['SharedPrograms.NumType.F3'(A,'MetaDefs.BType.F1'(I),E)|G],
-            'SharedPrograms.UnifyMeltedTypes.P4'(B, 'MetaDefs.BType.F1'(I), 'MetaDefs.Num.F1'(A), H)
-        ;   'SharedPrograms.MeltedTermType.P9'('MetaDefs.Int.F1'(A), B, C, D, _, E, F, G, H)
-        ).
-'SharedPrograms.FloatTerm.P2'(A, 'MetaDefs.Term.F2'('MetaDefs.Name.F4'('"Floats','"//','MetaDefs.Function.C0',2),['MetaDefs.Int.F1'(A),'MetaDefs.Int.F1'(1)])).
-'SharedPrograms.FloatToIntDL.P9'(A, B, C, D, E, F, G, H, I) :-
-        'SharedPrograms.CookFloatTerm.P2'(A, J),
-        (   B=1 ->
-            'SharedPrograms.TermToIntDL.P9'(J, C, D, [], E, F, G, H, I)
-        ;   'SharedPrograms.CookFloatTerm.P2'(B, K),
-            'SharedPrograms.TermToIntDL.P9'('MetaDefs.Term.F2'('MetaDefs.Name.F4'('"Floats','"/','MetaDefs.Function.C0',2),[J,K]), C, D, [], E, F, G, H, I)
-        ).
-'SharedPrograms.StatementInLanguage.P5'('MetaDefs.<-''.F2'(A,B), C, 'MetaDefs.<-''.F2'(D,E), F, G) :-
-write(statementinlanguage001),
-        'SharedPrograms.MeltedBodyTyping.P8'(B, C, [], H, E, I, J, K),
-write(statementinlanguage002),
-        (   K=[] ->
-            'SharedPrograms.HeadAtom.P9'(A, C, H, _, D, J, [], L, M),
-            (   M=[] ->
-                'SharedPrograms.FixFloats.P2'(I, F),
-                'SharedPrograms.CheckHeadArgs.P4'(D, L, C, G)
-            ;   G=M
-            )
-        ;   G=K
-        ).
-'SharedPrograms.FixFloats.P2'([], 0).
+user:'FloatInts'(Float, IntList) :-
+	name(Float, IntList).
+%   write(float_in),
+%   IntList = [52,50,49,48,46,48].
+%   write(float_in),
+%write(Float),
 
-'SharedPrograms.FixFloats.P2'([NumType|NumTypes], Count) :-
-   fix_rational(NumType, R),
-   'SharedPrograms.FixFloats.P2'(NumTypes, Count1),
-   Count is Count1 + R.
-
-'~SharedPrograms.FixFloats.P2'(NumTypes, Count) :-
-   'SharedPrograms.FixFloats.P2'(NumTypes, Count).
+%   float(Float), !,
+%   number_codes(Float, IntList),
+%   write(float_out),
+%   IntList = string(Float),
+%   write(IntList).
 
 
-fix_float('SharedPrograms.NumType.F3'(Value, 'MetaDefs.BType.F1'(Name), Term)
-      , Float
-      ) :-
-   ( Name = 'MetaDefs.Name.F4'('"Floats', '"Float', 'MetaDefs.Base.C0', 0) ->
-     'SharedPrograms.FloatTerm.P2'(Value, Term),
-     Float = 1
-   ; Term = 'MetaDefs.Int.F1'(Value),
-     Float = 0
-   ). 
+%%% 'FloatInts'(Float, IntList) :-
+%%%    write(float_in),
+%%% write(Float),
 
-%------------------------------------------------------------------------------
-% Type Unification
-%------------------------------------------------------------------------------
- 
-'Substs.ComposeTermSubsts1.P3'('Substs.TermSubst.F2'('Substs.Heap.F2'(A,B),C), D, 'Substs.TermSubst.F2'(E,F)) :-
-        'Substs.FloatiseTermList.P3'(C, F, D),
-        'Substs.EmptyHeap.P1'(G),
-        'Substs.FloatiseTermHeap.P6'(B, A, 0, D, G, E).
-'Substs.ComposeTypeSubsts1.P3'('Substs.TypeSubst.F2'('Substs.Heap.F2'(A,B),C), D, 'Substs.TypeSubst.F2'(E,F)) :-
-        'Substs.FloatiseTypeList.P3'(C, F, D),
-        'Substs.EmptyHeap.P1'(G),
-        'Substs.FloatiseTypeHeap.P6'(B, A, 0, D, G, E).
-'Substs.FloatiseTypeHeap.P6'('Substs.N.C0', _, _, _, A, A).
-'Substs.FloatiseTypeHeap.P6'('Substs.R.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToType.P4'('MetaDefs.Par.F1'(A), 'MetaDefs.Par.F1'(B), C, F),
-        (   user:not_equal([], [F,B], F, 'MetaDefs.Occ.F1'('MetaDefs.Par.F1'(B))) ->
-            'Substs.AddTypeBinding1.P4'(F, B, D, E)
-        ;   E=D
-        ).
-'Substs.FloatiseTypeHeap.P6'('Substs.V.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToType.P4'(A, 'MetaDefs.Par.F1'(B), C, F),
-        (   user:not_equal([], [F,B], F, 'MetaDefs.Occ.F1'('MetaDefs.Par.F1'(B))) ->
-            'Substs.AddTypeBinding1.P4'(F, B, D, E)
-        ;   E=D
-        ).
-'Substs.FloatiseTypeHeap.P6'('Substs.T.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToType.P4'(A, 'MetaDefs.Par.F1'(B), C, F),
-        'Substs.AddTypeBinding1.P4'(F, B, D, E).
-'Substs.FloatiseTypeHeap.P6'('Substs.H.F16'(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P), Q, R, S, T, U) :-
-        minus(Q, 1, W),
-        V=W,
-        power(16, Q, Y),
-        X=Y,
-        'Substs.FloatiseTypeHeap.P6'(A, V, R, S, T, Z),
-        plus(X, R, A1),
-        'Substs.FloatiseTypeHeap.P6'(B, V, A1, S, Z, B1),
-        times(2, X, E1),
-        plus(E1, R, C1),
-        'Substs.FloatiseTypeHeap.P6'(C, V, C1, S, B1, D1),
-        times(3, X, H1),
-        plus(H1, R, F1),
-        'Substs.FloatiseTypeHeap.P6'(D, V, F1, S, D1, G1),
-        times(4, X, K1),
-        plus(K1, R, I1),
-        'Substs.FloatiseTypeHeap.P6'(E, V, I1, S, G1, J1),
-        times(5, X, N1),
-        plus(N1, R, L1),
-        'Substs.FloatiseTypeHeap.P6'(F, V, L1, S, J1, M1),
-        times(6, X, Q1),
-        plus(Q1, R, O1),
-        'Substs.FloatiseTypeHeap.P6'(G, V, O1, S, M1, P1),
-        times(7, X, T1),
-        plus(T1, R, R1),
-        'Substs.FloatiseTypeHeap.P6'(H, V, R1, S, P1, S1),
-        times(8, X, W1),
-        plus(W1, R, U1),
-        'Substs.FloatiseTypeHeap.P6'(I, V, U1, S, S1, V1),
-        times(9, X, Z1),
-        plus(Z1, R, X1),
-        'Substs.FloatiseTypeHeap.P6'(J, V, X1, S, V1, Y1),
-        times(10, X, C2),
-        plus(C2, R, A2),
-        'Substs.FloatiseTypeHeap.P6'(K, V, A2, S, Y1, B2),
-        times(11, X, F2),
-        plus(F2, R, D2),
-        'Substs.FloatiseTypeHeap.P6'(L, V, D2, S, B2, E2),
-        times(12, X, I2),
-        plus(I2, R, G2),
-        'Substs.FloatiseTypeHeap.P6'(M, V, G2, S, E2, H2),
-        times(13, X, L2),
-        plus(L2, R, J2),
-        'Substs.FloatiseTypeHeap.P6'(N, V, J2, S, H2, K2),
-        times(14, X, O2),
-        plus(O2, R, M2),
-        'Substs.FloatiseTypeHeap.P6'(O, V, M2, S, K2, N2),
-        times(15, X, Q2),
-        plus(Q2, R, P2),
-        'Substs.FloatiseTypeHeap.P6'(P, V, P2, S, N2, U).
-'Substs.FloatiseTermHeap.P6'('Substs.N.C0', _, _, _, A, A).
-'Substs.FloatiseTermHeap.P6'('Substs.R.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToTerm.P4'('MetaDefs.Var.F1'(A), 'MetaDefs.Var.F1'(B), C, F),
-        (   user:not_equal([], [F,B], F, 'MetaDefs.Occ.F1'('MetaDefs.Var.F1'(B))) ->
-            'Substs.AddTermBinding1.P4'(F, B, D, E)
-        ;   E=D
-        ).
-'Substs.FloatiseTermHeap.P6'('Substs.V.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToTerm.P4'(A, 'MetaDefs.Var.F1'(B), C, F),
-        (   user:not_equal([], [F,B], F, 'MetaDefs.Occ.F1'('MetaDefs.Var.F1'(B))) ->
-            'Substs.AddTermBinding1.P4'(F, B, D, E)
-        ;   E=D
-        ).
-'Substs.FloatiseTermHeap.P6'('Substs.T.F1'(A), _, B, C, D, E) :-
-        'Substs.ApplySubstToTerm.P4'(A, 'MetaDefs.Var.F1'(B), C, F),
-        'Substs.AddTermBinding1.P4'(F, B, D, E).
-'Substs.FloatiseTermHeap.P6'('Substs.H.F16'(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P), Q, R, S, T, U) :-
-        minus(Q, 1, W),
-        V=W,
-        power(16, Q, Y),
-        X=Y,
-        'Substs.FloatiseTermHeap.P6'(A, V, R, S, T, Z),
-        plus(X, R, A1),
-        'Substs.FloatiseTermHeap.P6'(B, V, A1, S, Z, B1),
-        times(2, X, E1),
-        plus(E1, R, C1),
-        'Substs.FloatiseTermHeap.P6'(C, V, C1, S, B1, D1),
-        times(3, X, H1),
-        plus(H1, R, F1),
-        'Substs.FloatiseTermHeap.P6'(D, V, F1, S, D1, G1),
-        times(4, X, K1),
-        plus(K1, R, I1),
-        'Substs.FloatiseTermHeap.P6'(E, V, I1, S, G1, J1),
-        times(5, X, N1),
-        plus(N1, R, L1),
-        'Substs.FloatiseTermHeap.P6'(F, V, L1, S, J1, M1),
-        times(6, X, Q1),
-        plus(Q1, R, O1),
-        'Substs.FloatiseTermHeap.P6'(G, V, O1, S, M1, P1),
-        times(7, X, T1),
-        plus(T1, R, R1),
-        'Substs.FloatiseTermHeap.P6'(H, V, R1, S, P1, S1),
-        times(8, X, W1),
-        plus(W1, R, U1),
-        'Substs.FloatiseTermHeap.P6'(I, V, U1, S, S1, V1),
-        times(9, X, Z1),
-        plus(Z1, R, X1),
-        'Substs.FloatiseTermHeap.P6'(J, V, X1, S, V1, Y1),
-        times(10, X, C2),
-        plus(C2, R, A2),
-        'Substs.FloatiseTermHeap.P6'(K, V, A2, S, Y1, B2),
-        times(11, X, F2),
-        plus(F2, R, D2),
-        'Substs.FloatiseTermHeap.P6'(L, V, D2, S, B2, E2),
-        times(12, X, I2),
-        plus(I2, R, G2),
-        'Substs.FloatiseTermHeap.P6'(M, V, G2, S, E2, H2),
-        times(13, X, L2),
-        plus(L2, R, J2),
-        'Substs.FloatiseTermHeap.P6'(N, V, J2, S, H2, K2),
-        times(14, X, O2),
-        plus(O2, R, M2),
-        'Substs.FloatiseTermHeap.P6'(O, V, M2, S, K2, N2),
-        times(15, X, Q2),
-        plus(Q2, R, P2),
-        'Substs.FloatiseTermHeap.P6'(P, V, P2, S, N2, U).
-'Substs.FloatiseTermList.P3'([], [], _).
-'Substs.FloatiseTermList.P3'(['MetaDefs.!.F2'(B,C)|A], D, E) :-
-        'Substs.ApplySubstToTerm.P4'(C, B, E, F),
-        (   user:not_equal([], [C,B], C, 'MetaDefs.Occ.F1'(B)) ->
-            D=['MetaDefs.!.F2'(B,F)|G]
-        ;   D=G
-        ),
-        'Substs.FloatiseTermList.P3'(A, G, E).
-'Substs.FloatiseTypeList.P3'([], [], _).
-'Substs.FloatiseTypeList.P3'(['MetaDefs.!.F2'(B,C)|A], D, E) :-
-        'Substs.ApplySubstToType.P4'(C, B, E, F),
-        (   user:not_equal([], [C,B], C, 'MetaDefs.Occ.F1'(B)) ->
-            D=['MetaDefs.!.F2'(B,F)|G]
-        ;   D=G
-        ),
-        'Substs.FloatiseTypeList.P3'(A, G, E).
+%%%    float(Float), !,
+%%% %   atom_codes(string(Floatvar), IntList),
+%%%    write(float_out),
+%%%    IntList = string(Float),
+%%%    write(IntList).
+
+%%% 'FloatInts'(Float, IntList) :-
+%%%     ground(IntList), !,
+%%%    IntList = string(Float),
+%%%    write(IntList).
+%%% %    name(Float, [0'"|IntList]).
+
+%%%  'FloatInts'(Float, IntList) :-
+%%%     user:goedel_freeze(ground([IntList]) or ground([Float]),
+%%%  		'FloatInts'(Float, IntList)).
+
+%%% '~FloatInts'(Float, IntList) :-
+%%%    'FloatInts'(Float, IntList).
+
+'Floats.<.P2'(X, Y) :-
+   ( float(X), float(Y)
+     -> X < Y
+     ;  user:goedel_freeze(ground([X,Y]), X < Y)
+   ).
+
+'~Floats.<.P2'(X, Y) :-
+   ( float(X), float(Y)
+     -> X < Y
+     ;  user:goedel_freeze(ground([X,Y]), X < Y)
+   ).
+

@@ -531,8 +531,6 @@ lookup_reserved_word('|', end_of_formula(graphic_name('|'))).
 atom([], [], [], [], _).
 
 atom([Token|Tokens], Remains, Formulae, ErrorReturn, Language):-
-	write(dennis),
-	write(Token),
 	reserved_word(Token),
 	atom(Tokens, Remains, Formulae, ErrorReturn, Language).
 

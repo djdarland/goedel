@@ -167,6 +167,8 @@
 '~Syntax.ApplySubstToTerm.P8'('MetaDefs.XCTerm.F2'(A,B), C, C, _, _, D, D, 'MetaDefs.XCTerm.F2'(A,B)).
 'Syntax.ApplySubstToTerm.P8'('MetaDefs.Int.F1'(A), B, B, _, _, C, C, 'MetaDefs.Int.F1'(A)).
 '~Syntax.ApplySubstToTerm.P8'('MetaDefs.Int.F1'(A), B, B, _, _, C, C, 'MetaDefs.Int.F1'(A)).
+'Syntax.ApplySubstToTerm.P8'('MetaDefs.Flo.F1'(A), B, B, _, _, C, C, 'MetaDefs.Flo.F1'(A)).
+'~Syntax.ApplySubstToTerm.P8'('MetaDefs.Flo.F1'(A), B, B, _, _, C, C, 'MetaDefs.Flo.F1'(A)).
 'Syntax.ApplySubstToTerm.P8'('MetaDefs.Str.F1'(A), B, B, _, _, C, C, 'MetaDefs.Str.F1'(A)).
 '~Syntax.ApplySubstToTerm.P8'('MetaDefs.Str.F1'(A), B, B, _, _, C, C, 'MetaDefs.Str.F1'(A)).
 'Syntax.ApplySubstToTerm.P8'('MetaDefs.Prm.F1'(A), B, B, _, _, C, C, 'MetaDefs.Prm.F1'(A)).
@@ -463,6 +465,8 @@
 '~Syntax.CheckVariantTerms1.P4'('MetaDefs.XCTerm.F2'(A,B), C, C, 'MetaDefs.XCTerm.F2'(A,B)).
 'Syntax.CheckVariantTerms1.P4'('MetaDefs.Int.F1'(A), B, B, 'MetaDefs.Int.F1'(A)).
 '~Syntax.CheckVariantTerms1.P4'('MetaDefs.Int.F1'(A), B, B, 'MetaDefs.Int.F1'(A)).
+'Syntax.CheckVariantTerms1.P4'('MetaDefs.Flo.F1'(A), B, B, 'MetaDefs.Flo.F1'(A)).
+'~Syntax.CheckVariantTerms1.P4'('MetaDefs.Flo.F1'(A), B, B, 'MetaDefs.Flo.F1'(A)).
 'Syntax.CheckVariantTerms1.P4'('MetaDefs.Str.F1'(A), B, B, 'MetaDefs.Str.F1'(A)).
 '~Syntax.CheckVariantTerms1.P4'('MetaDefs.Str.F1'(A), B, B, 'MetaDefs.Str.F1'(A)).
 'Syntax.CheckVariantTerms1.P4'('MetaDefs.Prm.F1'(A), B, B, 'MetaDefs.Prm.F1'(A)).
@@ -623,6 +627,10 @@
         'Substs':'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Int.F1'(A), F, G).
 '~Syntax.CheckFunctionTerm1.P10'('MetaDefs.Int.F1'(A), B, C, D, D, _, E, E, F, G) :-
         'Substs':'~Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Int.F1'(A), F, G).
+'Syntax.CheckFunctionTerm1.P10'('MetaDefs.Flo.F1'(A), B, C, D, D, _, E, E, F, G) :-
+        'Substs':'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Flo.F1'(A), F, G).
+'~Syntax.CheckFunctionTerm1.P10'('MetaDefs.Flo.F1'(A), B, C, D, D, _, E, E, F, G) :-
+        'Substs':'~Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Flo.F1'(A), F, G).
 'Syntax.CheckFunctionTerm1.P10'('MetaDefs.Str.F1'(A), B, C, D, D, _, E, E, F, G) :-
         'Substs':'Substs.UnifyConstant.P5'(C, B, 'MetaDefs.Str.F1'(A), F, G).
 '~Syntax.CheckFunctionTerm1.P10'('MetaDefs.Str.F1'(A), B, C, D, D, _, E, E, F, G) :-
@@ -801,6 +809,12 @@
         'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, C, []),
         'Strings':'Strings.StringInts.P2'(B, C).
 '~Syntax.ConstantTerm.P2'('MetaDefs.Int.F1'(A), 'MetaDefs.Name.F4'('"Integers',B,'MetaDefs.Constant.C0',0)) :-
+        'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, C, []),
+        'Strings':'~Strings.StringInts.P2'(B, C).
+'Syntax.ConstantTerm.P2'('MetaDefs.Flo.F1'(A), 'MetaDefs.Name.F4'('"Floats',B,'MetaDefs.Constant.C0',0)) :-
+        'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, C, []),
+        'Strings':'Strings.StringInts.P2'(B, C).
+'~Syntax.ConstantTerm.P2'('MetaDefs.Flo.F1'(A), 'MetaDefs.Name.F4'('"Floats',B,'MetaDefs.Constant.C0',0)) :-
         'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, C, []),
         'Strings':'~Strings.StringInts.P2'(B, C).
 'Syntax.DefiniteGoal.P1'(A) :-
@@ -1057,6 +1071,8 @@
 '~Syntax.GroundTerm.P1.0'('MetaDefs.XCTerm.F2'(_,_)).
 'Syntax.GroundTerm.P1.0'('MetaDefs.Int.F1'(_)).
 '~Syntax.GroundTerm.P1.0'('MetaDefs.Int.F1'(_)).
+'Syntax.GroundTerm.P1.0'('MetaDefs.Flo.F1'(_)).
+'~Syntax.GroundTerm.P1.0'('MetaDefs.Flo.F1'(_)).
 'Syntax.GroundTerm.P1.0'('MetaDefs.Str.F1'(_)).
 '~Syntax.GroundTerm.P1.0'('MetaDefs.Str.F1'(_)).
 'Syntax.GroundTerm.P1.0'('MetaDefs.Prm.F1'(_)).
@@ -1227,6 +1243,8 @@
 '~Syntax.NonVariable.P1.0'('MetaDefs.XTerm.F3'(_,_,_)).
 'Syntax.NonVariable.P1.0'('MetaDefs.Int.F1'(_)).
 '~Syntax.NonVariable.P1.0'('MetaDefs.Int.F1'(_)).
+'Syntax.NonVariable.P1.0'('MetaDefs.Flo.F1'(_)).
+'~Syntax.NonVariable.P1.0'('MetaDefs.Flo.F1'(_)).
 'Syntax.NonVariable.P1.0'('MetaDefs.Str.F1'(_)).
 '~Syntax.NonVariable.P1.0'('MetaDefs.Str.F1'(_)).
 'Syntax.NonVariable.P1.0'('MetaDefs.Prm.F1'(_)).
@@ -1515,6 +1533,8 @@
 '~Syntax.RenameAllTerm3.P6'('MetaDefs.XCTerm.F2'(A,B), C, C, D, D, 'MetaDefs.XCTerm.F2'(A,B)).
 'Syntax.RenameAllTerm3.P6'('MetaDefs.Int.F1'(A), B, B, C, C, 'MetaDefs.Int.F1'(A)).
 '~Syntax.RenameAllTerm3.P6'('MetaDefs.Int.F1'(A), B, B, C, C, 'MetaDefs.Int.F1'(A)).
+'Syntax.RenameAllTerm3.P6'('MetaDefs.Flo.F1'(A), B, B, C, C, 'MetaDefs.Flo.F1'(A)).
+'~Syntax.RenameAllTerm3.P6'('MetaDefs.Flo.F1'(A), B, B, C, C, 'MetaDefs.Flo.F1'(A)).
 'Syntax.RenameAllTerm3.P6'('MetaDefs.Str.F1'(A), B, B, C, C, 'MetaDefs.Str.F1'(A)).
 '~Syntax.RenameAllTerm3.P6'('MetaDefs.Str.F1'(A), B, B, C, C, 'MetaDefs.Str.F1'(A)).
 'Syntax.RenameAllTerm3.P6'('MetaDefs.Prm.F1'(A), B, B, C, C, 'MetaDefs.Prm.F1'(A)).
@@ -1852,6 +1872,12 @@
         'Syntax.UnifyArgs.P11'(I, J, C, D, E, F, N, H, K, L, M).
 '~Syntax.UnifyTerms.P13'('MetaDefs.Int.F1'(A), B, C, D, E, F, G, H, I, J, K, L, M) :-
         'Substs':'~Substs.GetConstant.P4'(B, 'MetaDefs.Int.F1'(A), G, N),
+        '~Syntax.UnifyArgs.P11'(I, J, C, D, E, F, N, H, K, L, M).
+'Syntax.UnifyTerms.P13'('MetaDefs.Flo.F1'(A), B, C, D, E, F, G, H, I, J, K, L, M) :-
+        'Substs':'Substs.GetConstant.P4'(B, 'MetaDefs.Flo.F1'(A), G, N),
+        'Syntax.UnifyArgs.P11'(I, J, C, D, E, F, N, H, K, L, M).
+'~Syntax.UnifyTerms.P13'('MetaDefs.Flo.F1'(A), B, C, D, E, F, G, H, I, J, K, L, M) :-
+        'Substs':'~Substs.GetConstant.P4'(B, 'MetaDefs.Flo.F1'(A), G, N),
         '~Syntax.UnifyArgs.P11'(I, J, C, D, E, F, N, H, K, L, M).
 'Syntax.UnifyTerms.P13'('MetaDefs.Str.F1'(A), B, C, D, E, F, G, H, I, J, K, L, M) :-
         'Substs':'Substs.GetConstant.P4'(B, 'MetaDefs.Str.F1'(A), G, N),
