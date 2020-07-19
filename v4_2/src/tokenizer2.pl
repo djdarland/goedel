@@ -319,9 +319,7 @@ token_2nd(C, Chars, Remains, Token) :-
                        append(Cs2, [0'E, C2|Cs3], Cs4),
                        append(Cs1, [0'., C0|Cs4], Cs5),
                        name(Int2, [C|Cs5]),
-		      Token = float(Int2),
-		      write(token_2nd),
-		      write(Token)
+		      Token = float(Int2)
                     ;  format(user_error, '~nError: wrong format in the float number.~n', []),
                   		% here is the error recovery job
                        append(Cs1, [0'., C0|Cs2], Cs7),

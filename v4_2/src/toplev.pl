@@ -119,7 +119,7 @@ process_command(String, SymbolTable, Prog, NewProg, ModuleName, NewModuleName,
 build_command([], _, Prog, Prog, ModuleName, ModuleName, no).
 
 build_command([halt],Prog, Prog, ModuleName, ModuleName, no) :-
-	halt.
+	flush_output(user_output), halt.
 
 build_command([Token|Tokens], SymbolTable, Prog, NewProg, ModuleName,
 		NewModuleName, LanguageDif) :-
@@ -210,7 +210,7 @@ contiuation(1, Tokens, Prog, ModName) :-
    string2Gstring(ModName, GModuleName),
    'ParserPrograms.GoalSymbolTable.P3'(Prog, GModuleName, SymbolTable),
    process_query(Tokens, Prog, SymbolTable),
-   halt.
+   flush_output(user_output), halt.
 
 %------------------------------------------------------------------------------
 
@@ -480,7 +480,7 @@ rep(N, X, [X|Xs]) :-
 %------------------------------------------------------------------------------
  
 ask_to_terminator(Prompt1, Prompt2, Result) :-
-   write(user_output, Prompt1), %% ttyflush,
+   write(user_output, Prompt1), flush_output(user_output),
    get_code(C0),
    find_first_non_blank(C0, Prompt1, C1),
    ( C1 = 0'"
@@ -528,7 +528,7 @@ myttyskip(FirstChar, C) :-
 %------------------------------------------------------------------------------
 
 find_first_non_blank(10, Prompt, C) :- !,
-   write(user_output, Prompt), %% ttyflush,
+   write(user_output, Prompt), flush_output(user_output),
    get_code(C1),
    find_first_non_blank(C1, Prompt, C).
 
@@ -549,7 +549,7 @@ get_one_char(0'., Prompt, C, Switch) :- !,
    ( blank_char(C), Switch = not_in_string
      -> true
      ;  ( C = 10
-	  -> write(user_output, Prompt) %%, ttyflush
+	  -> write(user_output, Prompt), flush_output(user_output)
 	  ;  true
 	)
    ).
@@ -557,7 +557,7 @@ get_one_char(0'., Prompt, C, Switch) :- !,
 get_one_char(_, Prompt, C, _) :-
    get_code(C),
    ( C = 10
-     -> write(user_output, Prompt) %%, ttyflush
+     -> write(user_output, Prompt), flush_output(user_output)
      ;  true
    ).
 
@@ -576,7 +576,7 @@ prolog_cmd :-
    ). 
 
 quit_cmd :-
-   halt.
+   flush_output(user_output), halt.
 
 %------------------------------------------------------------------------------
 
@@ -798,8 +798,8 @@ create_prm_file_aux(Program, Stream) :-
    Program = 'ProgDefs.Program.F4'(MainModuleName, ModuleDefAVL, Language,
 					   StatementsAndDelays),
    Language = 'ProgDefs.Language.F1'(ModuleDescriptorAVL),
-   write_canonical(Stream, MainModuleName),
-   format(Stream, '.~n', []),
+   write_canonical(Stream, MainModuleName), flush_output(Stream),
+   format(Stream, '.~n', []), flush_output(Stream),
    'AVLTrees.AVLToBinary.P2'(ModuleDefAVL, ModuleDefOBT),
    traverse_OBT(ModuleDefOBT, ModuleDescriptorAVL, StatementsAndDelays, Stream).
 
@@ -807,20 +807,20 @@ traverse_OBT('AVLTrees.Empty.C0', _, _, _).
 traverse_OBT('AVLTrees.Tree.F4'(Left, ModuleName, Item, Right),
 	ModuleDescriptorAVL, StatementsAndDelays, Stream) :-
    ( system_module_name(ModuleName)
-     -> write_canonical(Stream, import(ModuleName)),
-        format(Stream, '.~n', [])
-     ;  write_canonical(Stream, module_name(ModuleName)),
-        format(Stream, '.~n', []),
-        write_canonical(Stream, Item),
-        format(Stream, '.~n', []),
+     -> write_canonical(Stream, import(ModuleName)), flush_output(Stream),
+        format(Stream, '.~n', []) , flush_output(Stream)
+     ;  write_canonical(Stream, module_name(ModuleName)), flush_output(Stream),
+        format(Stream, '.~n', []), flush_output(Stream),
+        write_canonical(Stream, Item), flush_output(Stream),
+        format(Stream, '.~n', []), flush_output(Stream),
 	'AVLTrees.AVLSearch.P3'(ModuleDescriptorAVL, ModuleName,
 			ModuleDescriptor),
-        write_canonical(Stream, ModuleDescriptor),
-        format(Stream, '.~n', []),
+        write_canonical(Stream, ModuleDescriptor), flush_output(Stream),
+        format(Stream, '.~n', []), flush_output(Stream),
 	'AVLTrees.AVLSearch.P3'(StatementsAndDelays, ModuleName
            , 'ProgDefs.Code.F2'(_, Code)),
-        write_canonical(Stream, Code),
-        format(Stream, '.~n', [])
+        write_canonical(Stream, Code), flush_output(Stream),
+        format(Stream, '.~n', []) , flush_output(Stream)
    ),
    traverse_OBT(Left, ModuleDescriptorAVL, StatementsAndDelays, Stream),
    traverse_OBT(Right, ModuleDescriptorAVL, StatementsAndDelays, Stream).
@@ -1519,7 +1519,7 @@ display_binding(Var, PVal, Program, VarNumber, NewVarNumber) :-
 
 write_codes([]).
 write_codes([C|Cs]) :-
-   put_code(user_output, C), %% was put DJD
+   put_code(user_output, C), flush_output(user_output), %% was put DJD
    write_codes(Cs).
 
 /*------------------------------------------------------------------------------
@@ -1527,7 +1527,7 @@ write_codes([C|Cs]) :-
  */
 
 user_satisfied:-
-   format(user_output, ' ? ', []), %% ttyflush,
+   format(user_output, ' ? ', []), flush_output(user_output),
    get_code(C),
    ( C = 0';
      -> myttyskip(C, 10), fail

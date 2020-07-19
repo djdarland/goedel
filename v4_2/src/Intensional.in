@@ -2,7 +2,7 @@ consult(init).
 goedel.
 ;cs Intensional.
 ;c Intensional.
-;l Intensional.x
+;l Intensional.
 
 k = {s : s Subset {z : n Mod z = 0 & 1 =< z < 10}} & n = 10.
 

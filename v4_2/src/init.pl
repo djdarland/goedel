@@ -3,9 +3,9 @@
 :- set_prolog_flag(discontiguous_warnings,off).
 :- set_prolog_flag(fileerrors,off).
 % :- set_prolog_flag(debug).
-:- set_prolog_flag(gc_trace,verbose).
-:- set_prolog_flag(quoted_charset, portable).
-:- set_prolog_flag(source_info, emacs).
+% :- set_prolog_flag(gc_trace,verbose).
+% :- set_prolog_flag(quoted_charset, portable).
+% :- set_prolog_flag(source_info, emacs).
  
 :- multifile '$$module'/1.
 % is_runtime_system.
@@ -216,7 +216,7 @@ process(0) :-
 
 process(1) :-
 	goedel,
-	halt.
+	flush_output(user_output), halt.
 
 /*------------------------------------------------------------------------------
 * utility routines for init.pl only.

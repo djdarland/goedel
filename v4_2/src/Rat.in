@@ -1,0 +1,10 @@
+consult(init).
+goedel.
+;cs Rat.
+;c Rat.
+;l Rat.
+ThFl(1/3, z).
+
+exit.
+
+

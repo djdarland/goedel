@@ -1,0 +1,7 @@
+EXPORT Rat.
+
+IMPORT Strings.
+
+IMPORT Rationals.
+
+PREDICATE ThFl : Rational * Rational.

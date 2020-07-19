@@ -1,0 +1,3 @@
+LOCAL Rat.
+
+ThFl(x, y ) <- y = x * 1/3. 

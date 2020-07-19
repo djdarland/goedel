@@ -1,5 +1,5 @@
-rm ../Tests/REFDIFF/*.refdiff
-rm ../Tests/ERRDIFF/*.errdiff
+rm ../Tests/REFDIFF/*.refdiff.tmp
+rm ../Tests/ERRDIFF/*.errdiff.tmp
 rm ../Tests/OUT/*.tmp
 rm ../Tests/ERR/*.tmp
 ./check_edit_all 1

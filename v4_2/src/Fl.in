@@ -3,7 +3,7 @@ goedel.
 ;cs Fl.
 ;c Fl.
 ;l Fl.
-ThFl(5.0, z).
+ThFl(5.0E2, z).
 
 halt.
 
