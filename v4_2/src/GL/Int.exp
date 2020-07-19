@@ -4,4 +4,10 @@ IMPORT Strings.
 
 IMPORT Integers.
 
-PREDICATE ThFl : Integer * Integer.
+PREDICATE ThFl : Integer * Integer;
+
+P : Integer * Integer;
+
+CkLt : Integer * Integer * Integer.
+
+%% CkLt2 : Integer * Integer * Integer.

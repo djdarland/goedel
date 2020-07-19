@@ -4,4 +4,8 @@ IMPORT Strings.
 
 IMPORT Floats.
 
-PREDICATE ThFl : Float * Float.
+PREDICATE TstFl1 : Float * Float;
+TstFl2 : Float * Float;
+TstFl3 : Float * Float;
+TstFl4 : Float * Float.
+% TstFl5 : Float * Float.

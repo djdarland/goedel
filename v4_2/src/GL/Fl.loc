@@ -1,3 +1,7 @@
 LOCAL Fl.
 
-ThFl(x, y ) <- y = x * 1000.0. 
+TstFl1(x, y ) <- y = x * 1000.0.
+TstFl2(x, y ) <- y = x + 1000.0.
+TstFl3(x, y ) <- y = x - 1000.0.
+TstFl4(x, y ) <- y = x / 1000.0.
+% TstFl5(x, y) <- y = Sin(x).

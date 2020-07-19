@@ -1,3 +1,10 @@
 LOCAL Int.
 
-ThFl(x, y ) <- y = x * 1000. 
+ThFl(x, y ) <- y = x * 1000.
+
+P(x,x).
+
+CkLt(x,y,z) <- z = x + y.
+
+%% CkLt2(x,y,z) <- z = [x < y] x + y.
+

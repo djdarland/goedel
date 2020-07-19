@@ -3,7 +3,25 @@ goedel.
 ;cs Fl.
 ;c Fl.
 ;l Fl.
-ThFl(5.0E2, z).
+TstFl1(5.0E2, z).
+
+TstFl2(5.0E2, z).
+
+TstFl3(5.0E2, z).
+
+TstFl4(5.0E2, z).
+
+a9 = Abs(5.0).
+
+a10 = Abs(-7.0).
+
+a11 = Sign(-5.0).
+
+a12 = Sign(6.0).
+
+a13 = Max(3.0, 11.0).
+
+a14 = Min(-4.0,12.0).
 
 halt.
 
