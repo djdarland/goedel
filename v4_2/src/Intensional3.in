@@ -1,0 +1,12 @@
+consult(init).
+goedel.
+;cs Intensional.
+;c Intensional.
+;l Intensional.
+djd1 = 54321.
+
+TwiceFloat(3.0E+2,z).
+
+djd2 = 99321.14.
+
+halt.

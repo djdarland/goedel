@@ -159,8 +159,8 @@ Date:		17 July 2020
  
 'times'(X, Y, Z) :-
    float(X), float(Y), !,
-   Z is X * Y,
-   write(Z).
+   Z is X * Y.
+%   write(Z).
 
 'times'(X, Y, Z) :-
    float(X), float(Z), !,

@@ -18,3 +18,4 @@ Max1(s,x,y) <-
 	    z In s &
 	    IF z > x THEN Max1(s\{z},z,y) ELSE Max1(s\{z},x,y).
 
+TwiceFloat(x, y) <- y = 2.0 * x.

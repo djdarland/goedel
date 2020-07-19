@@ -351,14 +351,36 @@
 '~SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT) :-
 'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
 
-'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
-      float_to_char_dl(Int1, Chars1, CharsT).
+'SharedSyntax.FloatToCharDL.P3'(Flo, Chars, CharsT) :-
+name(Flo, Chars).
+
+
+%      float_to_char_dl(Flo, CharsT).
 
 '~SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
-   'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT).
+ 'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT).
 
-float_to_char_dl(Flo, Chars, CharsT) :-
-	name(Flo, CharsT).
+% float_to_char_dl(Float, IntList) :-
+%	write(float_in),
+%	write(Float),
+	
+%	float(Float), !,
+%	name(Float, IntList),
+%	write(float_out),
+%	IntList = [52,50,49,48,46,48].
+%	write(IntList)	.
+
+
+
+
+%float_to_char_dl(Flo, Chars, CharsT) :-
+%	Chars = [dummy],
+%	write(Flo),
+%	name(Flo, CharsT),
+%	write(bbb),
+%	write(CharsT),
+%	write(aaa). %% using atom_codes (or name)  seems to create a buffering problem
+%% DJD
    %%% ( Int = 0 ->
    %%%   Chars = CharsT
    %%% ; C is 0'0 + Int mod 10,
@@ -370,16 +392,16 @@ float_to_char_dl(Flo, Chars, CharsT) :-
 
 
 int_to_char_dl(Int, Chars, CharsT) :-
-	name(Int, Chars).
-   %%% ( Int = 0 ->
-   %%%   Chars = CharsT
-   %%% ; C is 0'0 + Int mod 10,
-   %%%   Int1 is Int // 10,
-   %%%   int_to_char_dl(Int1, Chars, [C|CharsT])
-   %%% ).
+%	name(Int, Chars).
+   ( Int = 0 ->
+     Chars = CharsT
+   ; C is 0'0 + Int mod 10,
+     Int1 is Int // 10,
+       int_to_char_dl(Int1, Chars, [C|CharsT])
+   ).
 
-:- op(500, yfx, and).
-:- op(400, yfx, or).
+%:- op(500, yfx, and).
+%:- op(400, yfx, or).
 
 'ParserPrograms.ParserCheckStatement.P4'(A, B, C, D) :-
         'ParserPrograms.CheckStatementAux.P6'(A, B, 0, [], E, F),
@@ -668,9 +690,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
             'ParserPrograms.DecompileLanguage.P5'(N, 'ProgDefs.Hidden.C0', E, A, R),
             'ParserPrograms.DecompileLocalCode.P4'(P, E, A, R),
             'IO.EndOutput.P1'(R)
-        ;   true
-        , trace  %% DJD
-	).
+        ;   true).
 'ParserPrograms.DecompileModule.P7'('ProgDefs.ModuleKind.C0', A, _, B, C, D, E) :-
         call_residue(goedel_not('SharedPrograms.SystemModule.P1'(A)), F),
         (   F=[] ->
@@ -1710,7 +1730,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
             F=G, 
             H=[],
            E='MetaDefs.Empty.C0'
-        ;
+	;   A='MetaDefs.&''.F2'(I,J) ->
 		%%% write(iii),
 		%%% write(I),
 		%%% write(jjj),
@@ -2199,6 +2219,11 @@ int_to_char_dl(Int, Chars, CharsT) :-
         ;   'SharedPrograms.CharDL.P3'('"_', E, F),
             'SharedSyntax.IntegerToCharDL.P3'(A, F, C)
         ).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
+        'Strings.StringInts.P2'(A, E),
+        'SharedPrograms.ExpandString.P3'(E, C, D).
+
 %%% 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
 %%%         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
 %%%         'Strings.StringInts.P2'(A, E),
@@ -2222,7 +2247,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
         ).
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
-        'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+        'SharedSyntax.FloatToCharDL.P3'(A, E, F),
         (   'Floats.<.P2'(A, 0) ->
             'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1), B, C, _, _),
             D='SharedPrograms.Graphic.C0'

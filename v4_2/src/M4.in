@@ -3,11 +3,21 @@ goedel.
 ;cs M4.
 ;c M4.
 ;l M4.
-Append6([Monday], [Tuesday], [Wednesday], x).
+Append3([Monday], [Tuesday], [Wednesday], x).
 
-Append6(x, y, z, [Fred, Bill, Mary]).
+Append3(x, y, z, [Fred, Bill, Mary]).
 
-Append6(x, y, z, [1, 2, 3]).
+Append3(x, y, z, [1, 2, 3]).
+
+Append3(x, y, z, [4, 5, 6]).
+
+Append3(x, y, z, [7, 8, 9]).
+
+Append3(x, y, z, [10, 11, 12]).
+
+Append3(x, y, z, [13, 14, 15]).
+
+Append3(x, y, z, [Fred, Bill, Mary]).
 
 halt.
 

@@ -499,8 +499,9 @@ insert_import_decl([ModList/Switch|Mods], ModuleName, ModulePart, OldProg,
 
 
 insert_import_decl_aux([], _, _, _, Prog, Prog).
+
 insert_import_decl_aux([Mod|ModList], Switch, ModuleName, ModulePart, OldProg,
-				NewProg) :-
+		       NewProg) :-
    string2Gstring(Mod, GMod),
    ( Switch = 'IMPORT'
      -> 'ParserPrograms.QuickInsertImport.P5'(OldProg, ModuleName, ModulePart,
@@ -508,11 +509,12 @@ insert_import_decl_aux([Mod|ModList], Switch, ModuleName, ModulePart, OldProg,
      ;  'ParserPrograms.QuickInsertLift.P4'(OldProg, ModuleName, GMod, Prog2)
    ),
    insert_import_decl_aux(ModList, Switch, ModuleName, ModulePart, Prog2,
-				NewProg).
+			  NewProg).
 
 %------------------------------------------------------------------------------
 
 extract_import_modules([], [], [], [], _).
+
 extract_import_modules([Item|Items], Rest, Mods, Mod_Switch, WhichPart):-
    ( (  Item = item([big_name('IMPORT')|Tokens], Ln1, Ln2), Switch = 'IMPORT'
       ; Item = item([big_name('LIFT')|Tokens], Ln1, Ln2), Switch = 'LIFT'
@@ -1664,7 +1666,7 @@ or_seq([Token|Tokens], RestTokens, Condition, WholeTokens, Error, Ln1, Ln2,
  */
 
 parse_statements(ModuleName, ExpTokens, LocTokens, Language, OldProg, NewProg):-
-   ( ExpTokens == []	% there should be no statement in export part
+   ( ExpTokens = []	% there should be no statement in export part
      -> true
     ;  assert(there_is_error),
 	format(user_error, '~nAAA Error: there are illegal items in the export part of module "~w"~nThese items are:~n', [ModuleName]),
@@ -1804,7 +1806,7 @@ print_error_return([error(Format, Parameters)/Position|ErrorReturn],
 bad_message('undeclared or illegal symbol: "~w"', Parameters) :-
    token_to_pattern(Parameters, Parameters2),
    sort(Parameters2, Parameters3),
-   intersection(Parameters3, ['ALL','ELSE','IF','SOME','THEN','LOCAL'], Set),
+   intersection(Parameters3, ['ALL','ELSE','IF','SOME','THEN'], Set),
    Set \== [].
 
 

@@ -1,0 +1,10 @@
+consult(init).
+goedel.
+;cs Int.
+;c Int.
+;l Int.
+ThFl(5, z).
+
+exit.
+
+
