@@ -113,44 +113,44 @@ Date:		17 July 2020
  * Following are functions that support the constraint solving with floats.
  */
 
-'Floats.plus'(X, Y, Z) :-
+'plus'(X, Y, Z) :-
    float(X), float(Y), !, Z is X + Y.
 
-'Floats.plus'(X, Y, Z) :-
+'plus'(X, Y, Z) :-
    float(X), float(Z), !, Y is Z - X.
 
-'Floats.plus'(X, Y, Z) :-
+'plus'(X, Y, Z) :-
    float(Y), float(Z), !, X is Z - Y.
 
-'Floats.plus'(X, Y, Z) :-
+'plus'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Z]) or ground([Y,Z]) or ground([X,Y]),
                         'Floats':plus(X, Y, Z)).
 
 /*------------------------------------------------------------------------------
  */
 
-'Floats.negative'(X, Y) :-
+'negative'(X, Y) :-
    float(X), !, Y is -X.
 
-'Floats.negative'(X, Y) :-
+'negative'(X, Y) :-
    float(Y), !, X is -Y.
 
-'Floats.negative'(X, Y) :-
+'negative'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':negative(X, Y) ).
 
 /*------------------------------------------------------------------------------
  */
 
-'Floats.minus'(X, Y, Z) :-
+'minus'(X, Y, Z) :-
    float(X), float(Y), !, Z is X - Y.
 
-'Floats.minus'(X, Y, Z) :-
+'minus'(X, Y, Z) :-
    float(X), float(Z), !, Y is X - Z.
 
-'Floats.minus'(X, Y, Z) :-
+'minus'(X, Y, Z) :-
    float(Y), float(Z), !, X is Z + Y.
 
-'Floats.minus'(X, Y, Z) :-
+'minus'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Z]) or ground([Y,Z]) or ground([X,Y]),
 			'Floats':minus(X, Y, Z)).
 
@@ -167,7 +167,7 @@ Date:		17 July 2020
    ( X == 0, Z == 0
      -> true		% X is left uninstantiated
      ;  X =\= 0, 	% make sure X is not zero. If X is zero, it fails.
-        Y is Z // X, Z =:= X * Y
+        Y is Z / X, Z =:= X * Y
    ).
 
 'times'(X, Y, Z) :-
@@ -175,7 +175,7 @@ Date:		17 July 2020
    ( Y == 0, Z == 0
      -> true		% X is left uninstantiated
      ;  Y =\= 0, 	% make sure Y is not zero. If X is zero, it fails.
-        X is Z // Y, Z =:= X * Y
+        X is Z / Y, Z =:= X * Y
    ).
 
 'times'(X, Y, Z) :-
@@ -187,16 +187,16 @@ Date:		17 July 2020
  * returns multiple answers).
  */
  
-'Floats.divides'(X, Y, Z) :-
+'divides'(X, Y, Z) :-
    float(X), float(Y), !,
    ( Y = 0
      -> % Z = 0, but this value is never used
 	format(user_error, "Arithmetic exception: division by 0.~n", []),
 	raise_exception(catch_in_query)
-     ;  Z is X // Y
+     ;  Z is X / Y
    ).
 
-'Floats.divides'(X, Y, Z) :-
+'divides'(X, Y, Z) :-
    float(Z), float(Y), !,
    ( Y = 0
      -> % Z = 0, but this value is never used
@@ -211,14 +211,14 @@ Date:		17 July 2020
 	)
    ).
 
-'Floats.divides'(X, Y, Z) :-
+'divides'(X, Y, Z) :-
    user:goedel_freeze(ground([Y,Z]) or ground([X,Y]),
 		'Floats':divides(X, Y, Z)).
 
 /*------------------------------------------------------------------------------
  */
 
-'Floats.power'(X, Y, Z) :-
+'power'(X, Y, Z) :-
    float(X), float(Y), !,
    ( Y < 0
      -> % Z = 0, but this value is never used
@@ -230,7 +230,7 @@ Date:		17 July 2020
 	)
    ).
 
-'Floats.power'(X, Y, Z) :-
+'power'(X, Y, Z) :-
    float(X), float(Z), !,
    X * Z >= 0,		% checking X and Z are of the same sign
    ( X = 0, Z = 0
@@ -249,7 +249,7 @@ Date:		17 July 2020
 	)
    ).
 
-'Floats.power'(X, Y, Z) :-
+'power'(X, Y, Z) :-
    float(Y), float(Z), !,
    ( Y < 0
      -> format(user_error, "Arithmetic exception: negative exponent.~n", []),
@@ -276,14 +276,14 @@ Date:		17 July 2020
 	)
    ).
 
-'Floats.power'(X, Y, Z) :-
+'power'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Z]) or ground([Y,Z]) or ground([X,Y]),
 		'Floats':power(X, Y, Z)).
 
 
-'Floats.power2'(1, X, P, NewP) :-
+'power2'(1, X, P, NewP) :-
    NewP is X*P, !.
-'Floats.power2'(N, X, P, NewP) :-
+'power2'(N, X, P, NewP) :-
    N > 1,
    P2 is X*P, 
    N2 is N - 1,
@@ -293,7 +293,7 @@ Date:		17 July 2020
  * mod is more restrictive than divides.
  */
 
-'Floats.mod'(X, Y, Z) :-
+'mod'(X, Y, Z) :-
    float(X), float(Y), !,
    ( Y = 0
      -> % Z = 0, but this value is never used
@@ -302,20 +302,20 @@ Date:		17 July 2020
      ;  Z is X mod Y
    ).
 
-'Floats.mod'(X, Y, Z) :-
+'mod'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Y]), 'Floats':mod(X, Y, Z)).
 
 /*------------------------------------------------------------------------------
  * rem is more restrictive than divides.
  */
 
-'Floats.rem'(X, Y, Z) :-
+'rem'(X, Y, Z) :-
    float(X), float(Y), !,
    ( Y = 0
      -> % Z = 0, but this value is never used
 	format(user_error, "Arithmetic exception: rem by 0.~n", []),
 	raise_exception(catch_in_query)
-     ;  A is X // Y,
+     ;  A is X / Y,
         ( A > 0
 	  -> A2 = A
 	  ;  A2 is A - 1
@@ -323,34 +323,34 @@ Date:		17 July 2020
 	Z is X - A2 * Y
    ).
 
-'Floats.rem'(X, Y, Z) :-
+'rem'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Y]), 'Floats':rem(X, Y, Z)).
 
 /*------------------------------------------------------------------------------
  */
 
-'Floats.absolute'(X, Y) :-
+'absolute'(X, Y) :-
    float(X), !,
    ( X >= 0
      -> Y is X
      ;  Y is -X
    ).
 
-'Floats.absolute'(X, Y) :-
+'absolute'(X, Y) :-
    float(Y), !, Y >= 0, 
    ( X is Y
    ;
      X is -Y
    ).
 
-'Floats.absolute'(X, Y) :-
+'absolute'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':absolute(X, Y) ).
 
 /*------------------------------------------------------------------------------
  * maximum and minimum assum that X and Y are floats.
  */
 
-'Floats.sign'(X, Y) :-
+'sign'(X, Y) :-
    float(X), !,
    ( X = 0
      -> Y = 0
@@ -360,7 +360,7 @@ Date:		17 July 2020
 	)
    ).
 
-'Floats.sign'(X, Y) :-
+'sign'(X, Y) :-
    user:goedel_freeze(ground([X]), 'Floats':sign(X, Y) ).
 
 
@@ -368,26 +368,29 @@ Date:		17 July 2020
  * maximum and minimum assum that X and Y are floats.
  */
  
-'Floats.maximum'(X, Y, Z) :-
+'maximum'(X, Y, Z) :-
    float(X), float(Y), !,
    ( X < Y
      -> Z = Y
      ;  Z = X
    ).
 
-'Floats.maximum'(X, Y, Z) :-
+'maximum'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Y]), 'Floats':maximum(X, Y, Z) ).
 
 /*------------------------------------------------------------------------------
  */
 
-'Floats.minimum'(X, Y, Z) :-
+'minimum'(X, Y, Z) :-
    float(X), float(Y), !,
    ( X < Y
      -> Z = X
      ;  Z = Y
    ).
 
-'Floats.`minimum'(X, Y, Z) :-
+'minimum'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Y]), 'Floats':minimum(X, Y, Z) ).
  
+'sin'(X, Z) :-
+   float(X), !, Z is sin(X).
+

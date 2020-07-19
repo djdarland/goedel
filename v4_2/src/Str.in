@@ -1,0 +1,10 @@
+consult(init).
+goedel.
+;cs Str.
+;c Str.
+;l Str.
+a = "Hello " ++ "World".
+
+exit.
+
+
