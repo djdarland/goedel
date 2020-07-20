@@ -1900,6 +1900,7 @@ constraint_goal(Module, Goal) :-
 
 module_with_constraints('Integers').
 module_with_constraints('Rationals').
+module_with_constraints('Floats').
 module_with_constraints('Strings').
 module_with_constraints('Sets').
 
@@ -1913,6 +1914,33 @@ constraint_goal_conversion('Integers', mod, '"Mod', 2):- !.
 constraint_goal_conversion('Integers', maximum, '"Max', 2):- !.
 constraint_goal_conversion('Integers', minimum, '"Min', 2):- !.
 constraint_goal_conversion('Integers', absolute, '"Abs', 1):- !.
+
+constraint_goal_conversion('Floats', negative, '"-', 1):- !.
+constraint_goal_conversion('Floats', minus, '"-', 2):- !.
+constraint_goal_conversion('Floats', plus, '"+', 2):- !.
+constraint_goal_conversion('Floats', times, '"*', 2):- !.
+constraint_goal_conversion('Floats', divides, '"Div', 2):- !.
+constraint_goal_conversion('Floats', power, '"^', 2):- !.
+constraint_goal_conversion('Floats', mod, '"Mod', 2):- !.
+constraint_goal_conversion('Floats', maximum, '"Max', 2):- !.
+constraint_goal_conversion('Floats', minimum, '"Min', 2):- !.
+constraint_goal_conversion('Floats', absolute, '"Abs', 1):- !.
+constraint_goal_conversion('Floats', sinrad, '"Sin', 1):- !.
+constraint_goal_conversion('Floats', successorg, '"Successor', 1):- !.
+
+/*
+constraint_goal_conversion('Floats', truncateg, '"Truncate', 1):- !.
+*/
+/*
+constraint_goal_conversion('Floats', roundg, '"Round', 1):- !.
+*/
+/*
+constraint_goal_conversion('Floats', integerpartg, '"IntegerPart', 1):- !.
+*/
+
+constraint_goal_conversion('Floats', arcsinrad, '"ArcSin', 1):- !.
+constraint_goal_conversion('Floats', expe, '"Exp', 1):- !.
+constraint_goal_conversion('Floats', sqrtg, '"Sqrt', 1):- !.
 
 constraint_goal_conversion('Rationals', negative, '"-', 1):- !.
 constraint_goal_conversion('Rationals', minus, '"-', 2):- !.

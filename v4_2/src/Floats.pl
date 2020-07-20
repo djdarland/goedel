@@ -329,7 +329,7 @@ Date:		17 July 2020
 /*------------------------------------------------------------------------------
  */
 
-'absolute'(X, Y) :-
+ 'absolute'(X, Y) :-
    float(X), !,
    ( X >= 0
      -> Y is X
@@ -389,8 +389,84 @@ Date:		17 July 2020
    ).
 
 'minimum'(X, Y, Z) :-
-   user:goedel_freeze(ground([X,Y]), 'Floats':minimum(X, Y, Z) ).
+user:goedel_freeze(ground([X,Y]), 'Floats':minimum(X, Y, Z) ).
  
-'sin'(X, Z) :-
-   float(X), !, Z is sin(X).
+'sinrad'(X, Y) :-
+float(X), !,
+   Y is sin(X).
+
+'sinrad'(X, Y) :-
+  float(Y), !,
+   X is asin(Y).
+
+'sinrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sinrad(X, Y) ).
+
+
+'sqrtg'(X, Y) :-
+float(X), !,
+   Y is sqrt(X).
+
+'sqrtg'(X, Y) :-
+  float(Y), !,
+   X is Y * Y.
+
+'sqrtg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sqrtg(X, Y) ).
+
+'successorg'(X, Y) :-
+float(X), !,
+   Y is X + 1.0.
+
+'successorg'(X, Y) :-
+  float(Y), !,
+   X is Y - 1.0.
+
+'successorg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':successorg(X, Y) ).
+
+/*
+'truncateg'(X, Y) :-
+float(X), !,
+   Y is truncate(X).
+
+'truncateg'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':truncateg(X, Y) ).
+*/
+
+'roundg'(X, Y) :-
+float(X), !,
+   Y is round(X).
+
+'round'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':roundg(X, Y) ).
+
+'integerpartg'(X, Y) :-
+float(X), !,
+   Y is integerpart(X).
+
+'integerpart'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':integerpartg(X, Y) ).
+
+'arcsinrad'(X, Y) :-
+float(X), !,
+   Y is asin(X).
+
+'arcsinrad'(X, Y) :-
+  float(Y), !,
+   X is sin(Y).
+
+'arcsinrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':arcsinrad(X, Y) ).
+
+'expe'(X, Y) :-
+float(X), !,
+   Y is exp(X).
+
+'expe'(X, Y) :-
+  float(Y), !,
+  X is log(Y).
+
+'expe'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':expe(X, Y) ).
 
