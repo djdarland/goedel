@@ -199,6 +199,7 @@ build_constraints_aux('"Abs', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
 	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
    ).
 
+
 build_constraints_aux('"Sign', [Expr], Var, Module, Goal, VarDict, NewVarDict):-
    replace_evaluatable(Expr, Expr2, [], Constraints),
    build_term(Var, BuiltVar, VarDict, VarDict2),
@@ -238,9 +239,20 @@ build_constraints_aux('"Min', [Expr1, Expr2], Var, Module, Goal, VarDict,
 	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
    ).
 
-%------------------------------------------------------------------------------
-% For Rationals
-%------------------------------------------------------------------------------
+
+build_constraints_aux('"/', [Expr1, Expr2], Var, Module, Goal, VarDict,
+	NewVarDict) :-
+   replace_evaluatable(Expr1, Expr12, [], Constraints1),
+   replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr12, BuiltExpr1, VarDict2, VarDict3),
+   build_term(Expr22, BuiltExpr2, VarDict3, VarDict4),
+   ( Constraints = []
+     -> NewVarDict = VarDict4,
+	Goal = Module:divides(BuiltExpr1, BuiltExpr2, BuiltVar) 
+     ;  Goal = ( Goals, Module:divides(BuiltExpr1, BuiltExpr2, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
+   ).
 
 build_constraints_aux('"//', [Expr1, Expr2], Var, Module, Goal, VarDict,
 	NewVarDict) :-
@@ -255,8 +267,22 @@ build_constraints_aux('"//', [Expr1, Expr2], Var, Module, Goal, VarDict,
      ;  Goal = ( Goals, Module:rational(BuiltExpr1 // BuiltExpr2, BuiltVar) ),
 	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
    ).
+%------------------------------------------------------------------------------
+% For Floats
+%------------------------------------------------------------------------------
+build_constraints_aux('"-', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   !,
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:negative(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:negative(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
 
-build_constraints_aux('"/', [Expr1, Expr2], Var, Module, Goal, VarDict,
+build_constraints_aux('"-', [Expr1, Expr2], Var, Module, Goal, VarDict,
 	NewVarDict) :-
    replace_evaluatable(Expr1, Expr12, [], Constraints1),
    replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),
@@ -265,9 +291,143 @@ build_constraints_aux('"/', [Expr1, Expr2], Var, Module, Goal, VarDict,
    build_term(Expr22, BuiltExpr2, VarDict3, VarDict4),
    ( Constraints = []
      -> NewVarDict = VarDict4,
-	Goal = Module:divides(BuiltExpr1, BuiltExpr2, BuiltVar) 
-     ;  Goal = ( Goals, Module:divides(BuiltExpr1, BuiltExpr2, BuiltVar) ),
+	Goal = Module:minus(BuiltExpr1, BuiltExpr2, BuiltVar) 
+     ;  Goal = ( Goals, Module:minus(BuiltExpr1, BuiltExpr2, BuiltVar) ),
 	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
+   ).
+
+build_constraints_aux('"+', [Expr1, Expr2], Var, Module, Goal, VarDict,
+	NewVarDict) :-
+   replace_evaluatable(Expr1, Expr12, [], Constraints1),
+   replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr12, BuiltExpr1, VarDict2, VarDict3),
+   build_term(Expr22, BuiltExpr2, VarDict3, VarDict4),
+   ( Constraints = []
+     -> NewVarDict = VarDict4,
+	Goal = Module:plus(BuiltExpr1, BuiltExpr2, BuiltVar) 
+     ;  Goal = ( Goals, Module:plus(BuiltExpr1, BuiltExpr2, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
+   ).
+
+build_constraints_aux('"*', [Expr1, Expr2], Var, Module, Goal, VarDict,
+	NewVarDict) :-
+   replace_evaluatable(Expr1, Expr12, [], Constraints1),
+   replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr12, BuiltExpr1, VarDict2, VarDict3),
+   build_term(Expr22, BuiltExpr2, VarDict3, VarDict4),
+   ( Constraints = []
+     -> NewVarDict = VarDict4,
+	Goal = Module:times(BuiltExpr1, BuiltExpr2, BuiltVar) 
+     ;  Goal = ( Goals, Module:times(BuiltExpr1, BuiltExpr2, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
+   ).
+
+build_constraints_aux('"^', [Expr1, Expr2], Var, Module, Goal, VarDict,
+	NewVarDict) :-
+   replace_evaluatable(Expr1, Expr12, [], Constraints1),
+   replace_evaluatable(Expr2, Expr22, Constraints1, Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr12, BuiltExpr1, VarDict2, VarDict3),
+   build_term(Expr22, BuiltExpr2, VarDict3, VarDict4),
+   ( Constraints = []
+     -> NewVarDict = VarDict4,
+	Goal = Module:power(BuiltExpr1, BuiltExpr2, BuiltVar) 
+     ;  Goal = ( Goals, Module:power(BuiltExpr1, BuiltExpr2, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict4, NewVarDict)
+   ).
+
+build_constraints_aux('"Sin', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:sinrad(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:sinrad(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+
+build_constraints_aux('"Sqrt', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:sqrtg(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:sqrtg(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+
+build_constraints_aux('"Successor', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:successorg(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:successorg(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+/*
+build_constraints_aux('"Truncate', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:truncateg(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:truncateg(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+*/
+
+/*
+build_constraints_aux('"Round', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:roundg(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:roundg(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+*/
+/*
+build_constraints_aux('"IntegerPart', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:integerpartg(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:integerpartg(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+*/
+
+build_constraints_aux('"ArcSin', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:arcsinrad(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:arcsinrad(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
+   ).
+
+build_constraints_aux('"Exp', [Expr], Var, Module, Goal, VarDict, NewVarDict) :-
+   replace_evaluatable(Expr, Expr2, [], Constraints),
+   build_term(Var, BuiltVar, VarDict, VarDict2),
+   build_term(Expr2, BuiltExpr, VarDict2, VarDict3),
+   ( Constraints = []
+     -> NewVarDict = VarDict3,
+	Goal = Module:expe(BuiltExpr, BuiltVar) 
+     ;  Goal = ( Goals, Module:expe(BuiltExpr, BuiltVar) ),
+	build_constraints(Constraints, Goals, VarDict3, NewVarDict)
    ).
 
 %------------------------------------------------------------------------------

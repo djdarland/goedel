@@ -1477,6 +1477,22 @@ constraint_goal_conversion(sign, _, 'Sign', 1).
 constraint_goal_conversion(maximum, _, 'Max', 2).
 constraint_goal_conversion(minimum, _, 'Min', 2).
 constraint_goal_conversion(absolute, _, 'Abs', 1).
+constraint_goal_conversion(sinrad, _, 'Sin', 1).
+constraint_goal_conversion(successorg, _, 'Successor', 1).
+/*
+constraint_goal_conversion(truncateg, _, 'Truncate', 1).
+*/
+/*
+constraint_goal_conversion(roundg, _, 'Round', 1).
+*/
+
+/*
+constraint_goal_conversion(integerpartg, _, 'IntegerPart', 1).
+*/
+
+constraint_goal_conversion(arcsinrad, _, 'ArcSin', 1).
+constraint_goal_conversion(expe, _, 'Exp', 1).
+constraint_goal_conversion(sqrtg, _, 'Sqrt', 1).
 constraint_goal_conversion(rational, 'Rationals', '//', 2).
 constraint_goal_conversion(eval, 'Rationals', =, 2).
 
