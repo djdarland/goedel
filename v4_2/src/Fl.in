@@ -11,27 +11,61 @@ TstFl3(5.0E2, z).
 
 TstFl4(5.0E2, z).
 
+a9_lab = "Abs(5.0) = ".
+
 a9 = Abs(5.0).
+
+a10_lab = "Abs(-7.0) = ".
 
 a10 = Abs(-7.0).
 
+a11_lab = "Sign(-5.0) = ".
+
 a11 = Sign(-5.0).
+
+a12_lab = "Sign(6.0) = ".
 
 a12 = Sign(6.0).
 
+a13_lab = "Max(3.0, 11.0) = ".
+
 a13 = Max(3.0, 11.0).
+
+a14_lab = "Min(-4.0, 12.0) = ".
 
 a14 = Min(-4.0,12.0).
 
+a15_lab = "Sin(0.5) = ".
+
 a15 = Sin(0.5).
+
+a16_lab = "Successor(1.0) = ".
 
 a16 = Successor(1.0).
 
+a17_lab = "Sqrt(5.0) = ".
+
 a17 = Sqrt(5.0).
+
+a21_lab = "ArcSin(0.5) = ".
 
 a21 = ArcSin(0.5).
 
+a22_lab = "Exp(1.0) = ".
+
 a22 = Exp(1.0).
+
+a23_lab = "Tan(0.5) = ".
+
+a23 = Tan(0.5).
+
+a24_lab = "ArcTan(0.5) = ".
+
+a24 = ArcTan(0.5).
+
+a25_lab = "Cos(0.5) = ".
+
+a25 = Cos(0.5).
 
 halt.
 

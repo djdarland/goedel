@@ -1,0 +1,11 @@
+EXPORT      Disp01.
+
+IMPORT      Strings.
+IMPORT      IO.
+
+PREDICATE   SampleIO01 : String.
+
+
+
+% Display displays on standard output the file whose name appears in its
+% argument.

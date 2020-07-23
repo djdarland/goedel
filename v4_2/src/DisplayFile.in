@@ -1,0 +1,13 @@
+consult(init).
+goedel.
+;c DisplayFile.
+;l DisplayFile.
+Display("GL/M1.exp").
+
+Display("M1.exp").
+
+Display("GL/M1.loc").'
+
+Display("M1.in").
+
+halt.

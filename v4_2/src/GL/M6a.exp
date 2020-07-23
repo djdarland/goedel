@@ -1,0 +1,8 @@
+MODULE  M6a.
+
+IMPORT    M5a.
+
+PREDICATE  Member2 : a * a * List(a).
+
+Member2(x,y,z)  <- Append3(_, [x|_],[y|_],z).
+

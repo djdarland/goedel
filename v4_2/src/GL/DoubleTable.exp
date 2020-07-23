@@ -1,0 +1,11 @@
+EXPORT DoubleTable.
+
+IMPORT Tables.
+
+PREDICATE Double : Table(Integer) * Table(Integer).
+
+PREDICATE Double1 : Table(Integer) * List(String) * List(Integer) *
+Table(Integer).
+
+PREDICATE DoubleNode : Table(Integer) * String * Integer * Table(Integer).
+

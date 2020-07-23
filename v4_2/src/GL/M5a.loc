@@ -1,0 +1,4 @@
+LOCAL    M5a.
+
+Append3(x,y,z,u)  <- Append(x,y,w) & Append(w,z,u).
+

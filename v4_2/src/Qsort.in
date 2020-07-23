@@ -1,0 +1,7 @@
+consult(init).
+goedel.
+;c Qsort.
+;l Qsort.
+Quicksort([3,1,66,-3,6,45,-22], x).
+
+halt.

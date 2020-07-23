@@ -1,0 +1,6 @@
+LOCAL       Disp01.
+
+   SampleIO01(str)<-
+    WriteString(StdOut, str).
+
+

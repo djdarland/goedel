@@ -41,6 +41,8 @@ CkLt(2,5,a15).
 
 CkLt(5,2,a16).
 
+WriteString(StdOut, "Hello World\n").
+
 %% CkLt2(7,2,a17).
 
 %% CkLt2(5,7,a18).

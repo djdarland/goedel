@@ -1,0 +1,6 @@
+EXPORT  M6.
+
+IMPORT    M5.
+
+PREDICATE  Member2 : a * a * List(a).
+

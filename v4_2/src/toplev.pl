@@ -1478,21 +1478,28 @@ constraint_goal_conversion(maximum, _, 'Max', 2).
 constraint_goal_conversion(minimum, _, 'Min', 2).
 constraint_goal_conversion(absolute, _, 'Abs', 1).
 constraint_goal_conversion(sinrad, _, 'Sin', 1).
+constraint_goal_conversion(tanrad, _, 'Tan', 1).
 constraint_goal_conversion(successorg, _, 'Successor', 1).
-/*
 constraint_goal_conversion(truncateg, _, 'Truncate', 1).
-*/
-/*
 constraint_goal_conversion(roundg, _, 'Round', 1).
-*/
-
-/*
 constraint_goal_conversion(integerpartg, _, 'IntegerPart', 1).
-*/
-
 constraint_goal_conversion(arcsinrad, _, 'ArcSin', 1).
+constraint_goal_conversion(arctanrad, _, 'ArcTan', 1).
 constraint_goal_conversion(expe, _, 'Exp', 1).
 constraint_goal_conversion(sqrtg, _, 'Sqrt', 1).
+constraint_goal_conversion(floorg, _, 'Floor', 1).
+constraint_goal_conversion(ceilingg, _, 'Ceiling', 1).
+constraint_goal_conversion(cosrad, _, 'Cos', 1).
+constraint_goal_conversion(cotrad, _, 'Cot', 1).
+constraint_goal_conversion(sinhg, _, 'Sinh', 1).
+constraint_goal_conversion(coshg, _, 'Cosh', 1).
+constraint_goal_conversion(tanhg, _, 'Tanh', 1).
+constraint_goal_conversion(cothg, _, 'Coth', 1).
+constraint_goal_conversion(acosrad, _, 'ArcCos', 1).
+constraint_goal_conversion(acotrad, _, 'ArcCot', 1).
+constraint_goal_conversion(asinhg, _, 'ArcSinh', 1).
+constraint_goal_conversion(acoshg, _, 'ArcCosh', 1).
+constraint_goal_conversion(acothg, _, 'ArcCoth', 1).
 constraint_goal_conversion(rational, 'Rationals', '//', 2).
 constraint_goal_conversion(eval, 'Rationals', =, 2).
 

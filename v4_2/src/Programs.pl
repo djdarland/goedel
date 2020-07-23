@@ -1926,21 +1926,29 @@ constraint_goal_conversion('Floats', maximum, '"Max', 2):- !.
 constraint_goal_conversion('Floats', minimum, '"Min', 2):- !.
 constraint_goal_conversion('Floats', absolute, '"Abs', 1):- !.
 constraint_goal_conversion('Floats', sinrad, '"Sin', 1):- !.
+constraint_goal_conversion('Floats', tanrad, '"Tan ', 1):- !.
 constraint_goal_conversion('Floats', successorg, '"Successor', 1):- !.
-
-/*
 constraint_goal_conversion('Floats', truncateg, '"Truncate', 1):- !.
-*/
-/*
 constraint_goal_conversion('Floats', roundg, '"Round', 1):- !.
-*/
-/*
 constraint_goal_conversion('Floats', integerpartg, '"IntegerPart', 1):- !.
-*/
-
 constraint_goal_conversion('Floats', arcsinrad, '"ArcSin', 1):- !.
+constraint_goal_conversion('Floats', arctanrad, '"ArcTan', 1):- !.
 constraint_goal_conversion('Floats', expe, '"Exp', 1):- !.
 constraint_goal_conversion('Floats', sqrtg, '"Sqrt', 1):- !.
+constraint_goal_conversion('Floats', floorg, '"Floor', 1):- !.
+constraint_goal_conversion('Floats', ceilingg, '"Ceiling', 1):- !.
+constraint_goal_conversion('Floats', cosrad, '"Cos', 1):- !.
+constraint_goal_conversion('Floats', cotrad, '"Cot', 1):- !.
+constraint_goal_conversion('Floats', sinhg, '"Sinh', 1):- !.
+constraint_goal_conversion('Floats', coshg, '"Cosh', 1):- !.
+constraint_goal_conversion('Floats', tanhg, '"Tanh', 1):- !.
+constraint_goal_conversion('Floats', cothg, '"Coth', 1):- !.
+constraint_goal_conversion('Floats', acosrad, '"ArcCos', 1):- !.
+constraint_goal_conversion('Floats', acotrad, '"ArcC ot', 1):- !.
+constraint_goal_conversion('Floats', asinhg, '"ArcSinh', 1):- !.
+constraint_goal_conversion('Floats', acoshg, '"ArcCosh', 1):- !.
+constraint_goal_conversion('Floats', arctanh, '"ArcTanh', 1):- !.
+constraint_goal_conversion('Floats', arccoth, '"ArcCoth', 1):- !.
 
 constraint_goal_conversion('Rationals', negative, '"-', 1):- !.
 constraint_goal_conversion('Rationals', minus, '"-', 2):- !.
