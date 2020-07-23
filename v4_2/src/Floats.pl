@@ -402,6 +402,17 @@ float(X), !,
 'sinrad'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sinrad(X, Y) ).
 
+'tanrad'(X, Y) :-
+float(X), !,
+   Y is tan(X).
+
+'tanrad'(X, Y) :-
+  float(Y), !,
+   X is atan(Y).
+
+'tan rad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':tanrad(X, Y) ).
+
 
 'sqrtg'(X, Y) :-
 float(X), !,
@@ -425,14 +436,14 @@ float(X), !,
 'successorg'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':successorg(X, Y) ).
 
-/*
+
 'truncateg'(X, Y) :-
 float(X), !,
    Y is truncate(X).
 
 'truncateg'(X, Y) :-
    user:goedel_freeze(ground([X]), 'Floats':truncateg(X, Y) ).
-*/
+
 
 'roundg'(X, Y) :-
 float(X), !,
@@ -459,6 +470,17 @@ float(X), !,
 'arcsinrad'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':arcsinrad(X, Y) ).
 
+'arctanrad'(X, Y) :-
+float(X), !,
+   Y is atan(X).
+
+'arctanrad'(X, Y) :-
+  float(Y), !,
+   X is tan(Y).
+
+'arctanrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':arctanrad(X, Y) ).
+
 'expe'(X, Y) :-
 float(X), !,
    Y is exp(X).
@@ -469,4 +491,152 @@ float(X), !,
 
 'expe'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':expe(X, Y) ).
+
+
+'floorg'(X, Y) :-
+float(X), !,
+   Y is floorg(X).
+
+'floorg'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':floorg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'ceilingg'(X, Y) :-
+float(X), !,
+   Y is ceiling(X).
+
+'ceilingg'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':ceilingg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'cosrad'(X, Y) :-
+float(X), !,
+   Y is cos(X).
+
+'cosrad'(X, Y) :-
+  float(Y), !,
+  X is acos(Y).
+
+'cosrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':cosrad(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'cotrad'(X, Y) :-
+float(X), !,
+   Y is cot(X).
+
+'cotrad'(X, Y) :-
+  float(Y), !,
+  X is acot(Y).
+
+'cotrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':cotrad(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'sinhg'(X, Y) :-
+float(X), !,
+   Y is sinh(X).
+
+'sinhg'(X, Y) :-
+  float(Y), !,
+  X is asinh(Y).
+
+'sinhg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sinhg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'coshg'(X, Y) :-
+float(X), !,
+   Y is cosh(X).
+
+'coshg'(X, Y) :-
+  float(Y), !,
+  X is acosh(Y).
+
+'coshg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':coshg:(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'tanhg'(X, Y) :-
+float(X), !,
+   Y is tanh(X).
+
+'tanhg'(X, Y) :-
+  float(Y), !,
+  X is atanh(Y).
+
+'tanhg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':tanhg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'acosrad'(X, Y) :-
+float(X), !,
+   Y is acos(X).
+
+'acosrad'(X, Y) :-
+  float(Y), !,
+  X is cos(Y).
+
+'acosrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':acosrad(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'acotrad'(X, Y) :-
+float(X), !,
+   Y is acot(X).
+
+'acotrad'(X, Y) :-
+  float(Y), !,
+  X is cot(Y).
+
+'acotrad'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':acotrad(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'asinhg'(X, Y) :-
+float(X), !,
+   Y is asinh(X).
+
+'asinhg'(X, Y) :-
+  float(Y), !,
+  X is sinh(Y).
+
+'asinhg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':asinhg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'acoshg'(X, Y) :-
+float(X), !,
+   Y is acosh(X).
+
+'acoshg'(X, Y) :-
+  float(Y), !,
+  X is cosh(Y).
+
+'acoshg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':acoshg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'atanhg'(X, Y) :-
+float(X), !,
+   Y is atanh(X).
+
+'atanhg'(X, Y) :-
+  float(Y), !,
+  X is tanh(Y).
+
+'atanhg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':atanhg(X, Y) ).
+
+%%%%%%%%%%%%%%%%%%
+'acothg'(X, Y) :-
+float(X), !,
+   Y is acoth(X).
+
+'acothg'(X, Y) :-
+  float(Y), !,
+  X is coth(Y).
+
+'acothg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':acothg(X, Y) ).
 

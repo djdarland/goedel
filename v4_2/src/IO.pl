@@ -118,7 +118,7 @@ Date:      17 September 1991
 'IO.Put.P2.1'(ResultOfFind, Char) :-
    Char >= 0, Char =< 127,
    translate_stream(ResultOfFind, Stream),
-   put_byte(Stream, Char).
+   put_code(Stream, Char).
 
 '~IO.Put.P2'(ResultOfFind, Char) :-
    'IO.Put.P2'(ResultOfFind, Char).

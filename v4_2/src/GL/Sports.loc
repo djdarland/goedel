@@ -1,0 +1,9 @@
+LOCAL Sports.
+
+Likes(Mary, Cricket).
+Likes(Mary, Tennis).
+Likes(Bill, Cricket).
+Likes(Bill, Tennis).
+Likes(Joe, Tennis).
+Likes(Joe, Football).
+

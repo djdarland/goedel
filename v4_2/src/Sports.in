@@ -1,0 +1,13 @@
+consult(init).
+goedel.
+;c Sports.
+;l Sports.
+x = {p : Likes(p, Tennis)}.
+
+x = {s : Likes(Fred,s)}.
+
+x = {p : Likes(p,s)} & s In {Cricket,Football}.
+
+x = {Pair(p,y) : y = {s : Likes(p,s)} & p In {Mary, Bill, Joe, Fred}}.
+
+halt.

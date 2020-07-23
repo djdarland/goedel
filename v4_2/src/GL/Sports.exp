@@ -1,0 +1,13 @@
+EXPORT  Sports.
+
+IMPORT Sets.
+
+BASE   Person, Sport, PersonSports.
+
+CONSTANT  Mary, Bill, Joe, Fred : Person;
+
+Cricket, Football, Tennis : Sport.
+
+FUNCTION Pair : Person * Set(Sport) -> PersonSports.
+
+PREDICATE Likes : Person * Sport.

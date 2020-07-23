@@ -1,0 +1,10 @@
+consult(init).
+goedel.
+;cs Disp01.
+;c Disp01.
+;l Disp01.
+SampleIO01("Hello World!!!").
+
+halt.
+
+

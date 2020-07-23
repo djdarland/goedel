@@ -4,3 +4,9 @@ The .exp and .loc files belong in the GL subdirectory.
 The .lng and .pl files will be created in that subdirectory.
 The .in files are created to run any particular tests.
 I added a "halt" goedel instruction to halt the prolog program.
+
+sys_modules VERY difficult to modify.
+Would need to modify to add [built in] functions.
+Plan not to do that for now.
+
+Problem with [printing] Lists of Floats. See QsortF example.

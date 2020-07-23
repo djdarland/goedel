@@ -4,6 +4,8 @@ IMPORT Strings.
 
 IMPORT Integers.
 
+IMPORT IO.
+
 PREDICATE ThFl : Integer * Integer;
 
 P : Integer * Integer;

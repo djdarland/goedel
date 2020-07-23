@@ -1,0 +1,6 @@
+consult(init).
+goedel.
+;c DoubleTable.
+;l DoubleTable.
+
+halt.

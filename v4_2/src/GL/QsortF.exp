@@ -1,0 +1,13 @@
+EXPORT QsortF.
+
+IMPORT Lists.
+
+IMPORT Floats.
+
+IMPORT Strings.
+
+PREDICATE  Quicksort : List(Float) * List(Float);
+
+Partition : List(Float) * Float * List(Float) * List(Float).
+
+

@@ -1,0 +1,9 @@
+EXPORT Qsort.
+
+IMPORT Lists.
+
+PREDICATE  Quicksort : List(Integer) * List(Integer);
+
+Partition : List(Integer) * Integer * List(Integer) * List(Integer).
+
+
