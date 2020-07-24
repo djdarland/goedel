@@ -3,6 +3,8 @@ goedel.
 ;cs Int.
 ;c Int.
 ;l Int.
+x = "I have not checked all the answers.".
+
 ThFl(5, z).
 
 a1 = 4 ^ 2.

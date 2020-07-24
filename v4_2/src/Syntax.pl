@@ -805,17 +805,18 @@
         user:goedel_freeze(ground([A]), ('Syntax':'~Syntax.Literal.P1'(A),true->true;A='MetaDefs.&''.F2'(B,C),'Syntax':'~Syntax.ConjunctionOfLiterals.P1'(B),'Syntax':'~Syntax.ConjunctionOfLiterals.P1'(C))).
 'Syntax.ConstantTerm.P2'('MetaDefs.CTerm.F1'(A), A).
 '~Syntax.ConstantTerm.P2'('MetaDefs.CTerm.F1'(A), A).
+%%%%%%%%%%%%%%%%%%%%%%%%%55
 'Syntax.ConstantTerm.P2'('MetaDefs.Int.F1'(A), 'MetaDefs.Name.F4'('"Integers',B,'MetaDefs.Constant.C0',0)) :-
         'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, C, []),
         'Strings':'Strings.StringInts.P2'(B, C).
 '~Syntax.ConstantTerm.P2'('MetaDefs.Int.F1'(A), 'MetaDefs.Name.F4'('"Integers',B,'MetaDefs.Constant.C0',0)) :-
         'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, C, []),
-        'Strings':'~Strings.StringInts.P2'(B, C).
+'Strings':'~Strings.StringInts.P2'(B, C).
 'Syntax.ConstantTerm.P2'('MetaDefs.Flo.F1'(A), 'MetaDefs.Name.F4'('"Floats',B,'MetaDefs.Constant.C0',0)) :-
-        'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, C, []),
+        'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A, C, []),
         'Strings':'Strings.StringInts.P2'(B, C).
 '~Syntax.ConstantTerm.P2'('MetaDefs.Flo.F1'(A), 'MetaDefs.Name.F4'('"Floats',B,'MetaDefs.Constant.C0',0)) :-
-        'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, C, []),
+        'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A, C, []),
         'Strings':'~Strings.StringInts.P2'(B, C).
 'Syntax.DefiniteGoal.P1'(A) :-
         user:goedel_freeze(ground([A]), 'Syntax':'Syntax.DefiniteGoal.P1.0'(A)).

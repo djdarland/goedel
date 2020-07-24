@@ -1,0 +1,12 @@
+EXPORT Comp01.
+
+IMPORT Integers.
+IMPORT IO.
+IMPORT Strings.
+
+
+PREDICATE  IfGreater : Integer * Integer.
+
+
+
+

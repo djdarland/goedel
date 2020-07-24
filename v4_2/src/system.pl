@@ -352,6 +352,7 @@
 'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
 
 'SharedSyntax.FloatToCharDL.P3'(Flo, Chars, CharsT) :-
+%CharsT = [dummy],
 name(Flo, Chars).
 
 
@@ -630,7 +631,8 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'ParserPrograms.DecompileFunctions.P4'(G, C, D, E),
         'ParserPrograms.DecompilePropositions.P2'(H, E),
         'ParserPrograms.DecompilePredicates.P4'(I, C, D, E).
-'ParserPrograms.DecompileIndicator.P2'(A, B) :-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	'ParserPrograms.DecompileIndicator.P2'(A, B) :-
         (   A='ProgDefs.FunctionDecl.F4'(_,C,_,_),
             user:not_equal([], [C], C, 'Syntax.NoFunctInd.C0') ->
             'ParserPrograms.FunctionIndicator.P3'(C, D, E),
@@ -647,6 +649,26 @@ int_to_char_dl(Int, Chars, CharsT) :-
             'IO.WriteString.P2'(B, '" : ')
         ;   true
         ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	'ParserPrograms.DecompileIndicator.P2'(A, B) :-
+        (   A='ProgDefs.FunctionDecl.F4'(_,C,_,_),
+            user:not_equal([], [C], C, 'Syntax.NoFunctInd.C0') ->
+            'ParserPrograms.FunctionIndicator.P3'(C, D, E),
+            'IO.WriteString.P2'(B, D),
+            'IO.WriteString.P2'(B, '"('),
+            'SharedSyntax.FloatToCharDL.P3'(E, F, []),
+            'Strings.StringInts.P2'(G, F),
+            'IO.WriteString.P2'(B, G),
+            'IO.WriteString.P2'(B, '") : ')
+        ;   A='ProgDefs.PredicateDecl.F3'(_,H,_),
+            user:not_equal([], [H], H, 'Syntax.NoPredInd.C0') ->
+            'ParserPrograms.PredicateIndicator.P2'(H, D),
+            'IO.WriteString.P2'(B, D),
+            'IO.WriteString.P2'(B, '" : ')
+        ;   true
+        ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 'ParserPrograms.DecompileModule.P7'(_, A, _, _, _, _, _) :-
         call_residue('SharedPrograms.SystemModule.P1'(A), B),
         (   B=[] ->
@@ -1108,6 +1130,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'ParserPrograms.VariantTypeLists.P2'([B|A], [D|C]).
 'ParserPrograms.VariantDeclarations.P2'('ProgDefs.PredicateDecl.F3'(_,_,A), 'ProgDefs.PredicateDecl.F3'(_,_,B)) :-
         'ParserPrograms.VariantTypeLists.P2'(A, B).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 'ParserPrograms.WriteConstructor.P3'(A, 'ProgDefs.ConstructorDecl.F1'(B), C) :-
         'IO.WriteString.P2'(C, A),
         'IO.WriteString.P2'(C, '"/'),
@@ -1115,6 +1138,16 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'Strings.StringInts.P2'(E, D),
         'IO.WriteString.P2'(C, E).
 'ParserPrograms.WriteRestOfIdentifiers.P2'([], _).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'ParserPrograms.WriteConstructor.P3'(A, 'ProgDefs.ConstructorDecl.F1'(B), C) :-
+        'IO.WriteString.P2'(C, A),
+        'IO.WriteString.P2'(C, '"/'),
+        'SharedSyntax.FloatToCharDL.P3'(B, D, []),
+        'Strings.StringInts.P2'(E, D),
+        'IO.WriteString.P2'(C, E).
+'ParserPrograms.WriteRestOfIdentifiers.P2'([], _).
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 'ParserPrograms.WriteRestOfIdentifiers.P2'(['ParserPrograms.ID.F2'(B,_)|A], C) :-
         'IO.WriteString.P2'(C, '", '),
         'IO.WriteString.P2'(C, B),
@@ -1376,6 +1409,12 @@ int_to_char_dl(Int, Chars, CharsT) :-
             true
         ;   user:flounder_commit(C)
         ), !.
+'SharedPrograms.BindsTighter.P2'('SharedPrograms.Prec.F2'(A,_), 'SharedPrograms.Prec.F2'(B,_)) :-
+        call_residue('Floats.>.P2'(A,B), C),
+        (   C=[] ->
+            true
+        ;   user:flounder_commit(C)
+        ), !.
 'SharedPrograms.CRPrec.P2'('MetaDefs.Empty.C0', 'SharedPrograms.Infinity.C0').
 'SharedPrograms.CRPrec.P2'('MetaDefs.PAtom.F1'(_), 'SharedPrograms.Infinity.C0').
 'SharedPrograms.CRPrec.P2'('MetaDefs.Atom.F2'(_,_), 'SharedPrograms.Infinity.C0').
@@ -1582,12 +1621,23 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'Strings.StringInts.P2'('" THEN ', M),
         'Lists.Append.P3'(M, N, L),
         'SharedPrograms.ThenPartToIntDL.P6'(B, C, D, E, N, G).
-'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
         'SharedPrograms.CharDL.P3'('"{', F, H),
         'SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, H, I),
         'SharedPrograms.CharDL.P3'('"}', I, J),
         'SharedPrograms.CharDL.P3'('"_', J, K),
         'SharedSyntax.IntegerToCharDL.P3'(A, K, G).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
+        'SharedPrograms.CharDL.P3'('"{', F, H),
+        'SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, H, I),
+        'SharedPrograms.CharDL.P3'('"}', I, J),
+        'SharedPrograms.CharDL.P3'('"_', J, K),
+        'SharedSyntax.FloatToCharDL.P3'(A, K, G).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 'SharedPrograms.ImportedLanguage.P6'([], _, _, _, A, A).
 'SharedPrograms.ImportedLanguage.P6'([A|B], C, D, E, F, G) :-
         (   'Lists.Member.P2'(A, E) ->
@@ -2209,8 +2259,9 @@ int_to_char_dl(Int, Chars, CharsT) :-
             ) ->
             D=F
         ;   'SharedPrograms.CharDL.P3'('"_', F, H),
-            'SharedSyntax.IntegerToCharDL.P3'(B, H, D)
-        ).
+            'SharedSyntax.FloatToCharDL.P3'(B, H, D)
+        ). 
+	%%%%%%%%%%%%%%%%%%%%%%
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
         'Strings.StringInts.P2'('"v', D),
         'Lists.Append.P3'(D, E, B),
@@ -2219,23 +2270,36 @@ int_to_char_dl(Int, Chars, CharsT) :-
         ;   'SharedPrograms.CharDL.P3'('"_', E, F),
             'SharedSyntax.IntegerToCharDL.P3'(A, F, C)
         ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
+        'Strings.StringInts.P2'('"v', D),
+        'Lists.Append.P3'(D, E, B),
+        (   A=0 ->
+            C=E
+        ;   'SharedPrograms.CharDL.P3'('"_', E, F),
+            'SharedSyntax.FloatToCharDL.P3'(A, F, C)
+        ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
         'Strings.StringInts.P2'(A, E),
         'SharedPrograms.ExpandString.P3'(E, C, D).
 
-%%% 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
-%%%         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
-%%%         'Strings.StringInts.P2'(A, E),
-%%%         'SharedPrograms.ExpandString.P3'(E, C, D).
-%%% 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
-%%% write(got_HERE_001), 
-%%%         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
-%%% write(got_HERE_002), 
-%%%         user:'FloatInts'(A, D),
-%%% write(got_HERE_003).
-%%% %'SharedPrograms.ExpandFloat.P3'(E, C, D),
-%%% %write(got_HERE_004).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
+         'Strings.StringInts.P2'(A, E),
+         'SharedPrograms.ExpandString.P3'(E, C, D).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+C = [],
+         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+         user:'FloatInts'(A, D).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+/*
+ 'SharedPrograms.ExpandFloat.P3'(E, C, D) :-
+ write(got_HERE_004).
+*/
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Int.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0), B),
         'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
@@ -2285,11 +2349,11 @@ int_to_char_dl(Int, Chars, CharsT) :-
         'SharedPrograms.TermInLanguage.P5'(C, E, 'MetaDefs.VarTyping.F1'([]), 'MetaDefs.VarTyping.F1'(G), _),
 'SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
 
-'SharedPrograms.TermToFloatList.P4'(A, B, C, D) :-
+'SharedPrograms.TermToIntList.P4'(A, B, C, D) :-
         'SharedPrograms.ProgramLanguage.P2'(A, E),
         'SharedPrograms.ModuleLanguage.P3'(A, B, F),
         'SharedPrograms.TermInLanguage.P5'(C, E, 'MetaDefs.VarTyping.F1'([]), 'MetaDefs.VarTyping.F1'(G), _),
-'SharedPrograms.TermToFloatDL.P9'(C, F, E, G, _, _, _, D, []).
+'SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
 
 'SharedPrograms.TermToIntDLAux.P11'('Syntax.NoFunctInd.C0', 'MetaDefs.Name.F4'(A,B,C,D), E, F, G, H, 'Syntax.NoFunctInd.C0', I, 'SharedPrograms.Bounded.C0', J, K) :-
         (   A='"Lists',
@@ -2374,6 +2438,7 @@ int_to_char_dl(Int, Chars, CharsT) :-
         A='MetaDefs.Name.F4'(_,E,_,_),
         'Strings.StringInts.P2'(E, F),
         'Lists.Append.P3'(F, D, C).
+	%%%%%%%%%%%%%%%%%%%%%%%
 'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
         'Strings.StringInts.P2'(A, E),
         'Lists.Append.P3'(E, F, C),
@@ -2389,6 +2454,24 @@ int_to_char_dl(Int, Chars, CharsT) :-
         ;   'SharedPrograms.CharDL.P3'('"_', D, E),
             'SharedSyntax.IntegerToCharDL.P3'(A, E, C)
         ).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
+        'Strings.StringInts.P2'(A, E),
+        'Lists.Append.P3'(E, F, C),
+        (   B=0 ->
+            D=F
+        ;   'SharedPrograms.CharDL.P3'('"_', F, G),
+            'SharedSyntax.FloatToCharDL.P3'(B, G, D)
+        ).
+'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F1'(A), _, B, C) :-
+        'SharedPrograms.CharDL.P3'('"p', B, D),
+        (   A=0 ->
+            C=D
+        ;   'SharedPrograms.CharDL.P3'('"_', D, E),
+            'SharedSyntax.FloatToCharDL.P3'(A, E, C)
+        ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 'SharedPrograms.UnaryPostfixToIntDL.P10'(A, 'MetaDefs.Name.F4'(_,B,_,_), C, D, E, F, G, H, I, J) :-
         'SharedPrograms.TermToIntDL.P9'(C, D, E, F, K, L, M, N, O),
         'SharedPrograms.ClassifyToken.P2'(B, H),

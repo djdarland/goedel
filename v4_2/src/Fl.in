@@ -3,6 +3,8 @@ goedel.
 ;cs Fl.
 ;c Fl.
 ;l Fl.
+x = "I have just not checked answers.".
+
 TstFl1(5.0E2, z).
 
 TstFl2(5.0E2, z).

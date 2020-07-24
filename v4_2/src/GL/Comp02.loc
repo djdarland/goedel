@@ -1,0 +1,6 @@
+LOCAL  Comp02.
+
+IfGreater(x, y) <-
+
+IF x > y THEN WriteString(StdOut, "Greater\n")
+ELSE WriteString(StdOut, "Not Greater\n").

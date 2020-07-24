@@ -20,4 +20,6 @@ Licensed to SP4.6darlandcomplimentary
 yes
 % consulting /home/dennis/src/mine/mng_git/goedel/v4_2/src/toplev.pl...
 * [CharsT] - singleton variables
-* Approximate lines: 354-356, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/system.pl'
+* Approximate lines: 354-357, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/system.pl'
+* [CharsT] - singleton variables
+* Approximate lines: 610-613, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/SharedSyntax.pl'

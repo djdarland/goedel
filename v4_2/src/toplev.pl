@@ -1536,14 +1536,15 @@ display_binding(Var, PVal, Program, VarNumber, NewVarNumber) :-
    pobj_to_ground(PVal, VarNumber, NewVarNumber, Ground),
    'SharedPrograms.TermToIntList.P4'(Program, Module, Var, VarCodes),
    'SharedPrograms.TermToIntList.P4'(Program, Module, Ground, ValCodes),
-   write_codes(VarCodes), 
+   write_codes2(VarCodes), 
    write(user_output, ' = '),
-   write_codes(ValCodes).
+   write_codes2(ValCodes).
 
-write_codes([]).
-write_codes([C|Cs]) :-
-   put_code(user_output, C), flush_output(user_output), %% was put DJD
-   write_codes(Cs).
+write_codes2([]).
+
+write_codes2([C|Cs]) :-
+   put_code(user_output, C),  flush_output(user_output), %% was put DJD
+   write_codes2(Cs).
 
 /*------------------------------------------------------------------------------
  * user_satisfied

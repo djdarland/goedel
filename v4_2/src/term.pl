@@ -268,8 +268,9 @@ term([Token|Tokens], Return, SpecLeft, PrecLeft, Language):-
 	     Return = [error('misuse of infix/postfix functions', [])/Position]
 	  ;  Return = Return2
 	)
-     ;  length(Tokens, Position),
-	Return = [error('undeclared or illegal symbol in term: "~w"', [Token])/Position]
+   ;  length(Tokens, Position),
+       
+	Return = [error('D undeclared or illegal symbol in term: "~w"', [Token])/Position]
    ).
 
 /*------------------------------------------------------------------------------
@@ -586,9 +587,17 @@ check_term_token(string(String),
    lookup_base('"String', '"Strings', Language),
    string2Gstring(String, GString).
 
+%% Modified Next DJD
+
+/*
+check_term_token(float(N), simple_object('MetaDefs.Flo.F1'(N)), Language):-
+   lookup_base('"Float', '"Floats', Language).
+*/
+
 check_term_token(float(Float), simple_object('MetaDefs.Flo.F1'(Float)),
 		Language) :-
    lookup_base('"Float', '"Floats', Language).
+
 
 check_term_token(number(N), simple_object('MetaDefs.Num.F1'(N)), Language):-
    lookup_base('"Integer', '"Integers', Language).
@@ -1064,7 +1073,7 @@ term_prime([Token|Tokens], Return, SpecLeft, PrecLeft, Language):-
 	       ;  Return = Return2
 	     )
 	  ;  length(Tokens, Position),
-	     Return = [error('undeclared or illegal symbol in term: "~w"', [Token])/Position]
+	     Return = [error('E undeclared or illegal symbol in term: "~w"', [Token])/Position]
 	)
    ).
 

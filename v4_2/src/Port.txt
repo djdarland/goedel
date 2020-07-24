@@ -10,3 +10,7 @@ Would need to modify to add [built in] functions.
 Plan not to do that for now.
 
 Problem with [printing] Lists of Floats. See QsortF example.
+
+MetaDefs.Flo missing from system.pl
+
+Some Float functionallity missing (primarally answered lists of floats).

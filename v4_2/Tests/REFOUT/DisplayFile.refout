@@ -1,0 +1,20 @@
+Goedel 4.2
+Type ;h. for help.
+[] <- Reading file "GL/DisplayFile.exp" ...
+Reading file "GL/DisplayFile.loc" ...
+Parsing module "DisplayFile" ...
+Compiling module "DisplayFile" ...
+Module "DisplayFile" compiled.
+[] <- Loading module "DisplayFile" ...
+[DisplayFile] <- EXPORT        M1.
+
+BASE          Day, ListOfDay.
+
+CONSTANT      Nil : ListOfDay;
+              Monday, Tuesday, Wednesday, Thursday, Friday, Saturday,
+              Sunday : Day.
+FUNCTION      Cons : Day * ListOfDay -> ListOfDay.
+PREDICATE     Append : ListOfDay * ListOfDay * ListOfDay;
+              Append3 : ListOfDay * ListOfDay * ListOfDay * ListOfDay.
+Yes
+[DisplayFile] <- [DisplayFile] <- 

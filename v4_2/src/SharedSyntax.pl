@@ -600,3 +600,14 @@ int_to_char_dl(Int, Chars, CharsT) :-
      int_to_char_dl(Int1, Chars, [C|CharsT])
    ).
 
+
+'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
+float_to_char(Int, Chars, CharsT).
+
+'~SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
+   'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
+
+float_to_char_dl(Int, Chars, CharsT) :-
+%	CharsT = [dummy],
+	name(Int,Chars).
+

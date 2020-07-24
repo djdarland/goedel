@@ -1,0 +1,7 @@
+LOCAL       Disp01.
+
+   SampleIO01(str)<-
+   FindOutput("GL/Disp01.out", result) &
+   WriteString(result, str).
+
+
