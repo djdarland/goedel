@@ -1,0 +1,12 @@
+EXPORT Comp02.
+
+IMPORT Floats.
+IMPORT IO.
+IMPORT Strings.
+
+
+PREDICATE  IfGreater : Float * Float.
+
+
+
+

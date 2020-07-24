@@ -57,6 +57,14 @@
         ),
         'Integers':minus(C, 1, G),
         'Flocks.InsNthElement.P4'(B, G, D, E).
+'Flocks.InsNthElement.P4'([A|B], C, D, [A|E]) :-
+        call_residue('Floats':'Floats.>.P2'(C,1), F),
+        (   F=[] ->
+            !
+        ;   user:release_suspended(F)
+        ),
+        'Floats':minus(C, 1, G),
+        'Flocks.InsNthElement.P4'(B, G, D, E).
 '~Flocks.InsNthElement.P4'([A|B], C, D, [A|E]) :-
         'Integers':'~Integers.>.P2'(C, 1),
         'Integers':minus(C, 1, F),

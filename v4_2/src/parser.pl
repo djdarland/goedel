@@ -1803,7 +1803,7 @@ print_error_return([error(Format, Parameters)/Position|ErrorReturn],
    print_error_return(ErrorReturn, Number_of_Errors, Tokens, WhichPart, Ln1, Ln2).
 
 % this filters out complains about reservered words in term.
-bad_message('undeclared or illegal symbol: "~w"', Parameters) :-
+bad_message('C undeclared or illegal symbol: "~w"', Parameters) :-
    token_to_pattern(Parameters, Parameters2),
    sort(Parameters2, Parameters3),
    intersection(Parameters3, ['ALL','ELSE','IF','SOME','THEN'], Set),

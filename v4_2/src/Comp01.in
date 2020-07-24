@@ -1,0 +1,7 @@
+consult(init).
+goedel.
+;c Comp01.
+;l Comp01.
+IfGreater(5, 4).
+
+halt.

@@ -249,6 +249,12 @@
             !
         ;   user:release_suspended(C)
         ).
+'SharedPrograms.BindsTighter.P2'('SharedPrograms.Prec.F2'(A,_), 'SharedPrograms.Prec.F2'(B,_)) :-
+        call_residue('Floats':'Floats.>.P2'(A,B), C),
+        (   C=[] ->
+            !
+        ;   user:release_suspended(C)
+        ).
 '~SharedPrograms.BindsTighter.P2'('SharedPrograms.Prec.F2'(A,_), 'SharedPrograms.Prec.F2'(B,_)) :-
         'Integers':'~Integers.>.P2'(A, B).
 'SharedPrograms.CRPrec.P2'('MetaDefs.Empty.C0', 'SharedPrograms.Infinity.C0').
@@ -549,6 +555,7 @@
         'Strings':'~Strings.StringInts.P2'('" THEN ', M),
         'Lists':'~Lists.Append.P3'(M, N, L),
         '~SharedPrograms.ThenPartToIntDL.P6'(B, C, D, E, N, G).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%% 11111111111111111111111111
 'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
         'SharedPrograms.CharDL.P3'('"{', F, H),
         'SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, H, I),
@@ -561,6 +568,20 @@
         '~SharedPrograms.CharDL.P3'('"}', I, J),
         '~SharedPrograms.CharDL.P3'('"_', J, K),
         'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, K, G).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%2222222222222222222222
+'SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
+        'SharedPrograms.CharDL.P3'('"{', F, H),
+        'SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, H, I),
+        'SharedPrograms.CharDL.P3'('"}', I, J),
+        'SharedPrograms.CharDL.P3'('"_', J, K),
+        'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A, K, G).
+'~SharedPrograms.FormulaToIntDL.P6'('MetaDefs.Commit.F2'(A,B), C, D, E, F, G) :-
+        '~SharedPrograms.CharDL.P3'('"{', F, H),
+        '~SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, H, I),
+        '~SharedPrograms.CharDL.P3'('"}', I, J),
+        '~SharedPrograms.CharDL.P3'('"_', J, K),
+        'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A, K, G).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%222222222222222222222233333333333333
 'SharedPrograms.ImportedLanguage.P6'([], _, _, _, A, A).
 '~SharedPrograms.ImportedLanguage.P6'([], _, _, _, A, A).
 'SharedPrograms.ImportedLanguage.P6'([A|B], C, D, E, F, G) :-
@@ -1262,7 +1283,8 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TermToIntDL.P9'('MetaDefs.XCTerm.F2'(_,A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
         '~SharedPrograms.CharDL.P3'('"<', C, E),
         '~SharedPrograms.TypeToIntDL.P4'(A, B, E, F),
-        '~SharedPrograms.CharDL.P3'('">', F, D).
+'~SharedPrograms.CharDL.P3'('">', F, D).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%3333333333333333
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', C, D) :-
         'Strings':'Strings.StringInts.P2'(A, E),
         'Lists':'Lists.Append.P3'(E, F, C),
@@ -1270,7 +1292,18 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', C, D) :-
         'Strings':'~Strings.StringInts.P2'(A, E),
         'Lists':'~Lists.Append.P3'(E, F, C),
-        user:goedel_freeze(ground([B,A]), ((B=0;'Strings':concat('"_',_,G),A=G),true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,H),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(B,H,D))).
+user:goedel_freeze(ground([B,A]), ((B=0;'Strings':concat('"_',_,G),A=G),true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,H),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(B,H,D))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%444444444444444444
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', C, D) :-
+        'Strings':'Strings.StringInts.P2'(A, E),
+        'Lists':'Lists.Append.P3'(E, F, C),
+        user:goedel_freeze(ground([B,A]), ((B=0;'Strings':concat('"_',_,G),A=G),true->D=F;'SharedPrograms':'SharedPrograms.CharDL.P3'('"_',F,H),'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(B,H,D))).
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F2'(A,B), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', C, D) :-
+        'Strings':'~Strings.StringInts.P2'(A, E),
+        'Lists':'~Lists.Append.P3'(E, F, C),
+user:goedel_freeze(ground([B,A]), ((B=0;'Strings':concat('"_',_,G),A=G),true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,H),'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(B,H,D))).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%44444444444444444455555555555555555555
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
         'Strings':'Strings.StringInts.P2'('"v', D),
         'Lists':'Lists.Append.P3'(D, E, B),
@@ -1278,7 +1311,18 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
         'Strings':'~Strings.StringInts.P2'('"v', D),
         'Lists':'~Lists.Append.P3'(D, E, B),
-        user:goedel_freeze(ground([A]), (A=0,true->C=E;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',E,F),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A,F,C))).
+user:goedel_freeze(ground([A]), (A=0,true->C=E;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',E,F),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A,F,C))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55555555555555556666666666666666
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%44444444444444444455555555555555555555
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
+        'Strings':'Strings.StringInts.P2'('"v', D),
+        'Lists':'Lists.Append.P3'(D, E, B),
+        user:goedel_freeze(ground([A]), (A=0,true->C=E;'SharedPrograms':'SharedPrograms.CharDL.P3'('"_',E,F),'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A,F,C))).
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Var.F1'(A), _, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.AlphaNum.C0', 'SharedPrograms.AlphaNum.C0', B, C) :-
+        'Strings':'~Strings.StringInts.P2'('"v', D),
+        'Lists':'~Lists.Append.P3'(D, E, B),
+user:goedel_freeze(ground([A]), (A=0,true->C=E;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',E,F),'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A,F,C))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55555555555555556666666666666666
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
         'Strings':'Strings.StringInts.P2'(A, E),
@@ -1286,7 +1330,17 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
         '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
         'Strings':'~Strings.StringInts.P2'(A, E),
-        '~SharedPrograms.ExpandString.P3'(E, C, D).
+'~SharedPrograms.ExpandString.P3'(E, C, D).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%66666666666666666666666
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
+        'Strings':'Strings.StringInts.P2'(A, E),
+        'SharedPrograms.ExpandString.P3'(E, C, D).
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Str.F1'(A), B, _, _, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', C, D) :-
+        '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Strings','"String','MetaDefs.Base.C0',0), B),
+        'Strings':'~Strings.StringInts.P2'(A, E),
+'~SharedPrograms.ExpandString.P3'(E, C, D).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%66666666666666666666666777777777777
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Int.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Integers','"Integer','MetaDefs.Base.C0',0), B),
         'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
@@ -1298,11 +1352,32 @@ write(shared_programs_Stmt_in_lang_005).
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
         'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%7777777777777777777777
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%66666666666666666666666777777777777
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A, E, F),
         user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
 '~SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
         '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
-        'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A, E, F),
+        'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A, E, F),
         user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'~SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+'SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        'SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A, E, F),
+user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%7777777777777777777777
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A, E, F),
+user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'~SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%77778888
+'~SharedPrograms.TermToIntDL.P9'('MetaDefs.Flo.F1'(A), B, _, _, C, D, 'SharedPrograms.AlphaNum.C0', E, F) :-
+        '~SharedPrograms.BaseInLanguage.P2'('MetaDefs.Name.F4'('"Floats','"Float','MetaDefs.Base.C0',0), B),
+        'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A, E, F),
+user:goedel_freeze(ground([A]), ('Floats':'~Floats.<.P2'(A,0),true->'SharedPrograms':'~SharedPrograms.FunctionInLanguage.P5'('MetaDefs.Name.F4'('"Floats','"-','MetaDefs.Function.C0',1),B,C,_,_),D='SharedPrograms.Graphic.C0';C='Syntax.NoFunctInd.C0',D='SharedPrograms.AlphaNum.C0')).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%77778888
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.Prm.F1'(A), B, C, D, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', E, F) :-
         'SharedPrograms.TermInLanguage.P5'('MetaDefs.Prm.F1'(A), C, 'MetaDefs.VarTyping.F1'(D), _, G),
         'SharedPrograms.CharDL.P3'('"<', E, H),
@@ -1312,7 +1387,8 @@ write(shared_programs_Stmt_in_lang_005).
         '~SharedPrograms.TermInLanguage.P5'('MetaDefs.Prm.F1'(A), C, 'MetaDefs.VarTyping.F1'(D), _, G),
         '~SharedPrograms.CharDL.P3'('"<', E, H),
         '~SharedPrograms.TypeToIntDL.P4'(G, B, H, I),
-        '~SharedPrograms.CharDL.P3'('">', I, F).
+'~SharedPrograms.CharDL.P3'('">', I, F).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%888888888888888888888888
 'SharedPrograms.TermToIntDL.P9'('MetaDefs.SuchThat.F2'(A,B), C, D, E, 'Syntax.NoFunctInd.C0', 'SharedPrograms.Bounded.C0', 'SharedPrograms.Bounded.C0', F, G) :-
         'SharedPrograms.CharDL.P3'('"{', F, H),
         'SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, H, I),
@@ -1326,13 +1402,15 @@ write(shared_programs_Stmt_in_lang_005).
         'Strings':'~Strings.StringInts.P2'('" : ', J),
         'Lists':'~Lists.Append.P3'(J, K, I),
         '~SharedPrograms.FormulaToIntDL.P6'(B, C, D, E, K, L),
-        '~SharedPrograms.CharDL.P3'('"}', L, G).
+'~SharedPrograms.CharDL.P3'('"}', L, G).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%99999999999999999999999
 'SharedPrograms.TermListToIntDL.P6'([A|B], C, D, E, F, G) :-
         'SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, F, H),
         'SharedPrograms.TermListToIntDLAux.P6'(B, C, D, E, H, G).
 '~SharedPrograms.TermListToIntDL.P6'([A|B], C, D, E, F, G) :-
         '~SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, F, H),
-        '~SharedPrograms.TermListToIntDLAux.P6'(B, C, D, E, H, G).
+'~SharedPrograms.TermListToIntDLAux.P6'(B, C, D, E, H, G).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%0000000000000000000000
 'SharedPrograms.TermInLanguage.P5'(A, B, 'MetaDefs.VarTyping.F1'(C), 'MetaDefs.VarTyping.F1'(D), E) :-
         'SharedPrograms.MeltVariableTyping.P4'(C, B, [], F),
         'SharedPrograms.MeltedTermType.P9'(A, E, B, F, D, _, [], [], []),
@@ -1342,9 +1420,11 @@ write(shared_programs_Stmt_in_lang_005).
         '~SharedPrograms.MeltVariableTyping.P4'(C, B, [], F),
         '~SharedPrograms.MeltedTermType.P9'(A, E, B, F, D, _, [], [], []),
         '~SharedPrograms.FixType.P3'(E, 0, G),
-        '~SharedPrograms.FixVariableTyping.P2'(D, G).
+'~SharedPrograms.FixVariableTyping.P2'(D, G).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%111111111111111111111111
 'SharedPrograms.TermListToIntDLAux.P6'([], _, _, _, A, A).
 '~SharedPrograms.TermListToIntDLAux.P6'([], _, _, _, A, A).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%22222222222222222222
 'SharedPrograms.TermListToIntDLAux.P6'([A|B], C, D, E, F, G) :-
         'SharedPrograms.CharDL.P3'('",', F, H),
         'SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, H, I),
@@ -1352,7 +1432,8 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TermListToIntDLAux.P6'([A|B], C, D, E, F, G) :-
         '~SharedPrograms.CharDL.P3'('",', F, H),
         '~SharedPrograms.TermToIntDL.P9'(A, C, D, E, _, _, _, H, I),
-        '~SharedPrograms.TermListToIntDLAux.P6'(B, C, D, E, I, G).
+'~SharedPrograms.TermListToIntDLAux.P6'(B, C, D, E, I, G).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%33333333333333333
 'SharedPrograms.TermToIntList.P4'(A, B, C, D) :-
         'SharedPrograms.ProgramLanguage.P2'(A, E),
         'SharedPrograms.ModuleLanguage.P3'(A, B, F),
@@ -1362,11 +1443,14 @@ write(shared_programs_Stmt_in_lang_005).
         '~SharedPrograms.ProgramLanguage.P2'(A, E),
         '~SharedPrograms.ModuleLanguage.P3'(A, B, F),
         '~SharedPrograms.TermInLanguage.P5'(C, E, 'MetaDefs.VarTyping.F1'([]), 'MetaDefs.VarTyping.F1'(G), _),
-        '~SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
+'~SharedPrograms.TermToIntDL.P9'(C, F, E, G, _, _, _, D, []).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%444444444444444444444444
 'SharedPrograms.TermToIntDLAux.P11'('Syntax.NoFunctInd.C0', 'MetaDefs.Name.F4'(A,B,C,D), E, F, G, H, 'Syntax.NoFunctInd.C0', I, 'SharedPrograms.Bounded.C0', J, K) :-
-        user:goedel_freeze(ground([D,C,A,B]), ((A='"Lists',B='"Cons',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'SharedPrograms.ListExprToIntDL.P6'(E,F,G,H,J,K);user:goedel_freeze(ground([D,C,A,B]),((A='"Sets',B='"Inc',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'SharedPrograms.SetExprToIntDL.P6'(E,F,G,H,J,K);'SharedPrograms':'SharedPrograms.ClassifyToken.P2'(B,I),'Strings':'Strings.StringInts.P2'(B,L),'Lists':'Lists.Append.P3'(L,M,J),'SharedPrograms':'SharedPrograms.CharDL.P3'('"(',M,N),'SharedPrograms':'SharedPrograms.TermListToIntDL.P6'(E,F,G,H,N,O),'SharedPrograms':'SharedPrograms.CharDL.P3'('")',O,K))))).
+user:goedel_freeze(ground([D,C,A,B]), ((A='"Lists',B='"Cons',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'SharedPrograms.ListExprToIntDL.P6'(E,F,G,H,J,K);user:goedel_freeze(ground([D,C,A,B]),((A='"Sets',B='"Inc',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'SharedPrograms.SetExprToIntDL.P6'(E,F,G,H,J,K);'SharedPrograms':'SharedPrograms.ClassifyToken.P2'(B,I),'Strings':'Strings.StringInts.P2'(B,L),'Lists':'Lists.Append.P3'(L,M,J),'SharedPrograms':'SharedPrograms.CharDL.P3'('"(',M,N),'SharedPrograms':'SharedPrograms.TermListToIntDL.P6'(E,F,G,H,N,O),'SharedPrograms':'SharedPrograms.CharDL.P3'('")',O,K))))).
+
 '~SharedPrograms.TermToIntDLAux.P11'('Syntax.NoFunctInd.C0', 'MetaDefs.Name.F4'(A,B,C,D), E, F, G, H, 'Syntax.NoFunctInd.C0', I, 'SharedPrograms.Bounded.C0', J, K) :-
-        user:goedel_freeze(ground([D,C,A,B]), ((A='"Lists',B='"Cons',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'~SharedPrograms.ListExprToIntDL.P6'(E,F,G,H,J,K);user:goedel_freeze(ground([D,C,A,B]),((A='"Sets',B='"Inc',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'~SharedPrograms.SetExprToIntDL.P6'(E,F,G,H,J,K);'SharedPrograms':'~SharedPrograms.ClassifyToken.P2'(B,I),'Strings':'~Strings.StringInts.P2'(B,L),'Lists':'~Lists.Append.P3'(L,M,J),'SharedPrograms':'~SharedPrograms.CharDL.P3'('"(',M,N),'SharedPrograms':'~SharedPrograms.TermListToIntDL.P6'(E,F,G,H,N,O),'SharedPrograms':'~SharedPrograms.CharDL.P3'('")',O,K))))).
+user:goedel_freeze(ground([D,C,A,B]), ((A='"Lists',B='"Cons',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'~SharedPrograms.ListExprToIntDL.P6'(E,F,G,H,J,K);user:goedel_freeze(ground([D,C,A,B]),((A='"Sets',B='"Inc',C='MetaDefs.Function.C0',D=2),true->I='SharedPrograms.Bounded.C0','SharedPrograms':'~SharedPrograms.SetExprToIntDL.P6'(E,F,G,H,J,K);'SharedPrograms':'~SharedPrograms.ClassifyToken.P2'(B,I),'Strings':'~Strings.StringInts.P2'(B,L),'Lists':'~Lists.Append.P3'(L,M,J),'SharedPrograms':'~SharedPrograms.CharDL.P3'('"(',M,N),'SharedPrograms':'~SharedPrograms.TermListToIntDL.P6'(E,F,G,H,N,O),'SharedPrograms':'~SharedPrograms.CharDL.P3'('")',O,K))))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5555555555555555555555
 'SharedPrograms.TermToIntDLAux.P11'('Syntax.XFX.F1'(A), B, [C,D], E, F, G, H, I, J, K, L) :-
         'SharedPrograms.BinaryInfixToIntDL.P12'('Syntax.XFX.F1'(A), B, C, D, E, F, G, H, I, J, K, L).
 '~SharedPrograms.TermToIntDLAux.P11'('Syntax.XFX.F1'(A), B, [C,D], E, F, G, H, I, J, K, L) :-
@@ -1465,6 +1549,7 @@ write(shared_programs_Stmt_in_lang_005).
         A='MetaDefs.Name.F4'(_,E,_,_),
         'Strings':'~Strings.StringInts.P2'(E, F),
         'Lists':'~Lists.Append.P3'(F, D, C).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%6666666666666666666
 'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
         'Strings':'Strings.StringInts.P2'(A, E),
         'Lists':'Lists.Append.P3'(E, F, C),
@@ -1472,13 +1557,31 @@ write(shared_programs_Stmt_in_lang_005).
 '~SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
         'Strings':'~Strings.StringInts.P2'(A, E),
         'Lists':'~Lists.Append.P3'(E, F, C),
-        user:goedel_freeze(ground([B]), (B=0,true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,G),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(B,G,D))).
+user:goedel_freeze(ground([B]), (B=0,true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,G),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(B,G,D))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%7777777777777777777
+'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
+        'Strings':'Strings.StringInts.P2'(A, E),
+        'Lists':'Lists.Append.P3'(E, F, C),
+        user:goedel_freeze(ground([B]), (B=0,true->D=F;'SharedPrograms':'SharedPrograms.CharDL.P3'('"_',F,G),'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(B,G,D))).
+'~SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F2'(A,B), _, C, D) :-
+        'Strings':'~Strings.StringInts.P2'(A, E),
+        'Lists':'~Lists.Append.P3'(E, F, C),
+user:goedel_freeze(ground([B]), (B=0,true->D=F;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',F,G),'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(B,G,D))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%7777777777777777777
 'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F1'(A), _, B, C) :-
         'SharedPrograms.CharDL.P3'('"p', B, D),
         user:goedel_freeze(ground([A]), (A=0,true->C=D;'SharedPrograms':'SharedPrograms.CharDL.P3'('"_',D,E),'SharedSyntax':'SharedSyntax.IntegerToCharDL.P3'(A,E,C))).
 '~SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F1'(A), _, B, C) :-
         '~SharedPrograms.CharDL.P3'('"p', B, D),
-        user:goedel_freeze(ground([A]), (A=0,true->C=D;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',D,E),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A,E,C))).
+user:goedel_freeze(ground([A]), (A=0,true->C=D;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',D,E),'SharedSyntax':'~SharedSyntax.IntegerToCharDL.P3'(A,E,C))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%8888888888888
+'SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F1'(A), _, B, C) :-
+        'SharedPrograms.CharDL.P3'('"p', B, D),
+        user:goedel_freeze(ground([A]), (A=0,true->C=D;'SharedPrograms':'SharedPrograms.CharDL.P3'('"_',D,E),'SharedSyntax':'SharedSyntax.FloatToCharDL.P3'(A,E,C))).
+'~SharedPrograms.TypeToIntDL.P4'('MetaDefs.Par.F1'(A), _, B, C) :-
+        '~SharedPrograms.CharDL.P3'('"p', B, D),
+user:goedel_freeze(ground([A]), (A=0,true->C=D;'SharedPrograms':'~SharedPrograms.CharDL.P3'('"_',D,E),'SharedSyntax':'~SharedSyntax.FloatToCharDL.P3'(A,E,C))).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%8888888888888
 'SharedPrograms.UnaryPostfixToIntDL.P10'(A, 'MetaDefs.Name.F4'(_,B,_,_), C, D, E, F, G, H, I, J) :-
         'SharedPrograms.TermToIntDL.P9'(C, D, E, F, K, L, M, N, O),
         'SharedPrograms.ClassifyToken.P2'(B, H),
@@ -1491,6 +1594,7 @@ write(shared_programs_Stmt_in_lang_005).
         user:goedel_freeze(ground([A,K]), (('SharedPrograms':'~SharedPrograms.RPrec.P2'(K,P),'SharedPrograms':'~SharedPrograms.LPrec.P2'(A,Q),'SharedPrograms':'~SharedPrograms.BindsTighter.P2'(P,Q)),true->G=L,I=N,'SharedPrograms':'~SharedPrograms.SpaceIfNeeded.P4'(M,H,O,R);G='SharedPrograms.Bounded.C0','SharedPrograms':'~SharedPrograms.CharDL.P3'('"(',I,N),'SharedPrograms':'~SharedPrograms.CharDL.P3'('")',O,R))),
         'Strings':'~Strings.StringInts.P2'(B, S),
         'Lists':'~Lists.Append.P3'(S, J, R).
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%559999999999999999999999
 'SharedPrograms.UpdateDelays.P6'('ProgDefs.Export.C0', A, B, C, [A|B], C).
 '~SharedPrograms.UpdateDelays.P6'('ProgDefs.Export.C0', A, B, C, [A|B], C).
 'SharedPrograms.UpdateDelays.P6'('ProgDefs.Closed.C0', A, B, C, [A|B], C).

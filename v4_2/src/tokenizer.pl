@@ -391,8 +391,6 @@ token(First_digit, Stream, Token, Ln, Ln, Ahead) :-
 		      append(Part4, Fraction, Mantissa),
 		      append(Mantissa, Exponent, Whole),
 		      name(Int2, Whole),
-
-%		      Token = float(Int2),
 		      Token = float(Int2)
 		    ;  format(user_error, '~nError: wrong format in the float number in line ~d.~n', [Ln])
 		            % here is the error recovery job
