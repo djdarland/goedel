@@ -1,0 +1,17 @@
+MODULE		ThreeWiseMen.
+
+% This program solves the three wise men puzzle.
+%
+% The module WiseMan3KB needs to be program-compiled first.
+%
+% Goal:  <- Go(colour).
+
+IMPORT		ProgramsIO, Reasoner.
+
+PREDICATE  Go : Colour.	
+
+Go(colour) <-
+  FindInput("WiseMan3KB.prm", In(stream)) &
+  GetProgram(stream, wiseman3_kb) &
+  EndInput(stream) &
+  Solve(W3,wiseman3_kb, colour).

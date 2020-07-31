@@ -1,0 +1,35 @@
+LOCAL       DisplayFile.
+
+% IMPORT      IO.
+
+
+%Display(file) <-
+%	      FindInput(file, resultin) &
+	      
+	      
+            ProcessStream(resultin,resultout).
+Display(file) <-
+*	      FindOutput("GL/DisplayFile.out",resultout) & 
+	      FindInput(file, resultin) &
+	      
+            ProcessStream(resultin,resultout).
+
+
+
+ProcessStream(streamin, streamout) <-
+            Get(streamin, c) &
+            DisplayStream(streamin, c, streamout) &
+            EndInput(streamin) &
+            EndOutput(streamout).
+
+ProcessStream(NotFound, streamout) <-
+            WriteString(streamout, "File not found\n").
+
+
+
+DisplayStream(streamin, c, streamout) <-
+            IF c ~= -1 
+            THEN
+              Put(streamout, c) &
+              Get(streamin, c1) &
+              DisplayStream(streamin, c1, streamout).

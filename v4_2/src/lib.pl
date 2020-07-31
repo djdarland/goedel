@@ -103,7 +103,7 @@ one_solution(Goals):-
 goedel_not(Goals):-
    ( call_residue(Goals, Suspended)
      -> Suspended \== [],
-	format(user_error, 'Floundered. Unsolved goals are:~n', []),
+	format(user_error, 'B Floundered. Unsolved goals are:~n', []),
 	process_unsolved_goals(Suspended),
 	raise_exception(catch_in_query)
      ;  true

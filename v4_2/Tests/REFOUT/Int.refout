@@ -10,5 +10,44 @@ Compiling module "Int" ...
 Module "Int" compiled.
 [] <- Loading module "Int" ...
 [Int] <- 
+x = "I have not checked all the answers." ? Yes
+[Int] <- 
 z = 5000 ? Yes
 [Int] <- 
+a1 = 16 ? Yes
+[Int] <- 
+a2 = -5 ? Yes
+[Int] <- 
+a3 = 8 ? Yes
+[Int] <- 
+a4 = 2 ? Yes
+[Int] <- 
+a5 = 1 ? Yes
+[Int] <- 
+a6 = 10 ? Yes
+[Int] <- 
+a7 = 4 ? Yes
+[Int] <- 
+a8 = -4 ? Yes
+[Int] <- 
+a9 = 5 ? Yes
+[Int] <- 
+a10 = 7 ? Yes
+[Int] <- 
+a11 = -1 ? Yes
+[Int] <- 
+a12 = 1 ? Yes
+[Int] <- 
+a13 = 11 ? Yes
+[Int] <- 
+a14 = -4 ? Yes
+[Int] <- Yes
+[Int] <- [Int] <- 
+x15 = 4 ? Yes
+[Int] <- 
+a15 = 7 ? Yes
+[Int] <- 
+a16 = 7 ? Yes
+[Int] <- Hello World
+Yes
+[Int] <- [Int] <- [Int] <- [Int] <- [Int] <- [Int] <- [Int] <- [Int] <- [Int] <- [Int] <- 

@@ -592,8 +592,8 @@ check_term_token(string(String),
 /*
 check_term_token(float(N), simple_object('MetaDefs.Flo.F1'(N)), Language):-
    lookup_base('"Float', '"Floats', Language).
-*/
 
+*/
 check_term_token(float(Float), simple_object('MetaDefs.Flo.F1'(Float)),
 		Language) :-
    lookup_base('"Float', '"Floats', Language).

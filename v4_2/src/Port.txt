@@ -11,6 +11,8 @@ Plan not to do that for now.
 
 Problem with [printing] Lists of Floats. See QsortF example.
 
-MetaDefs.Flo missing from system.pl
+MetaDefs.Flo missing from sys_modules.pl
 
 Some Float functionallity missing (primarally answered lists of floats).
+
+Think maybe Flock stuff missing from system.pl

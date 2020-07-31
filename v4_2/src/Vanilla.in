@@ -1,0 +1,10 @@
+consult(init).
+goedel.
+;cs OM2.
+;c OM2.
+;cs Vanilla.
+;c Vanilla.
+;l Vanilla.
+
+halt.
+

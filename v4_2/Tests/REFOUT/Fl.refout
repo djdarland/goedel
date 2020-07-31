@@ -12,3 +12,69 @@ Module "Fl" compiled.
 [Fl] <- 
 z = 5.0E+05 ? Yes
 [Fl] <- 
+z = 1500.0 ? Yes
+[Fl] <- 
+z = -500.0 ? Yes
+[Fl] <- 
+z = 0.5 ? Yes
+[Fl] <- 
+a9_lab = "Abs(5.0) = " ? Yes
+[Fl] <- 
+a9 = 5.0 ? Yes
+[Fl] <- 
+a10_lab = "Abs(-7.0) = " ? Yes
+[Fl] <- 
+a10 = 7.0 ? Yes
+[Fl] <- 
+a11_lab = "Sign(-5.0) = " ? Yes
+[Fl] <- 
+a11 = -1 ? Yes
+[Fl] <- 
+a12_lab = "Sign(6.0) = " ? Yes
+[Fl] <- 
+a12 = 1 ? Yes
+[Fl] <- 
+a13_lab = "Max(3.0, 11.0) = " ? Yes
+[Fl] <- 
+a13 = 11.0 ? Yes
+[Fl] <- 
+a14_lab = "Min(-4.0, 12.0) = " ? Yes
+[Fl] <- 
+a14 = -4.0 ? Yes
+[Fl] <- 
+a15_lab = "Sin(0.5) = " ? Yes
+[Fl] <- 
+a15 = 0.479425538604203 ? Yes
+[Fl] <- 
+a16_lab = "Successor(1.0) = " ? Yes
+[Fl] <- 
+a16 = 2.0 ? Yes
+[Fl] <- 
+a17_lab = "Sqrt(5.0) = " ? Yes
+[Fl] <- 
+a17 = 2.23606797749979 ? Yes
+[Fl] <- 
+a21_lab = "ArcSin(0.5) = " ? Yes
+[Fl] <- 
+a21 = 0.5235987755982989 ? Yes
+[Fl] <- 
+a22_lab = "Exp(1.0) = " ? Yes
+[Fl] <- 
+a22 = 2.718281828459045 ? Yes
+[Fl] <- 
+a23_lab = "Tan(0.5) = " ? Yes
+[Fl] <- 
+a23 = 0.5463024898437905 ? Yes
+[Fl] <- 
+a24_lab = "ArcTan(0.5) = " ? Yes
+[Fl] <- 
+a24 = 0.4636476090008061 ? Yes
+[Fl] <- 
+a25_lab = "Cos(0.5) = " ? Yes
+[Fl] <- 
+a25 = 0.8775825618903728 ? Yes
+[Fl] <- 
+a30_lab = "ArcCos(0.5) = " ? Yes
+[Fl] <- 
+a30 = 1.0471975511965979 ? Yes
+[Fl] <- 

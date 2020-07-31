@@ -1,0 +1,12 @@
+consult(init).
+goedel.
+;cs Tableau.
+;c Tableau.
+;cs TestTableau.
+;c TestTableau.
+;l TestTableau.
+;fc "theory5" "theory5".
+TestProve("theory5", "R",indicator).
+
+halt.
+

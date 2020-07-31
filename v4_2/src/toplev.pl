@@ -896,7 +896,8 @@ flock_compile_cmd(F1, F2) :-
         close(Stream),
         (  'Units':token_identifiers(Chars, Tokens, []),
            flock_compile_cmd_aux(Tokens, FlockList),
-           sappend(F2, '.flk', FileName),
+	    sappend('GL/',F2, F3),
+           sappend(F3, '.flk', FileName),
            ( open(FileName, write, Stream2, [type(text)])
 	     -> format(Stream2, '~q.~n', ['Flocks.Flock.F1'(FlockList)]),
 	        format(user_output, '~nUnits in "~a" are compiled into flock "~a".~n', [F1, FileName]),
@@ -934,7 +935,8 @@ read_file(Stream, Chars) :-
 %------------------------------------------------------------------------------
 
 flock_decompile_cmd(F1, F2) :-
-   postfix_handler(F1, '.flk', FF1),
+	sappend('GL/', F1, F3), 
+   postfix_handler(F3, '.flk', FF1),
    ( open(FF1, read, Stream, [type(text)])
      -> read(Stream, 'Flocks.Flock.F1'(List)),
 	close(Stream),
