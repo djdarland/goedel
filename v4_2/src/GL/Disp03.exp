@@ -1,0 +1,13 @@
+EXPORT      DisplayFile.
+
+IMPORT      Strings.
+IMPORT      IO.
+
+PREDICATE   Display : String.
+PREDICATE   ProcessStream : InputStream * OutputStream.
+PREDICATE   DisplayStream : InputStream * Integer * OutputStream.
+
+DELAY       Display(x) UNTIL GROUND(x).
+
+% Display displays on standard output the file whose name appears in its
+% argument.

@@ -7,6 +7,9 @@ Licensed to SP4.6darlandcomplimentary
 %   module types imported into system
 %   loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/types.po in module types,  8208 bytes
 %  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/system.po in module system,  28368 bytes
+%  loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/process.po...
+%  module process imported into user
+%  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/process.po in module process,  14176 bytes
 %  loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/file_systems.po...
 %  module file_systems imported into user
 %   module types imported into file_systems
@@ -14,10 +17,12 @@ Licensed to SP4.6darlandcomplimentary
 %   loading /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/lists.po...
 %   module lists imported into file_systems
 %    module types imported into lists
-%   loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/lists.po in module lists,  182976 bytes
-%  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/file_systems.po in module file_systems,  255232 bytes
-% consulted /home/dennis/src/mine/mng_git/goedel/v4_2/src/init.pl in module user,  411184 bytes
+%   loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/lists.po in module lists,  181920 bytes
+%  loaded /usr/local/sicstus4.6.0/bin/sp-4.6.0/sicstus-4.6.0/library/file_systems.po in module file_systems,  255120 bytes
+% consulted /home/dennis/src/mine/mng_git/goedel/v4_2/src/init.pl in module user,  425632 bytes
 yes
 % consulting /home/dennis/src/mine/mng_git/goedel/v4_2/src/toplev.pl...
 * [CharsT] - singleton variables
-* Approximate lines: 354-356, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/system.pl'
+* Approximate lines: 354-357, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/system.pl'
+* [CharsT] - singleton variables
+* Approximate lines: 610-613, file: '/home/dennis/src/mine/mng_git/goedel/v4_2/src/SharedSyntax.pl'

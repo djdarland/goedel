@@ -1,0 +1,13 @@
+consult(init).
+goedel.
+;cs Tableau.
+;c Tableau.
+;cs TestTableau.
+;c TestTableau.
+;l TestTableau.
+;fc "theory2" "theory2".
+
+TestProve("theory2", "-> ( B, \\/ ( C , D ) ) ",indicator).
+
+halt.
+

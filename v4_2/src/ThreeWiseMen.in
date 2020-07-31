@@ -1,0 +1,12 @@
+consult(init).
+goedel.
+;cs Reasoner.
+;c Reasoner.
+;cs WiseMan3KB.
+;c WiseMan3KB.
+;cs ThreeWiseMen.
+;c ThreeWiseMen.
+;l ThreeWiseMen.
+
+halt.
+

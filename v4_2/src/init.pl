@@ -1,4 +1,5 @@
 :- use_module(library(system)).
+:- use_module(library(process)).
 :- use_module(library(file_systems)).
 :- set_prolog_flag(discontiguous_warnings,off).
 :- set_prolog_flag(fileerrors,off).

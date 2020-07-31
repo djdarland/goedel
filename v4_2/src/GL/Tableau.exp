@@ -1,0 +1,124 @@
+EXPORT      Tableau.
+
+% This module contains an implementation of a tableau propositional 
+% theorem prover as described, for example, in "Logic for Computer 
+% Science", S. Reeves and M. Clarke, Addison-Wesley, 1990, pages 64-75. 
+% The connectives admitted are &, \/, ->, and ~.
+
+IMPORT      Flocks.
+
+
+IMPORT     Sets.
+
+
+BASE       Leaf, Node, Tableau.
+
+
+
+BASE        Indicator.
+%
+% The type of the constants YES, indicating a formula is a theorem of
+% a theory, and NO, indicating that it is not.
+
+
+CONSTANT    YES, NO : Indicator.
+
+PREDICATE  Literal : 
+
+Unit.          % A propositional formula which is a literal.
+
+FUNCTION   Nd : 
+
+Integer        % A pointer.
+* Unit           % The propositional formula in the node pointed to by
+                 % this pointer.
+-> Node.
+
+FUNCTION   Lf : 
+
+  Integer        % A pointer to an open leaf node. (A leaf node is open
+                 % if it is at the end of a non-closed branch in a 
+                 % tableau.)
+ * Set(Integer)   % The set of pointers to the ancestors of this node 
+                 % plus the pointer to the node itself. 
+ -> Leaf.
+
+FUNCTION   Tb : 
+
+  Set(Leaf)      % The set of open leaf nodes in a tableau.
+* Set(Node)      % The set of all nodes in this tableau.
+* Set(Integer)   % The set of pointers to nodes in this tableau which 
+                 % have yet to be expanded and lie on non-closed 
+                 % branches.
+* Integer        % The maximum value of pointers in this tableau. 
+ -> Tableau.
+
+PREDICATE  InitialiseTableau : 
+
+  Flock          % A propositional theory.
+ * Tableau        % A tableau containing only the negation of the
+                 % formula to be proved.
+ * Tableau.       % The tableau containing just the axioms in this 
+                 % theory and the negation of the formula to be proved.
+
+PREDICATE  Unsatisfiable : 
+
+  Tableau        % A tableau.
+ * Indicator.     % YES, if the tableau can be expanded to an 
+                 % unsatisfiable one, and NO, otherwise.
+
+PREDICATE  Closed : 
+
+   Unit           % A formula closed wrt to the formulas in the nodes 
+                 % in the third argument.
+ * Set(Integer)   % A set of pointers to nodes.
+ * Set(Node).     % A set of nodes.
+
+ PREDICATE  Apply : 
+
+  Unit           % A propositional formula which is not a literal. 
+ * Set(Integer)   % A set of pointers to open leaf nodes.
+ * Tableau        % A tableau containing these open leaf nodes. 
+ * Tableau.       % The tableau obtained by extending this tableau 
+                 % at each of these open leaf nodes according to this 
+                 % formula.
+
+ PREDICATE  ExpandOr : 
+
+   Unit           % A propositional formula.
+ * Unit           % A propositional formula.
+ * Set(Integer)   % A set of pointers to open leaf nodes. 
+ * Tableau        % A tableau containing these open leaf nodes.
+ * Tableau.       % The tableau obtained by extending this tableau at
+                 % each of these open leaf nodes with two "or" 
+                 % children corresponding to each of these formulas.
+
+PREDICATE  ExpandAnd : 
+
+  Unit           % A propositional formula. 
+ * Unit           % A propositional formula.
+ * Set(Integer)   % A set of pointers to open leaf nodes. 
+ * Tableau        % A tableau containing these open leaf nodes.
+ * Tableau.       % The tableau obtained by extending this tableau at 
+                 % each of these open leaf nodes with two "and" 
+                 % children corresponding to each of these formulas.
+
+ PREDICATE  ExpandNegNeg : 
+
+   Unit           % A propositional formula.
+ * Set(Integer)   % A set of pointers to open leaf nodes. 
+ * Tableau        % A tableau containing these open leaf nodes.
+ * Tableau.       % The tableau obtained by extending this tableau at
+                 % each of these open leaf nodes with a node
+                 % containing this formula.
+% PREDICATE  Prove : Flock * Unit * Indicator.
+
+
+PREDICATE   Prove : 
+
+  Flock          % A propositional theory. 
+* Unit           % A propositional formula.
+* Indicator.     % YES, if the formula is a theorem of the theory,
+                 % and NO, if it is not.
+
+DELAY       Prove(x,y,_) UNTIL GROUND(x) & GROUND(y).
