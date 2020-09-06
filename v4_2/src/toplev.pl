@@ -1480,11 +1480,15 @@ constraint_goal_conversion(maximum, _, 'Max', 2).
 constraint_goal_conversion(minimum, _, 'Min', 2).
 constraint_goal_conversion(absolute, _, 'Abs', 1).
 constraint_goal_conversion(sinrad, _, 'Sin', 1).
+constraint_goal_conversion(logg, _, 'Log', 1).
+constraint_goal_conversion(log10g, _, 'Log10', 1).
 constraint_goal_conversion(tanrad, _, 'Tan', 1).
 constraint_goal_conversion(successorg, _, 'Successor', 1).
-constraint_goal_conversion(truncateg, _, 'Truncate', 1).
-constraint_goal_conversion(roundg, _, 'Round', 1).
+constraint_goal_conversion(predecessorg, _, 'Predecessor', 1).
+constraint_goal_conversion(truncateg, _, 'Truncate', 2).
+constraint_goal_conversion(roundg, _, 'Round', 2).
 constraint_goal_conversion(integerpartg, _, 'IntegerPart', 1).
+constraint_goal_conversion(fractionalpartg, _, 'FractionalPart', 1).
 constraint_goal_conversion(arcsinrad, _, 'ArcSin', 1).
 constraint_goal_conversion(arctanrad, _, 'ArcTan', 1).
 constraint_goal_conversion(expe, _, 'Exp', 1).

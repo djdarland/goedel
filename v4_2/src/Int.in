@@ -7,31 +7,59 @@ x = "I have not checked all the answers.".
 
 ThFl(5, z).
 
+lab = "4 ^ 2 [16]".
+
 a1 = 4 ^ 2.
+
+lab = "-5".
 
 a2 = -5.
 
+lab = "2 * 4 [8]".
+
 a3 = 2 * 4.
+
+lab = "4 Div 2 [2]".
 
 a4 = 4 Div 2.
 
+lab = "5 Mod 2 [1]".
+
 a5 = 5 Mod 2.
+
+lab = "7 + 3 [10]".
 
 a6 = 7 + 3.
 
+lab = "7 - 3 [4]".
+
 a7 = 7 - 3.
+
+lab = "3 - 7 [-4]".
 
 a8 = 3 - 7.
 
+lab = "Abs(5) [5]".
+
 a9 = Abs(5).
+
+lab = "Abs(-7) [7]". 
 
 a10 = Abs(-7).
 
+lab = "Sign(-5) [-1]".
+
 a11 = Sign(-5).
+
+lab = "Sign(6) [1]".
 
 a12 = Sign(6).
 
+lab = "Max(3, 11) [11]".
+
 a13 = Max(3, 11).
+
+lab = "Min(-4,12) [-4]".
 
 a14 = Min(-4,12).
 

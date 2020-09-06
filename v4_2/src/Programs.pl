@@ -1926,11 +1926,15 @@ constraint_goal_conversion('Floats', maximum, '"Max', 2):- !.
 constraint_goal_conversion('Floats', minimum, '"Min', 2):- !.
 constraint_goal_conversion('Floats', absolute, '"Abs', 1):- !.
 constraint_goal_conversion('Floats', sinrad, '"Sin', 1):- !.
+constraint_goal_conversion('Floats', logg, '"Log', 1):- !.
+constraint_goal_conversion('Floats', log10g, '"Log10', 1):- !.
 constraint_goal_conversion('Floats', tanrad, '"Tan ', 1):- !.
 constraint_goal_conversion('Floats', successorg, '"Successor', 1):- !.
-constraint_goal_conversion('Floats', truncateg, '"Truncate', 1):- !.
-constraint_goal_conversion('Floats', roundg, '"Round', 1):- !.
+constraint_goal_conversion('Floats', predecessorg, '"Predecessor', 1):- !.
+constraint_goal_conversion('Floats', truncateg, '"Truncate', 2):- !.
+constraint_goal_conversion('Floats', roundg, '"Round', 2):- !.
 constraint_goal_conversion('Floats', integerpartg, '"IntegerPart', 1):- !.
+constraint_goal_conversion('Floats', fractionalpartg, '"FractionalPart', 1):- !.
 constraint_goal_conversion('Floats', arcsinrad, '"ArcSin', 1):- !.
 constraint_goal_conversion('Floats', arctanrad, '"ArcTan', 1):- !.
 constraint_goal_conversion('Floats', expe, '"Exp', 1):- !.

@@ -219,31 +219,34 @@ Date:		17 July 2020
  */
 
 'power'(X, Y, Z) :-
-   float(X), float(Y), !,
-   ( Y < 0
-     -> % Z = 0, but this value is never used
-	format(user_error, "Arithmetic exception: negative exponent.~n", []),
-	raise_exception(catch_in_query)
-     ;  ( Y = 0
-	  -> Z = 1
-	  ;  power2(Y, X, 1, Z)
+ float(X), float(Y), !,
+   (% Y < 0
+    % -> % Z = 0, but this value is never used
+%	format(user_error, "Arithmetic exception: negative exponent.~n", []),
+%	raise_exception(catch_in_query)
+       %;
+       ( Y = 0.0
+	  -> Z = 1.0
+				%	  ;  power2(Y, X, 1, Z)
+	; Z is X ** Y
 	)
    ).
 
 'power'(X, Y, Z) :-
    float(X), float(Z), !,
-   X * Z >= 0,		% checking X and Z are of the same sign
-   ( X = 0, Z = 0
-     -> 'Floats.>.P2'(Y, 0)	% return constraint Y > 0
-     ;  ( X = 0, Z = 1
-	  -> Y = 0
-	  ;  ( ( X = 0, Z =\= 0; X =\= 0, Z = 0 )
+   X * Z >= 0.0,		% checking X and Z are of the same sign
+   ( X = 0.0, Z = 0.0
+     -> 'Floats.>.P2'(Y, 0.0)	% return constraint Y > 0
+     ;  ( X = 0.0, Z = 1.0
+	  -> Y = 0.0
+	  ;  ( ( X = 0.0, Z =\= 0.0; X =\= 0.0, Z = 0.0 )
 	       -> fail	% this is the incompatible case
-               ;  ( X = 1
-	            -> Z = 1	% if Z \= 1 this fails,
+               ;  ( X = 1.0
+	            -> Z = 1.0	% if Z \= 1 this fails,
 				% otherwise X is left uninstantiated
-	            ;  Y is float(round(log(abs(Z))/log(abs(X)))),
-	  	       power2(Y, X, 1, Z)
+	            ;  Y is log(abs(Z))/log(abs(X))
+%		      Y is 
+%		      power2(Y, X, 1, Z)
 		  )
 	     )
 	)
@@ -251,30 +254,25 @@ Date:		17 July 2020
 
 'power'(X, Y, Z) :-
    float(Y), float(Z), !,
-   ( Y < 0
-     -> format(user_error, "Arithmetic exception: negative exponent.~n", []),
-	raise_exception(catch_in_query)
-     ;  ( Y = 0
-	  -> Z = 1		% X is left as a variable
-	  ;  ( 0 =:= Y mod 2
-	       -> ( Z =< 0
+%   ( Y < 0.0
+%     -> format(user_error, "Arithmetic exception: negative exponent.~n", []),
+%	raise_exception(catch_in_query)
+%   ;
+   ( Y = 0.0
+	  -> Z = 1.0		% X is left as a variable
+	       ; ( Z =< 0.0
 	            -> fail		% should fail
-	            ;  ( X is float(round(exp(log(Z)/Y)));
-	                 X is - float(round(exp(log(Z)/Y)))
-		       ),
-	  	       power2(Y, X, 1, Z)	% the test
-	          )
+		 ;  X is exp(log(Z)/Y)
 	       ;  ( Z > 0
-	            -> X is float(round(exp(log(abs(Z))/Y)))
+	            -> X is exp(log(Z)/Y)
 	            ;  ( Z < 0
-		         -> X is - float(round(exp(log(abs(Z))/Y)))
+		         -> X is - exp(log(abs(Z))/Y)
 		         ;  fail	% when Z=0
 		       )
-	          ),
-	  	  power2(Y, X, 1, Z)	% the test
+	          )
 	     )
-	)
-   ).
+	).
+%   ).
 
 'power'(X, Y, Z) :-
    user:goedel_freeze(ground([X,Z]) or ground([Y,Z]) or ground([X,Y]),
@@ -352,11 +350,11 @@ Date:		17 July 2020
 
 'sign'(X, Y) :-
    float(X), !,
-   ( X = 0
-     -> Y = 0
-     ;  ( X > 0
-          -> Y = 1
-	  ;  Y = -1
+   ( X = 0.0
+     -> Y = 0.0
+     ;  ( X > 0.0
+          -> Y = 1.0
+	  ;  Y = -1.0
 	)
    ).
 
@@ -402,6 +400,28 @@ float(X), !,
 'sinrad'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sinrad(X, Y) ).
 
+'logg'(X, Y) :-
+float(X), !,
+   Y is log(X).
+
+'logg'(X, Y) :-
+  float(Y), !,
+   X is exp(Y).
+
+'logg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':logg(X, Y) ).
+
+'log10g'(X, Y) :-
+float(X), !,
+   Y is log(10.0,X).
+
+'log10g'(X, Y) :-
+  float(Y), !,
+   X is 10 ** Y.
+
+'log10g'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':log10g(X, Y) ).
+
 'tanrad'(X, Y) :-
 float(X), !,
    Y is tan(X).
@@ -425,6 +445,17 @@ float(X), !,
 'sqrtg'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':sqrtg(X, Y) ).
 
+'integertofloatg'(X, Y) :-
+ integer(X), !,
+   Y is float(X).
+
+'integertofloatg'(X, Y) :-
+  float(Y), !,
+   X is integer(Y).
+
+'integertofloatg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':integertofloatg(X, Y) ).
+
 'successorg'(X, Y) :-
 float(X), !,
    Y is X + 1.0.
@@ -436,28 +467,45 @@ float(X), !,
 'successorg'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':successorg(X, Y) ).
 
-
-'truncateg'(X, Y) :-
+'predecessorg'(X, Y) :-
 float(X), !,
-   Y is truncate(X).
+   Y is X - 1.0.
 
-'truncateg'(X, Y) :-
-   user:goedel_freeze(ground([X]), 'Floats':truncateg(X, Y) ).
+'predecessorg'(X, Y) :-
+  float(Y), !,
+   X is Y + 1.0.
+
+'predecessorg'(X, Y) :-
+   user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':predecessorg(X, Y) ).
 
 
-'roundg'(X, Y) :-
-float(X), !,
-   Y is round(X).
+'truncateg'(X, Y, Z) :-
+float(X), integer(Y), !,
+   Z is truncate(X * 10.0 ** Y) / (10.0 ** Y).
 
-'round'(X, Y) :-
-   user:goedel_freeze(ground([X]), 'Floats':roundg(X, Y) ).
+'truncate'(X, Y, Z) :-
+   user:goedel_freeze(ground([X]) and ground([Y]), 'Floats':truncateg(X, Y, Z) ).
+
+'roundg'(X, Y, Z) :-
+float(X), integer(Y), !,
+   Z is round(X * 10.0 ** Y) / (10.0 ** Y).
+
+'round'(X, Y, Z) :-
+   user:goedel_freeze(ground([X]) and ground([Y]), 'Floats':roundg(X, Y, Z) ).
 
 'integerpartg'(X, Y) :-
 float(X), !,
-   Y is integerpart(X).
+   Y is float_integer_part(X).
 
 'integerpart'(X, Y) :-
    user:goedel_freeze(ground([X]), 'Floats':integerpartg(X, Y) ).
+
+'fractionalpartg'(X, Y) :-
+float(X), !,
+   Y is X - float_integer_part(X).
+
+'fractionalpart'(X, Y) :-
+   user:goedel_freeze(ground([X]), 'Floats':fractionalpartg(X, Y) ).
 
 'arcsinrad'(X, Y) :-
 float(X), !,
@@ -640,3 +688,81 @@ float(X), !,
 'acothg'(X, Y) :-
    user:goedel_freeze(ground([Y]) or ground([X]), 'Floats':acothg(X, Y) ).
 
+'Floats.IntegerToFloat.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'Floats.IntegerToFloat.P2.0'(A,B)).
+
+'~Floats.IntegerToFloat.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'~Floats.IntegerToFloat.P2.0'(A,B)).
+
+'Floats.IntegerToFloat.P2.0'(A,B) :-
+B is float(A).
+
+'~Floats.IntegerToFloat.P2.0'(A,B) :-
+B is float(A).
+
+'Floats.TruncateToInteger.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'Floats.TruncateToInteger.P2.0'(A,B)).
+
+'~Floats.TruncateToInteger.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'~Floats.TruncateToInteger.P2.0'(A,B)).
+
+'Floats.TruncateToInteger.P2.0'(A,B) :-
+B is integer(A).
+
+'~Floats.TruncateToInteger.P2.0'(A,B) :-
+B is integer(A).
+
+'Floats.RoundToInteger.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'Floats.RoundToInteger.P2.0'(A,B)).
+
+'~Floats.RoundToInteger.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'~Floats.RoundToInteger.P2.0'(A,B)).
+
+'Floats.RoundToInteger.P2.0'(A,B) :-
+B is integer(round(A)).
+
+'~Floats.RoundToInteger.P2.0'(A,B) :-
+B is integer(round(A)).
+
+'Floats.Floor.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'Floats.Floor.P2.0'(A,B)).
+
+'~Floats.Floor.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'~Floats.Floor.P2.0'(A,B)).
+
+'Floats.Floor.P2.0'(A,B) :-
+B is integer(floor(A)).
+
+'~Floats.Floor.P2.0'(A,B) :-
+B is integer(floor(A)).
+
+'Floats.Ceiling.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'Floats.Ceiling.P2.0'(A,B)).
+
+'~Floats.Ceiling.P2'(A,B) :-
+  user:goedel_freeze(nonvar(A), 'Floats':'~Floats.Ceiling.P2.0'(A,B)).
+
+'Floats.Ceiling.P2.0'(A,B) :-
+B is integer(ceiling(A)).
+
+'~Floats.Ceiling.P2.0'(A,B) :-
+B is integer(ceiling(A)).
+
+
+
+
+
+
+
+/*
+'Lists.Member.P2'(A, B) :-
+        user:goedel_freeze(nonvar(B), 'Lists':'Lists.Member.P2.0'(A,B)).
+'~Lists.Member.P2'(A, B) :-
+        user:goedel_freeze(nonvar(B), 'Lists':'~Lists.Member.P2.0'(A,B)).
+'Lists.Member.P2.0'(A, [A|_]).
+'~Lists.Member.P2.0'(A, [A|_]).
+'Lists.Member.P2.0'(A, [_|B]) :-
+        'Lists.Member.P2'(A, B).
+'~Lists.Member.P2.0'(A, [_|B]) :-
+        '~Lists.Member.P2'(A, B).
+*/
