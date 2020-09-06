@@ -352,14 +352,13 @@
 'SharedSyntax.IntegerToCharDL.P3'(Int, Chars, CharsT).
 
 'SharedSyntax.FloatToCharDL.P3'(Flo, Chars, CharsT) :-
-%CharsT = [dummy],
 name(Flo, Chars).
 
 
 %      float_to_char_dl(Flo, CharsT).
 
-'~SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT) :-
- 'SharedSyntax.FloatToCharDL.P3'(Int, Chars, CharsT).
+'~SharedSyntax.FloatToCharDL.P3'(Flo, Chars, CharsT) :-
+ 'SharedSyntax.FloatToCharDL.P3'(Flo, Chars, CharsT).
 
 % float_to_char_dl(Float, IntList) :-
 %	write(float_in),
@@ -401,8 +400,8 @@ int_to_char_dl(Int, Chars, CharsT) :-
        int_to_char_dl(Int1, Chars, [C|CharsT])
    ).
 
-%:- op(500, yfx, and).
-%:- op(400, yfx, or).
+:- op(500, yfx, and).
+:- op(400, yfx, or).
 
 'ParserPrograms.ParserCheckStatement.P4'(A, B, C, D) :-
         'ParserPrograms.CheckStatementAux.P6'(A, B, 0, [], E, F),

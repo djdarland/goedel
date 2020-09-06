@@ -11,65 +11,185 @@ TstFl3(5.0E2, z).
 
 TstFl4(5.0E2, z).
 
-a9_lab = "Abs(5.0) = ".
+a9_lab = "Abs(5.0) = [5.0]".
 
 a9 = Abs(5.0).
 
-a10_lab = "Abs(-7.0) = ".
+a10_lab = "Abs(-7.0) = [7.0]".
 
 a10 = Abs(-7.0).
 
-a11_lab = "Sign(-5.0) = ".
+a11_lab = "Sign(-5.0) = [-1.0]".
 
 a11 = Sign(-5.0).
 
-a12_lab = "Sign(6.0) = ".
+a12_lab = "Sign(6.0) = [1.0]".
 
 a12 = Sign(6.0).
 
-a13_lab = "Max(3.0, 11.0) = ".
+a13_lab = "Max(3.0, 11.0) = [11.0]".
 
 a13 = Max(3.0, 11.0).
 
-a14_lab = "Min(-4.0, 12.0) = ".
+a14_lab = "Min(-4.0, 12.0) = [-4.0]".
 
 a14 = Min(-4.0,12.0).
 
-a15_lab = "Sin(0.5) = ".
+a15_lab = "Sin(0.5) = [0.479425539]".
 
 a15 = Sin(0.5).
 
-a16_lab = "Successor(1.0) = ".
+a16_lab = "Successor(1.0) = [2.0]".
 
 a16 = Successor(1.0).
 
-a17_lab = "Sqrt(5.0) = ".
+a17_lab = "Sqrt(5.0) = [2.236067978]".
 
 a17 = Sqrt(5.0).
 
-a21_lab = "ArcSin(0.5) = ".
+a21_lab = "ArcSin(0.5) = [0.523598776]".
 
 a21 = ArcSin(0.5).
 
-a22_lab = "Exp(1.0) = ".
+a22_lab = "Exp(1.5) = [4.48168907]".
 
-a22 = Exp(1.0).
+a22 = Exp(1.5).
 
-a23_lab = "Tan(0.5) = ".
+a23_lab = "Tan(0.5) = [0.54630249]".
 
 a23 = Tan(0.5).
 
-a24_lab = "ArcTan(0.5) = ".
+a24_lab = "ArcTan(0.5) = [0.463647609]".
 
 a24 = ArcTan(0.5).
 
-a25_lab = "Cos(0.5) = ".
+a25_lab = "Cos(0.5) = [0.877582562]".
 
 a25 = Cos(0.5).
 
-a30_lab = "ArcCos(0.5) = ".
+a30_lab = "ArcCos(0.5) = [1.047197551]".
 
 a30 = ArcCos(0.5).
+
+a31_lab = "IntegerPart(6.5) = [6.0]".
+
+a31 = IntegerPart(6.5).
+
+a33_lab = "2.0 * 3.0 [6.0]".
+
+a33 = 2.0 * 3.0.
+
+a34_lab = "2.0 + 3.0 [5.0]".
+
+a34 = 2.0 + 3.0.
+
+a35_lab = "2.0 - 3.0 [-1.0]".
+
+a35 = 2.0 - 3.0.
+
+a36_lab = "2.0 / 3.0 [0.666666666666]".
+
+a36 = 2.0 / 3.0.
+
+a32_lab = "z = 2.0 ^ 3.0 = [8.0]".
+
+z = 2.0 ^ 3.0.
+
+a32_lab = "8.0 = 2.0 ^ y = [3.0]".
+
+8.0 = 2.0 ^ y.
+
+a32_lab = "8.0 = x ^ 3.0 = [2.0]".
+
+8.0 = x ^ 3.0.
+
+a32_lab = "z = -2.0 ^ 3.0 = [-8.0]".
+
+z = -2.0 ^ 3.0.
+
+a32_lab = "-8.0 = -2.0 ^ y = [3.0]".
+
+-8.0 = -2.0 ^ y.
+
+a32_lab = "-8.0 = -x ^ 3.0 = [2.0]".
+
+-8.0 = -x ^ 3.0.
+
+a32_lab = "z = 2.0 ^ (-3.0) = [0.125]".
+
+z = 2.0 ^ (-3.0).
+
+a32_lab = "(1.0/8.0) = 2.0 ^ (-y) = [3.0]".
+
+(1.0/8.0) = 2.0 ^ (-y).
+
+a32_lab = "(1.0/8.0) = x ^ (-3.0) = [2.0]".
+
+(1.0/8.0) = x ^ (-3.0).
+
+lab = "Round(7.12345,3) [7.123]".
+
+val = Round(7.12345, 3).
+
+lab = "Truncate(7.12345,3) [7.123]".
+
+val = Truncate(7.12345, 3).
+
+lab = "Predecessor(7.12345) [6.12345]".
+
+val = Predecessor(7.12345).
+
+lab = "5.0  = Predecessor(x) [6.0]".
+
+5.0 = Predecessor(x).
+
+lab = "FractionalPart(7.12345) [0.12345]".
+
+val = FractionalPart(7.12345).
+
+lab = "FractionalPart(-7.12345) [-0.12345]".
+
+val = FractionalPart(-7.12345).
+
+lab = "Log(7.12345) [1.963392159]".
+
+val = Log(7.12345).
+
+lab = "Log10(7.12345) [0.85269038]".
+
+val = Log10(7.12345).
+
+lab = "5.0 = Log10(x) [10**5]".
+
+5.0 = Log10(x).
+
+lab = "5.0 = Log(x) [148.4131591]".
+
+5.0 = Log(x).
+
+lab = "IntegerToFloat(187, y) [187.0]".
+
+IntegerToFloat(187, y).
+
+lab = "TruncateToInteger(2.345, y) [2]".
+
+TruncateToInteger(2.345, y).
+
+lab = "RoundToInteger(2.345, y) [2]".
+
+RoundToInteger(2.345, y).
+
+lab = "RoundToInteger(2.678, y) [3]".
+
+RoundToInteger(2.678, y).
+
+lab = "Floor(2.678, y) [2]".
+
+Floor(2.678, y).
+
+lab = "Ceiling(2.678, y) [3]".
+
+Ceiling(2.678, y).
 
 halt.
 
